@@ -118,6 +118,47 @@ const definition = {
           description: { type: 'string' },
         },
       },
+
+      // --- MACHINES ---
+      Machine: {
+        type: 'object',
+        properties: {
+          id: { type: 'integer' },
+          name: { type: 'string' },
+          type: { type: 'string', enum: ['cardio', 'fuerza', 'peso libre', 'funcional', 'otro'] },
+          status: { type: 'string', enum: ['operativa', 'en mantenimiento', 'fuera de servicio'] },
+          centerId: { type: 'integer' },
+          createdAt: { type: 'string', format: 'date-time' },
+          updatedAt: { type: 'string', format: 'date-time' },
+          center: {
+            type: 'object',
+            properties: {
+              id: { type: 'integer' },
+              name: { type: 'string' },
+              city: { type: 'string' },
+            },
+          },
+        },
+      },
+      CreateMachineInput: {
+        type: 'object',
+        required: ['name', 'type', 'status', 'centerId'],
+        properties: {
+          name: { type: 'string' },
+          type: { type: 'string', enum: ['cardio', 'fuerza', 'peso libre', 'funcional', 'otro'] },
+          status: { type: 'string', enum: ['operativa', 'en mantenimiento', 'fuera de servicio'] },
+          centerId: { type: 'integer' },
+        },
+      },
+      UpdateMachineInput: {
+        type: 'object',
+        properties: {
+          name: { type: 'string' },
+          type: { type: 'string', enum: ['cardio', 'fuerza', 'peso libre', 'funcional', 'otro'] },
+          status: { type: 'string', enum: ['operativa', 'en mantenimiento', 'fuera de servicio'] },
+          centerId: { type: 'integer' },
+        },
+      },
     },
   },
   tags: [
@@ -125,6 +166,7 @@ const definition = {
     { name: 'Users', description: 'Gestión de usuarios' },
     { name: 'Centers', description: 'Gestión de centros (gimnasios)' },
     { name: 'Classes', description: 'Gestión de clases' },
+    { name: 'Machines', description: 'Gestión de máquinas de gimnasio' },
   ],
   security: [{ bearerAuth: [] }],
 };

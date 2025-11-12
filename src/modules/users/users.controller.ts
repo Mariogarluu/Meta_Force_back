@@ -1,5 +1,13 @@
 import type { Request, Response } from 'express';
-import { listUsers, findUserById, findUserByEmail, updateUser, deleteUser, updateProfile, changePassword } from './users.service.js';
+import {
+  listUsers,
+  findUserById,
+  updateUser,
+  deleteUser,
+  updateProfile,
+  changePassword,
+  getMeWithCenter,
+} from './users.service.js';
 
 export async function listUsersCtrl(_req: Request, res: Response) {
   try {
@@ -16,12 +24,12 @@ export async function getUserCtrl(req: Request, res: Response) {
     if (isNaN(id)) {
       return res.status(400).json({ message: 'ID inválido' });
     }
-    
+
     const user = await findUserById(id);
     if (!user) {
       return res.status(404).json({ message: 'Usuario no encontrado' });
     }
-    
+
     res.json(user);
   } catch (error: any) {
     res.status(500).json({ message: error.message });
@@ -33,20 +41,15 @@ export async function meCtrl(req: Request, res: Response) {
     if (!req.user) {
       return res.status(401).json({ message: 'No autorizado' });
     }
-    
-    const user = await findUserByEmail(req.user.email);
-    if (!user) {
+
+    const me = await getMeWithCenter(req.user.sub);
+    if (!me) {
       return res.status(404).json({ message: 'Usuario no encontrado' });
     }
-    
-    res.json({ 
-      id: user.id, 
-      email: user.email, 
-      name: user.name,
-      createdAt: user.createdAt
-    });
+
+    return res.json(me);
   } catch (error: any) {
-    res.status(500).json({ message: error.message });
+    return res.status(500).json({ message: error.message });
   }
 }
 
@@ -56,7 +59,7 @@ export async function updateUserCtrl(req: Request, res: Response) {
     if (isNaN(id)) {
       return res.status(400).json({ message: 'ID inválido' });
     }
-    
+
     const user = await updateUser(id, req.body);
     res.json(user);
   } catch (error: any) {
@@ -76,7 +79,7 @@ export async function deleteUserCtrl(req: Request, res: Response) {
     if (isNaN(id)) {
       return res.status(400).json({ message: 'ID inválido' });
     }
-    
+
     await deleteUser(id);
     res.status(204).send();
   } catch (error: any) {
@@ -92,7 +95,7 @@ export async function updateProfileCtrl(req: Request, res: Response) {
     if (!req.user) {
       return res.status(401).json({ message: 'No autorizado' });
     }
-    
+
     const user = await updateProfile(req.user.sub, req.body);
     res.json(user);
   } catch (error: any) {
@@ -108,7 +111,7 @@ export async function changePasswordCtrl(req: Request, res: Response) {
     if (!req.user) {
       return res.status(401).json({ message: 'No autorizado' });
     }
-    
+
     const { currentPassword, newPassword } = req.body;
     const result = await changePassword(req.user.sub, currentPassword, newPassword);
     res.json(result);

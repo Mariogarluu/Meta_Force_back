@@ -37,6 +37,7 @@ model Center {
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
   users       User[]
+  machines    Machine[]
 }
 
 model GymClass {
@@ -47,4 +48,15 @@ model GymClass {
   updatedAt   DateTime  @updatedAt
 
   users       User[]
+}
+
+model Machine {
+  id          Int       @id @default(autoincrement())
+  name        String
+  type        String
+  status      String
+  centerId    Int
+  center      Center   @relation(fields: [centerId], references: [id], onDelete: Cascade)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 }

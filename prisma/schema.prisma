@@ -14,9 +14,26 @@ datasource db {
 }
 
 model User {
-  id           Int      @id @default(autoincrement())
-  email        String   @unique
+  id           Int       @id @default(autoincrement())
+  email        String    @unique
   name         String
   passwordHash String
-  createdAt    DateTime @default(now())
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  centerId     Int?
+  center       Center?   @relation(fields: [centerId], references: [id], onDelete: SetNull)
+}
+
+model Center {
+  id          Int       @id @default(autoincrement())
+  name        String    @unique
+  description String?
+  address     String?
+  city        String?
+  country     String?
+  phone       String?
+  email       String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  users       User[]
 }

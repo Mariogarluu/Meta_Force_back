@@ -9,6 +9,8 @@ import { env } from './config/env.js';
 import { swaggerSpec } from './config/swagger.js';
 import authRoutes from './modules/auth/auth.routes.js';
 import usersRoutes from './modules/users/users.routes.js';
+import centerRoutes from './modules/centers/centers.routes.js';
+import userCenterRouter from './modules/users/user-center.routes.js';
 
 const app = express();
 
@@ -34,6 +36,8 @@ if (env.NODE_ENV !== 'test') {
 }
 
 app.use('/api/users', usersRoutes);
+app.use('/api/centers', centerRoutes);
+app.use('/api/users', userCenterRouter);
 
 app.use(errorHandler);
 

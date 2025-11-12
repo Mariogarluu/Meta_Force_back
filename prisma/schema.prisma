@@ -22,6 +22,7 @@ model User {
   updatedAt    DateTime  @updatedAt
   centerId     Int?
   center       Center?   @relation(fields: [centerId], references: [id], onDelete: SetNull)
+  classes      GymClass[]
 }
 
 model Center {
@@ -35,5 +36,15 @@ model Center {
   email       String?
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
+  users       User[]
+}
+
+model GymClass {
+  id          Int       @id @default(autoincrement())
+  name        String
+  description String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
   users       User[]
 }

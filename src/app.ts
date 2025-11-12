@@ -11,6 +11,9 @@ import authRoutes from './modules/auth/auth.routes.js';
 import usersRoutes from './modules/users/users.routes.js';
 import centerRoutes from './modules/centers/centers.routes.js';
 import userCenterRouter from './modules/users/user-center.routes.js';
+import classRoutes from './modules/classes/classes.routes.js';
+import userClassRouter from './modules/users/user-class.routes.js';
+
 
 const app = express();
 
@@ -38,6 +41,8 @@ if (env.NODE_ENV !== 'test') {
 app.use('/api/users', usersRoutes);
 app.use('/api/centers', centerRoutes);
 app.use('/api/users', userCenterRouter);
+app.use('/api/classes', classRoutes);
+app.use('/api/users', userClassRouter);
 
 app.use(errorHandler);
 

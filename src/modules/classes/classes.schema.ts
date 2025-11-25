@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { cuidSchema } from '../../utils/validation.js';
 
 export const createClassSchema = {
   body: z.object({
@@ -8,7 +9,7 @@ export const createClassSchema = {
 };
 
 export const updateClassSchema = {
-  params: z.object({ id: z.string().regex(/^\d+$/, 'ID inválido') }),
+  params: z.object({ id: cuidSchema }),
   body: z.object({
     name: z.string().min(1).optional(),
     description: z.string().optional(),
@@ -16,5 +17,5 @@ export const updateClassSchema = {
 };
 
 export const classIdParamSchema = {
-  params: z.object({ id: z.string().regex(/^\d+$/, 'ID inválido') }),
+  params: z.object({ id: cuidSchema }),
 };

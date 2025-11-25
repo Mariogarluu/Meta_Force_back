@@ -7,20 +7,25 @@ type CompositeSchema = {
   query?: ZodTypeAny;
 };
 
-// Detecta si el argumento es un ZodObject "plano" (para body)
+/**
+ * Detecta si el schema proporcionado es un ZodObject plano usado para validar el body de la petición.
+ */
 function isPlainZodObject(schema: any): schema is ZodObject<any> {
   return !!schema && typeof schema === 'object' && typeof schema.safeParse === 'function' && schema instanceof ZodObject;
 }
 
-// Detecta si el argumento es un objeto compuesto { body?, params?, query? }
+/**
+ * Detecta si el schema proporcionado es un objeto compuesto que puede validar body, params y/o query por separado.
+ */
 function isComposite(schema: any): schema is CompositeSchema {
   return !!schema && (schema.body || schema.params || schema.query);
 }
 
 /**
- * Middleware de validación flexible:
- * - Si recibe ZodObject -> valida req.body
- * - Si recibe { body?, params?, query? } -> valida cada parte
+ * Middleware de validación flexible que acepta schemas Zod simples o compuestos.
+ * Si recibe un ZodObject simple, valida solo el body de la petición.
+ * Si recibe un objeto compuesto con body, params y/o query, valida cada parte presente.
+ * Retorna un error 400 con los detalles de validación si algún campo no cumple el schema.
  */
 export const validate = (schema: CompositeSchema | ZodObject<any>) => (
   req: Request,
@@ -28,7 +33,6 @@ export const validate = (schema: CompositeSchema | ZodObject<any>) => (
   next: NextFunction
 ) => {
   try {
-    // Caso 1: esquema plano -> validar body
     if (isPlainZodObject(schema)) {
       const parsed = schema.safeParse(req.body);
       if (!parsed.success) return res.status(400).json({ errors: parsed.error.flatten() });
@@ -36,7 +40,6 @@ export const validate = (schema: CompositeSchema | ZodObject<any>) => (
       return next();
     }
 
-    // Caso 2: compuesto -> validar cada parte presente
     if (isComposite(schema)) {
       if (schema.body) {
         const p = schema.body.safeParse(req.body);
@@ -56,7 +59,6 @@ export const validate = (schema: CompositeSchema | ZodObject<any>) => (
       return next();
     }
 
-    // Si llega aquí, el schema no es válido
     return res.status(500).json({ message: 'Invalid schema passed to validate()' });
   } catch (err: any) {
     return res.status(400).json({ message: 'Validation error', detail: err.message });

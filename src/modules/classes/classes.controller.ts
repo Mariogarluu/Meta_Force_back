@@ -5,6 +5,11 @@ import {
 } from './classes.service.js';
 import { prisma } from '../../config/db.js';
 
+/**
+ * Controlador para crear una nueva clase de gimnasio.
+ * Valida los datos del cuerpo de la petición antes de crear la clase.
+ * Retorna la clase creada con un status 201.
+ */
 export async function createClassCtrl(req: Request, res: Response) {
   try {
     const cls = await createClass(req.body);
@@ -15,6 +20,10 @@ export async function createClassCtrl(req: Request, res: Response) {
   }
 }
 
+/**
+ * Controlador para listar todas las clases de gimnasio disponibles.
+ * Retorna una lista ordenada por fecha de creación descendente.
+ */
 export async function listClassesCtrl(_req: Request, res: Response) {
   try {
     const list = await listClasses();
@@ -24,10 +33,13 @@ export async function listClassesCtrl(_req: Request, res: Response) {
   }
 }
 
+/**
+ * Controlador para obtener una clase específica por su ID.
+ * Retorna todos los datos de la clase incluyendo fechas de creación y actualización.
+ */
 export async function getClassCtrl(req: Request, res: Response) {
   try {
-    const id = Number((req.params as any).id);
-    if (isNaN(id)) return res.status(400).json({ message: 'ID inválido' });
+    const id = req.params.id;
     const cls = await getClassById(id);
     if (!cls) return res.status(404).json({ message: 'Clase no encontrada' });
     res.json(cls);
@@ -36,10 +48,14 @@ export async function getClassCtrl(req: Request, res: Response) {
   }
 }
 
+/**
+ * Controlador para actualizar los datos de una clase existente.
+ * Permite modificar el nombre y/o descripción de la clase.
+ * Retorna la clase actualizada con sus fechas de modificación.
+ */
 export async function updateClassCtrl(req: Request, res: Response) {
   try {
-    const id = Number((req.params as any).id);
-    if (isNaN(id)) return res.status(400).json({ message: 'ID inválido' });
+    const id = req.params.id;
     const updated = await updateClass(id, req.body);
     res.json(updated);
   } catch (error: any) {
@@ -49,10 +65,14 @@ export async function updateClassCtrl(req: Request, res: Response) {
   }
 }
 
+/**
+ * Controlador para eliminar una clase de gimnasio.
+ * Desconecta automáticamente a todos los usuarios apuntados antes de eliminar.
+ * Retorna un status 204 sin contenido en caso de éxito.
+ */
 export async function deleteClassCtrl(req: Request, res: Response) {
   try {
-    const id = Number((req.params as any).id);
-    if (isNaN(id)) return res.status(400).json({ message: 'ID inválido' });
+    const id = req.params.id;
     await deleteClass(id);
     res.status(204).send();
   } catch (error: any) {
@@ -61,10 +81,13 @@ export async function deleteClassCtrl(req: Request, res: Response) {
   }
 }
 
+/**
+ * Controlador para listar todos los usuarios apuntados a una clase específica.
+ * Retorna información pública de cada usuario ordenados por fecha de creación.
+ */
 export async function listClassUsersCtrl(req: Request, res: Response) {
   try {
-    const id = Number((req.params as any).id);
-    if (isNaN(id)) return res.status(400).json({ message: 'ID inválido' });
+    const id = req.params.id;
     const users = await listUsersInClass(id);
     res.json(users);
   } catch (error: any) {
@@ -72,11 +95,15 @@ export async function listClassUsersCtrl(req: Request, res: Response) {
   }
 }
 
+/**
+ * Controlador para que un usuario se apunte a una clase de gimnasio.
+ * Verifica que la clase exista antes de crear la relación.
+ * Utiliza el ID del usuario autenticado desde el token JWT.
+ */
 export async function joinClassCtrl(req: Request, res: Response) {
   try {
     if (!req.user) return res.status(401).json({ message: 'No autorizado' });
-    const classId = Number((req.params as any).id);
-    if (isNaN(classId)) return res.status(400).json({ message: 'ID inválido' });
+    const classId = req.params.id;
 
     const exists = await prisma.gymClass.findUnique({ where: { id: classId } });
     if (!exists) return res.status(404).json({ message: 'Clase no encontrada' });
@@ -88,11 +115,15 @@ export async function joinClassCtrl(req: Request, res: Response) {
   }
 }
 
+/**
+ * Controlador para que un usuario se desapunte de una clase de gimnasio.
+ * Verifica que la clase exista antes de eliminar la relación.
+ * Utiliza el ID del usuario autenticado desde el token JWT.
+ */
 export async function leaveClassCtrl(req: Request, res: Response) {
   try {
     if (!req.user) return res.status(401).json({ message: 'No autorizado' });
-    const classId = Number((req.params as any).id);
-    if (isNaN(classId)) return res.status(400).json({ message: 'ID inválido' });
+    const classId = req.params.id;
 
     const exists = await prisma.gymClass.findUnique({ where: { id: classId } });
     if (!exists) return res.status(404).json({ message: 'Clase no encontrada' });

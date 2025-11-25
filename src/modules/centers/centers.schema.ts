@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { cuidSchema } from '../../utils/validation.js';
 
 export const createCenterSchema = {
   body: z.object({
@@ -13,7 +14,7 @@ export const createCenterSchema = {
 };
 
 export const updateCenterSchema = {
-  params: z.object({ id: z.string().regex(/^\d+$/, 'ID inválido') }),
+  params: z.object({ id: cuidSchema }),
   body: z.object({
     name: z.string().min(1).optional(),
     description: z.string().optional(),
@@ -26,5 +27,5 @@ export const updateCenterSchema = {
 };
 
 export const centerIdParamSchema = {
-  params: z.object({ id: z.string().regex(/^\d+$/, 'ID inválido') }),
+  params: z.object({ id: cuidSchema }),
 };

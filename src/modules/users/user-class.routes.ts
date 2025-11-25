@@ -3,21 +3,21 @@ import { auth } from '../../middleware/auth.js';
 import { validate } from '../../middleware/validate.js';
 import { z } from 'zod';
 import { prisma } from '../../config/db.js';
+import { cuidSchema } from '../../utils/validation.js';
 
 const router = Router();
 
-// Schemas compuestos para validate()
-const listMyClassesSchema = {}; // no valida nada (solo auth)
+const listMyClassesSchema = {};
 
 const joinMyClassSchema = {
   body: z.object({
-    classId: z.number().int().positive(),
+    classId: cuidSchema,
   }),
 };
 
 const leaveMyClassSchema = {
   params: z.object({
-    id: z.string().regex(/^\d+$/, 'ID inválido'),
+    id: cuidSchema,
   }),
 };
 
@@ -38,6 +38,7 @@ router.get('/me/classes', auth, validate(listMyClassesSchema), async (req, res) 
       select: {
         id: true,
         email: true,
+        role: true,
         classes: { select: { id: true, name: true, description: true, createdAt: true } },
       },
     });
@@ -71,7 +72,7 @@ router.post('/me/classes', auth, validate(joinMyClassSchema), async (req, res) =
   try {
     if (!req.user) return res.status(401).json({ message: 'No autorizado' });
 
-    const { classId } = req.body as { classId: number };
+    const { classId } = req.body as { classId: string };
 
     const exists = await prisma.gymClass.findUnique({ where: { id: classId } });
     if (!exists) return res.status(404).json({ message: 'Clase no encontrada' });
@@ -105,8 +106,7 @@ router.delete('/me/classes/:id', auth, validate(leaveMyClassSchema), async (req,
   try {
     if (!req.user) return res.status(401).json({ message: 'No autorizado' });
 
-    const classId = Number((req.params as any).id);
-    if (isNaN(classId)) return res.status(400).json({ message: 'ID inválido' });
+    const classId = req.params.id;
 
     const exists = await prisma.gymClass.findUnique({ where: { id: classId } });
     if (!exists) return res.status(404).json({ message: 'Clase no encontrada' });

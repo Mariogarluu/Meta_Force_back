@@ -1,6 +1,9 @@
-// src/config/swagger.js
 import swaggerJSDoc from 'swagger-jsdoc';
 
+/**
+ * Configuración principal de Swagger para la documentación de la API.
+ * Define la estructura OpenAPI 3.0.3 con todos los schemas y endpoints disponibles.
+ */
 const definition = {
   openapi: '3.0.3',
   info: {
@@ -17,7 +20,6 @@ const definition = {
       bearerAuth: { type: 'http', scheme: 'bearer', bearerFormat: 'JWT' },
     },
     schemas: {
-      // --- USERS (ya los tienes, los dejo como referencia) ---
       User: {
         type: 'object',
         properties: {
@@ -75,7 +77,6 @@ const definition = {
         },
       },
 
-      // --- CENTERS ---
       CreateCenterInput: {
         type: 'object',
         required: ['name'],
@@ -102,7 +103,6 @@ const definition = {
         },
       },
 
-      // --- CLASSES ---
       CreateClassInput: {
         type: 'object',
         required: ['name'],
@@ -119,7 +119,6 @@ const definition = {
         },
       },
 
-      // --- MACHINES ---
       Machine: {
         type: 'object',
         properties: {
@@ -171,15 +170,21 @@ const definition = {
   security: [{ bearerAuth: [] }],
 };
 
-// 🔥 IMPORTANTE: incluye **todas** tus rutas .ts (si ejecutas TS con ts-node)
-// Si ejecutas desde `dist`, cambia a 'dist/modules/**/*.routes.js'
+/**
+ * Especifica las rutas donde Swagger buscará los comentarios de documentación JSDoc.
+ * Incluye archivos TypeScript y JavaScript para soportar diferentes entornos de ejecución.
+ */
 const apis = [
   'src/modules/**/*.routes.ts',
   'src/modules/**/*.controller.ts',
   'src/modules/**/*.schema.ts',
-  'src/modules/**/*.routes.js',       // por si en runtime cargas .js
+  'src/modules/**/*.routes.js',
 ];
 
+/**
+ * Especificación completa de Swagger generada a partir de la definición y los archivos de rutas.
+ * Exporta la configuración de Swagger para ser utilizada por el middleware de Swagger UI.
+ */
 export const swaggerSpec = swaggerJSDoc({
   definition,
   apis,

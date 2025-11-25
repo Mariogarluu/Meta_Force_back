@@ -13,20 +13,29 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Role {
+  SUPERADMIN
+  ADMIN_CENTER
+  TRAINER
+  CLEANER
+  USER
+}
+
 model User {
-  id           Int       @id @default(autoincrement())
+  id           String    @id @default(cuid())
   email        String    @unique
   name         String
   passwordHash String
+  role         Role      @default(USER)
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
-  centerId     Int?
+  centerId     String?
   center       Center?   @relation(fields: [centerId], references: [id], onDelete: SetNull)
   classes      GymClass[]
 }
 
 model Center {
-  id          Int       @id @default(autoincrement())
+  id          String    @id @default(cuid())
   name        String    @unique
   description String?
   address     String?
@@ -41,7 +50,7 @@ model Center {
 }
 
 model GymClass {
-  id          Int       @id @default(autoincrement())
+  id          String    @id @default(cuid())
   name        String
   description String?
   createdAt   DateTime  @default(now())
@@ -51,11 +60,11 @@ model GymClass {
 }
 
 model Machine {
-  id          Int       @id @default(autoincrement())
+  id          String    @id @default(cuid())
   name        String
   type        String
   status      String
-  centerId    Int
+  centerId    String
   center      Center   @relation(fields: [centerId], references: [id], onDelete: Cascade)
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt

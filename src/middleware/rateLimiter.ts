@@ -1,5 +1,10 @@
 import rateLimit from 'express-rate-limit';
 
+/**
+ * Limitador de tasa general para todas las rutas de la API.
+ * Permite máximo 100 peticiones por IP en una ventana de 15 minutos.
+ * Útil para prevenir abuso general de la API.
+ */
 export const generalLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 100,
@@ -8,6 +13,12 @@ export const generalLimiter = rateLimit({
   legacyHeaders: false,
 });
 
+/**
+ * Limitador de tasa específico para rutas de autenticación (login y registro).
+ * Permite máximo 5 intentos por IP en una ventana de 15 minutos.
+ * Solo cuenta los intentos fallidos, ignorando las peticiones exitosas.
+ * Útil para prevenir ataques de fuerza bruta en autenticación.
+ */
 export const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 5,

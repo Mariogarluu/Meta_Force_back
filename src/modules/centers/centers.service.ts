@@ -19,12 +19,37 @@ export async function createCenter(data: {
 /**
  * Lista todos los centros de entrenamiento ordenados por fecha de creación descendente.
  * Retorna solo información básica de cada centro.
+ * Si se proporciona centerId, solo retorna ese centro específico.
+ * Si includeId es false, no incluye el ID en la respuesta (solo nombre).
  */
-export async function listCenters() {
+export async function listCenters(centerId?: string | null, includeId: boolean = true) {
+  const where = centerId ? { id: centerId } : {};
+  const select = includeId 
+    ? { id: true, name: true, city: true, country: true, createdAt: true }
+    : { name: true, city: true, country: true, createdAt: true };
+  
   return prisma.center.findMany({
+    where,
     orderBy: { createdAt: 'desc' },
-    select: { id: true, name: true, city: true, country: true, createdAt: true },
+    select,
   });
+}
+
+/**
+ * Obtiene el nombre del centro al que pertenece un usuario.
+ * Retorna solo el nombre, sin el ID.
+ */
+export async function getCenterNameByUserId(userCenterId: string | null) {
+  if (!userCenterId) {
+    return null;
+  }
+  
+  const center = await prisma.center.findUnique({
+    where: { id: userCenterId },
+    select: { name: true },
+  });
+  
+  return center ? { name: center.name } : null;
 }
 
 /**

@@ -1,6 +1,6 @@
 import type { Request, Response } from 'express';
 import {
-  createCenter, listCenters, getCenterById, updateCenter, deleteCenter, listUsersInCenter,
+  createCenter, listCenters, getCenterById, updateCenter, deleteCenter, listUsersInCenter, getCenterNameByUserId,
 } from './centers.service.js';
 import { Role } from '../../types/role.js';
 
@@ -22,11 +22,31 @@ export async function createCenterCtrl(req: Request, res: Response) {
 /**
  * Controlador para listar todos los centros de entrenamiento disponibles.
  * Retorna una lista ordenada por fecha de creación descendente.
- * Accesible para todos los usuarios autenticados.
+ * 
+ * Permisos:
+ * - USER, TRAINER, CLEANER: Solo ven el nombre del centro al que pertenecen (sin ID)
+ * - ADMIN_CENTER: Ven todos los centros con ID
+ * - SUPERADMIN: Ven todos los centros con ID
  */
-export async function listCentersCtrl(_req: Request, res: Response) {
+export async function listCentersCtrl(req: Request, res: Response) {
   try {
-    const centers = await listCenters();
+    if (!req.user) {
+      return res.status(401).json({ message: 'No autorizado' });
+    }
+
+    const { role, centerId } = req.user;
+
+    // USER, TRAINER, CLEANER: Solo ven el nombre de su centro (sin ID)
+    if (role === Role.USER || role === Role.TRAINER || role === Role.CLEANER) {
+      if (!centerId) {
+        return res.json([]);
+      }
+      const centerName = await getCenterNameByUserId(centerId);
+      return res.json(centerName ? [centerName] : []);
+    }
+
+    // ADMIN_CENTER y SUPERADMIN: Ven todos los centros con ID
+    const centers = await listCenters(null, true);
     res.json(centers);
   } catch (error: any) {
     res.status(500).json({ message: error.message });
@@ -36,9 +56,25 @@ export async function listCentersCtrl(_req: Request, res: Response) {
 /**
  * Controlador para obtener un centro específico por su ID.
  * Retorna todos los datos del centro incluyendo información de contacto y ubicación.
+ * 
+ * Permisos:
+ * - USER, TRAINER, CLEANER: No pueden ver ningún centro por ID (403)
+ * - ADMIN_CENTER: Puede ver todos los centros
+ * - SUPERADMIN: Puede ver todos los centros
  */
 export async function getCenterCtrl(req: Request, res: Response) {
   try {
+    if (!req.user) {
+      return res.status(401).json({ message: 'No autorizado' });
+    }
+
+    const { role } = req.user;
+
+    // USER, TRAINER, CLEANER: No pueden ver centros por ID
+    if (role === Role.USER || role === Role.TRAINER || role === Role.CLEANER) {
+      return res.status(403).json({ message: 'No tienes permiso para ver este centro' });
+    }
+
     const id = req.params.id;
     const center = await getCenterById(id);
     if (!center) return res.status(404).json({ message: 'Centro no encontrado' });

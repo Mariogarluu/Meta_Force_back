@@ -29,6 +29,17 @@ if (env.NODE_ENV !== 'test') {
   app.use(generalLimiter);
 }
 
+app.get('/', (_req, res) => {
+  res.status(200).json({
+    ok: true,
+    message: 'Meta-Force API está funcionando correctamente',
+    version: '1.0.0',
+    docs: '/api-docs'
+  });
+});
+// ----------------------------------------------------
+
+
 app.get('/health', (_req, res) => res.json({ ok: true }));
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));

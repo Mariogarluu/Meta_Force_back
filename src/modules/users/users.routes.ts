@@ -1,7 +1,9 @@
 import { Router } from 'express';
 import { auth } from '../../middleware/auth.js';
 import { validate } from '../../middleware/validate.js';
-import { updateUserSchema, updateProfileSchema, changePasswordSchema } from './users.schema.js';
+import { updateUserSchema, updateProfileSchema, changePasswordSchema, userIdParamSchema } from './users.schema.js';
+import { hasRole } from '../../middleware/hasRole.js';
+import { Role } from '../../types/role.js';
 import { listUsersCtrl, getUserCtrl, meCtrl, updateUserCtrl, deleteUserCtrl, updateProfileCtrl, changePasswordCtrl } from './users.controller.js';
 
 const router = Router();
@@ -30,7 +32,7 @@ const router = Router();
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.get('/', auth, listUsersCtrl);
+router.get('/', auth, hasRole(Role.SUPERADMIN, Role.ADMIN_CENTER), listUsersCtrl);
 
 /**
  * @swagger
@@ -255,9 +257,9 @@ router.patch('/me/password', auth, validate(changePasswordSchema), changePasswor
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.get('/:id', auth, getUserCtrl);
-router.patch('/:id', auth, validate(updateUserSchema), updateUserCtrl);
-router.delete('/:id', auth, deleteUserCtrl);
+router.get('/:id', auth, hasRole(Role.SUPERADMIN, Role.ADMIN_CENTER), validate(userIdParamSchema), getUserCtrl);
+router.patch('/:id', auth, hasRole(Role.SUPERADMIN, Role.ADMIN_CENTER), validate(updateUserSchema), updateUserCtrl);
+router.delete('/:id', auth, hasRole(Role.SUPERADMIN, Role.ADMIN_CENTER), validate(userIdParamSchema), deleteUserCtrl);
 
 export default router;
 

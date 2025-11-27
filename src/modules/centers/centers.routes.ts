@@ -2,6 +2,8 @@ import { Router } from 'express';
 import { auth } from '../../middleware/auth.js';
 import { validate } from '../../middleware/validate.js';
 import { createCenterSchema, updateCenterSchema, centerIdParamSchema } from './centers.schema.js';
+import { hasRole } from '../../middleware/hasRole.js';
+import { Role } from '../../types/role.js';
 import {
   createCenterCtrl, listCentersCtrl, getCenterCtrl, updateCenterCtrl, deleteCenterCtrl, listCenterUsersCtrl,
 } from './centers.controller.js';
@@ -45,7 +47,7 @@ router.get('/', auth, listCentersCtrl);
  *       201: { description: Creado }
  *       409: { description: Nombre ya existe }
  */
-router.post('/', auth, validate(createCenterSchema), createCenterCtrl);
+router.post('/', auth, hasRole(Role.SUPERADMIN), validate(createCenterSchema), createCenterCtrl);
 
 /**
  * @swagger
@@ -88,7 +90,7 @@ router.get('/:id', auth, validate(centerIdParamSchema), getCenterCtrl);
  *       404: { description: No encontrado }
  *       409: { description: Nombre ya existe }
  */
-router.patch('/:id', auth, validate(updateCenterSchema), updateCenterCtrl);
+router.patch('/:id', auth, hasRole(Role.SUPERADMIN), validate(updateCenterSchema), updateCenterCtrl);
 
 /**
  * @swagger
@@ -106,7 +108,7 @@ router.patch('/:id', auth, validate(updateCenterSchema), updateCenterCtrl);
  *       204: { description: Eliminado }
  *       404: { description: No encontrado }
  */
-router.delete('/:id', auth, validate(centerIdParamSchema), deleteCenterCtrl);
+router.delete('/:id', auth, hasRole(Role.SUPERADMIN), validate(centerIdParamSchema), deleteCenterCtrl);
 
 /**
  * @swagger
@@ -123,6 +125,6 @@ router.delete('/:id', auth, validate(centerIdParamSchema), deleteCenterCtrl);
  *     responses:
  *       200: { description: OK }
  */
-router.get('/:id/users', auth, validate(centerIdParamSchema), listCenterUsersCtrl);
+router.get('/:id/users', auth, hasRole(Role.SUPERADMIN, Role.ADMIN_CENTER), validate(centerIdParamSchema), listCenterUsersCtrl);
 
 export default router;

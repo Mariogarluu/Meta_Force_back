@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { auth } from '../../middleware/auth.js';
 import { validate } from '../../middleware/validate.js';
-import { createMachineSchema, updateMachineSchema, machineIdParamSchema } from './machines.schema.js';
+import { createMachineSchema, updateMachineSchema, machineIdParamSchema, centerIdParamSchema } from './machines.schema.js';
 import {
   createMachineCtrl, listMachinesCtrl, getMachineCtrl, updateMachineCtrl, deleteMachineCtrl, listMachinesByCenterCtrl,
 } from './machines.controller.js';
@@ -145,7 +145,7 @@ router.delete('/:id', auth, validate(machineIdParamSchema), deleteMachineCtrl);
  *       200:
  *         description: Lista de máquinas del centro
  */
-router.get('/center/:centerId', auth, listMachinesByCenterCtrl);
+router.get('/center/:centerId', auth, validate(centerIdParamSchema), listMachinesByCenterCtrl);
 
 export default router;
 

@@ -46,6 +46,10 @@ export async function login(email: string, password: string) {
   if (!user) {
     throw new Error('Credenciales inválidas');
   }
+
+  if (user.status !== 'ACTIVE') {
+    throw new Error('Cuenta no validada. Contacta con un administrador para activar tu cuenta.');
+  }
   
   const ok = await bcrypt.compare(password, user.passwordHash);
   if (!ok) {

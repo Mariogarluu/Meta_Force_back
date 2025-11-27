@@ -15,7 +15,7 @@ export async function createUser(email: string, name: string, passwordHash: stri
       passwordHash,
       role: (role as string) || Role.USER
     },
-    select: { id: true, email: true, name: true, role: true, createdAt: true }
+    select: { id: true, email: true, name: true, role: true, status: true, createdAt: true }
   });
 }
 
@@ -34,7 +34,7 @@ export async function findUserByEmail(email: string) {
 export async function findUserById(id: string) {
   return prisma.user.findUnique({
     where: { id },
-    select: { id: true, email: true, name: true, role: true, createdAt: true }
+    select: { id: true, email: true, name: true, role: true, status: true, createdAt: true }
   });
 }
 
@@ -48,23 +48,23 @@ export async function listUsers(centerId?: string | null) {
   
   return prisma.user.findMany({
     where,
-    select: { id: true, email: true, name: true, role: true, centerId: true, createdAt: true },
+    select: { id: true, email: true, name: true, role: true, status: true, centerId: true, createdAt: true },
     orderBy: { createdAt: 'asc' }
   });
 }
 
 /**
  * Actualiza los datos de un usuario existente en la base de datos.
- * Permite actualizar el nombre, email y/o rol del usuario identificado por su ID.
+ * Permite actualizar el nombre, email, rol, estado y/o centro del usuario identificado por su ID.
  */
-export async function updateUser(id: string, data: { name?: string; email?: string; role?: Role | string }) {
+export async function updateUser(id: string, data: { name?: string; email?: string; role?: Role | string; status?: string; centerId?: string | null }) {
   return prisma.user.update({
     where: { id },
     data: {
       ...data,
       role: data.role as string | undefined
     },
-    select: { id: true, email: true, name: true, role: true, createdAt: true }
+    select: { id: true, email: true, name: true, role: true, status: true, centerId: true, createdAt: true }
   });
 }
 
@@ -84,7 +84,7 @@ export async function updateProfile(userId: string, data: { name?: string; email
   return prisma.user.update({
     where: { id: userId },
     data,
-    select: { id: true, email: true, name: true, role: true, createdAt: true }
+    select: { id: true, email: true, name: true, role: true, status: true, createdAt: true }
   });
 }
 
@@ -128,6 +128,7 @@ export async function getMeWithCenter(id: string) {
       email: true,
       name: true,
       role: true,
+      status: true,
       createdAt: true,
       centerId: true,
       center: { select: { id: true, name: true } },

@@ -45,7 +45,7 @@ export async function getUserCtrl(req: Request, res: Response) {
     const id = req.params.id;
     const user = await prisma.user.findUnique({
       where: { id },
-      select: { id: true, email: true, name: true, role: true, centerId: true, createdAt: true }
+      select: { id: true, email: true, name: true, role: true, status: true, centerId: true, createdAt: true }
     });
 
     if (!user) {
@@ -98,7 +98,7 @@ export async function updateUserCtrl(req: Request, res: Response) {
     }
 
     const id = req.params.id;
-    
+
     const existingUser = await prisma.user.findUnique({
       where: { id },
       select: { centerId: true, role: true }
@@ -108,14 +108,12 @@ export async function updateUserCtrl(req: Request, res: Response) {
       return res.status(404).json({ message: 'Usuario no encontrado' });
     }
 
+    // ADMIN_CENTER solo puede gestionar usuarios de su propio centro,
+    // pero sí puede cambiar estado y rol dentro de su centro.
     if (req.user.role === Role.ADMIN_CENTER) {
       if (existingUser.centerId !== req.user.centerId) {
         return res.status(403).json({ message: 'No tienes acceso a este usuario' });
       }
-      
-      const { role, centerId, ...updateData } = req.body;
-      const user = await updateUser(id, updateData);
-      return res.json(user);
     }
 
     const user = await updateUser(id, req.body);

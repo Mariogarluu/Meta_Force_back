@@ -1,6 +1,11 @@
 import type { Request, Response, NextFunction } from 'express';
 import { logger } from '../utils/logger.js';
 
+/**
+ * Middleware que registra todas las peticiones HTTP recibidas con su método, ruta, código de estado y tiempo de respuesta.
+ * Usa diferentes niveles de log según el código de estado: error para 5xx, warn para 4xx, http para exitosas.
+ * Mide el tiempo transcurrido desde que se recibe la petición hasta que se completa la respuesta.
+ */
 export function requestLogger(req: Request, res: Response, next: NextFunction) {
   const start = Date.now();
   

@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { cuidSchema } from '../../utils/validation.js';
 
 export const roleEnum = z.enum(['SUPERADMIN', 'ADMIN_CENTER', 'TRAINER', 'CLEANER', 'USER']);
+export const userStatusEnum = z.enum(['PENDING', 'ACTIVE', 'INACTIVE']);
 
 export const registerSchema = z.object({
   email: z.string().email('Email inválido'),
@@ -21,6 +22,8 @@ export const updateUserSchema = {
     name: z.string().min(2, 'El nombre debe tener al menos 2 caracteres').optional(),
     email: z.string().email('Email inválido').optional(),
     role: roleEnum.optional(),
+    status: userStatusEnum.optional(),
+    centerId: cuidSchema.optional().nullable(),
   }),
 };
 

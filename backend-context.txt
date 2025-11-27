@@ -182,6 +182,7 @@ export default {
       "integrity": "sha512-e7jT4DxYvIDLk1ZHmU/m/mB19rex9sv0c2ftBtjSBv+kVM/902eh0fINUzD7UwLLNR+jU585GxUJ8/EBfAM5fw==",
       "dev": true,
       "license": "MIT",
+      "peer": true,
       "dependencies": {
         "@babel/code-frame": "^7.27.1",
         "@babel/generator": "^7.28.5",
@@ -2048,6 +2049,7 @@ export default {
       "resolved": "https://registry.npmjs.org/@types/node/-/node-24.10.0.tgz",
       "integrity": "sha512-qzQZRBqkFsYyaSWXuEHc2WR9c0a0CXwiE5FWUvn7ZM+vdy1uZLfCunD38UzhuB7YN/J11ndbDBcTmOdxJo9Q7A==",
       "license": "MIT",
+      "peer": true,
       "dependencies": {
         "undici-types": "~7.16.0"
       }
@@ -2799,6 +2801,7 @@ export default {
         }
       ],
       "license": "MIT",
+      "peer": true,
       "dependencies": {
         "baseline-browser-mapping": "^2.8.19",
         "caniuse-lite": "^1.0.30001751",
@@ -3851,6 +3854,7 @@ export default {
       "resolved": "https://registry.npmjs.org/express/-/express-5.1.0.tgz",
       "integrity": "sha512-DT9ck5YIRU+8GYzzU5kT3eHGA5iL+1Zd0EutOmTE9Dtk+Tvuzd23VBU+ec7HPNSTxXYO55gPV/hq4pSBJDjFpA==",
       "license": "MIT",
+      "peer": true,
       "dependencies": {
         "accepts": "^2.0.0",
         "body-parser": "^2.2.0",
@@ -4727,6 +4731,7 @@ export default {
       "integrity": "sha512-F26gjC0yWN8uAA5m5Ss8ZQf5nDHWGlN/xWZIh8S5SRbsEKBovwZhxGd6LJlbZYxBgCYOtreSUyb8hpXyGC5O4A==",
       "dev": true,
       "license": "MIT",
+      "peer": true,
       "dependencies": {
         "@jest/core": "30.2.0",
         "@jest/types": "30.2.0",
@@ -6365,6 +6370,7 @@ export default {
       "integrity": "sha512-F3eX7K+tWpkbhl3l4+VkFtrwJlLXbAM+f9jolgoUZbFcm1DgHZ4cq9AgVEgUym2au5Ad/TDLN8lg83D+M10ycw==",
       "devOptional": true,
       "hasInstallScript": true,
+      "peer": true,
       "dependencies": {
         "@prisma/config": "6.19.0",
         "@prisma/engines": "6.19.0"
@@ -7425,6 +7431,7 @@ export default {
       "integrity": "sha512-f0FFpIdcHgn8zcPSbf1dRevwt047YMnaiJM3u2w2RewrB+fob/zePZcrOyQoLMMO7aBIddLcQIEK5dYjkLnGrQ==",
       "dev": true,
       "license": "MIT",
+      "peer": true,
       "dependencies": {
         "@cspotcode/source-map-support": "^0.8.0",
         "@tsconfig/node10": "^1.0.7",
@@ -7534,6 +7541,7 @@ export default {
       "integrity": "sha512-jl1vZzPDinLr9eUt3J/t7V6FgNEw9QjvBPdysz9KfQDD41fQrC2Y4vKQdiaUpFT4bXlb1RHhLpp8wtm6M5TgSw==",
       "devOptional": true,
       "license": "Apache-2.0",
+      "peer": true,
       "bin": {
         "tsc": "bin/tsc",
         "tsserver": "bin/tsserver"
@@ -8049,17 +8057,18 @@ export default {
   "type": "module",
   "description": "Este proyecto implementa una API REST con Node.js, Express y PostgreSQL siguiendo un desarrollo incremental versionado con Git tags.",
   "main": "index.js",
-  "scripts": {
-    "dev": "nodemon src/index.ts",
-    "build": "tsc -p .",
-    "start": "node dist/index.js",
-    "test": "NODE_ENV=test NODE_OPTIONS=--experimental-vm-modules jest",
-    "test:watch": "NODE_ENV=test NODE_OPTIONS=--experimental-vm-modules jest --watch",
-    "test:coverage": "NODE_ENV=test NODE_OPTIONS=--experimental-vm-modules jest --coverage",
-    "prisma:migrate": "prisma migrate dev",
-    "prisma:generate": "prisma generate",
-    "prisma:studio": "prisma studio"
-  },
+ "scripts": {
+  "dev": "nodemon src/index.ts",
+  "build": "tsc -p .",
+  "start": "node dist/index.js",
+  "test": "NODE_ENV=test NODE_OPTIONS=--experimental-vm-modules jest",
+  "test:watch": "NODE_ENV=test NODE_OPTIONS=--experimental-vm-modules jest --watch",
+  "test:coverage": "NODE_ENV=test NODE_OPTIONS=--experimental-vm-modules jest --coverage",
+  "prisma:migrate": "dotenv prisma migrate dev",
+  "prisma:generate": "dotenv prisma generate",
+  "prisma:studio": "dotenv prisma studio",
+  "prisma:status": "dotenv prisma migrate status"
+},
   "keywords": [],
   "author": "",
   "license": "ISC",
@@ -8089,6 +8098,7 @@ export default {
     "@types/node": "^24.10.0",
     "@types/supertest": "^6.0.3",
     "@types/swagger-jsdoc": "^6.0.4",
+    "dotenv-cli": "^11.0.0",
     "jest": "^30.2.0",
     "nodemon": "^3.1.10",
     "prisma": "^6.18.0",
@@ -8100,8 +8110,70 @@ export default {
   }
 }
 
-
 --- END OF FILE: package.json ---
+
+
+--- START OF FILE: scripts\create-gymprep-admin.ts ---
+import { PrismaClient } from '@prisma/client';
+import bcrypt from 'bcrypt';
+
+const prisma = new PrismaClient();
+
+async function main() {
+  console.log('🔍 Buscando centro "gymprep"...');
+  
+  // 1. Buscar el centro creado en la UI
+  const center = await prisma.center.findFirst({
+    where: { name: 'gymprep' } // Asegúrate que el nombre coincida exactamente
+  });
+
+  if (!center) {
+    console.error('❌ Error: No se encontró el centro "gymprep". Asegúrate de crearlo en el Dashboard primero.');
+    process.exit(1);
+  }
+
+  console.log(`✅ Centro encontrado: ${center.name} (${center.id})`);
+
+  // 2. Datos del usuario
+  const email = 'admin@gymprep.com';
+  const password = 'password123';
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  // 3. Crear o actualizar el usuario asignándole el rol y el centro
+  const user = await prisma.user.upsert({
+    where: { email },
+    update: {
+      role: 'ADMIN_CENTER',
+      centerId: center.id // <--- Aquí vinculamos la seguridad
+    },
+    create: {
+      email,
+      name: 'Admin Gymprep',
+      passwordHash: hashedPassword,
+      role: 'ADMIN_CENTER',
+      centerId: center.id
+    }
+  });
+
+  console.log('\n=============================================');
+  console.log('✅ USUARIO DE PRUEBA CREADO EXITOSAMENTE');
+  console.log('=============================================');
+  console.log(`👤 Usuario: ${user.email}`);
+  console.log(`🔑 Contraseña: ${password}`);
+  console.log(`Gd: Rol: ${user.role}`);
+  console.log(`🏢 Asignado a: ${center.name}`);
+  console.log('=============================================');
+}
+
+main()
+  .catch((e) => {
+    console.error(e);
+    process.exit(1);
+  })
+  .finally(async () => {
+    await prisma.$disconnect();
+  });
+--- END OF FILE: scripts\create-gymprep-admin.ts ---
 
 
 --- START OF FILE: src\app.ts ---
@@ -8135,6 +8207,17 @@ app.use(requestLogger);
 if (env.NODE_ENV !== 'test') {
   app.use(generalLimiter);
 }
+
+app.get('/', (_req, res) => {
+  res.status(200).json({
+    ok: true,
+    message: 'Meta-Force API está funcionando correctamente',
+    version: '1.0.0',
+    docs: '/api-docs'
+  });
+});
+// ----------------------------------------------------
+
 
 app.get('/health', (_req, res) => res.json({ ok: true }));
 
@@ -8191,9 +8274,12 @@ export const env = {
 
 
 --- START OF FILE: src\config\swagger.ts ---
-// src/config/swagger.js
 import swaggerJSDoc from 'swagger-jsdoc';
 
+/**
+ * Configuración principal de Swagger para la documentación de la API.
+ * Define la estructura OpenAPI 3.0.3 con todos los schemas y endpoints disponibles.
+ */
 const definition = {
   openapi: '3.0.3',
   info: {
@@ -8210,7 +8296,6 @@ const definition = {
       bearerAuth: { type: 'http', scheme: 'bearer', bearerFormat: 'JWT' },
     },
     schemas: {
-      // --- USERS (ya los tienes, los dejo como referencia) ---
       User: {
         type: 'object',
         properties: {
@@ -8268,7 +8353,6 @@ const definition = {
         },
       },
 
-      // --- CENTERS ---
       CreateCenterInput: {
         type: 'object',
         required: ['name'],
@@ -8295,7 +8379,6 @@ const definition = {
         },
       },
 
-      // --- CLASSES ---
       CreateClassInput: {
         type: 'object',
         required: ['name'],
@@ -8312,7 +8395,6 @@ const definition = {
         },
       },
 
-      // --- MACHINES ---
       Machine: {
         type: 'object',
         properties: {
@@ -8364,15 +8446,21 @@ const definition = {
   security: [{ bearerAuth: [] }],
 };
 
-// 🔥 IMPORTANTE: incluye **todas** tus rutas .ts (si ejecutas TS con ts-node)
-// Si ejecutas desde `dist`, cambia a 'dist/modules/**/*.routes.js'
+/**
+ * Especifica las rutas donde Swagger buscará los comentarios de documentación JSDoc.
+ * Incluye archivos TypeScript y JavaScript para soportar diferentes entornos de ejecución.
+ */
 const apis = [
   'src/modules/**/*.routes.ts',
   'src/modules/**/*.controller.ts',
   'src/modules/**/*.schema.ts',
-  'src/modules/**/*.routes.js',       // por si en runtime cargas .js
+  'src/modules/**/*.routes.js',
 ];
 
+/**
+ * Especificación completa de Swagger generada a partir de la definición y los archivos de rutas.
+ * Exporta la configuración de Swagger para ser utilizada por el middleware de Swagger UI.
+ */
 export const swaggerSpec = swaggerJSDoc({
   definition,
   apis,
@@ -8415,15 +8503,27 @@ process.on('SIGINT', () => {
 import type { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import { env } from '../config/env.js';
+import { Role } from '../types/role.js';
 
 declare global {
   namespace Express {
     interface Request {
-      user?: { sub: number; email: string };
+      user?: { 
+        sub: string; 
+        email: string;
+        role: Role;
+        centerId?: string | null;
+      };
     }
   }
 }
 
+/**
+ * Middleware de autenticación JWT que verifica y valida el token Bearer en el header Authorization.
+ * Extrae la información del usuario del token JWT y la añade a req.user para uso en los controladores.
+ * Valida que el token contenga sub, email, role y centerId (opcional) en el payload.
+ * Retorna 401 si el token es inválido, está mal formado o falta.
+ */
 export function auth(req: Request, res: Response, next: NextFunction) {
   const header = req.headers.authorization;
   
@@ -8445,10 +8545,18 @@ export function auth(req: Request, res: Response, next: NextFunction) {
       payload !== null && 
       'sub' in payload && 
       'email' in payload &&
-      typeof payload.sub === 'number' &&
-      typeof payload.email === 'string'
+      'role' in payload &&
+      typeof payload.sub === 'string' &&
+      typeof payload.email === 'string' &&
+      typeof payload.role === 'string' &&
+      Object.values(Role).includes(payload.role as Role)
     ) {
-      req.user = { sub: payload.sub, email: payload.email };
+      req.user = { 
+        sub: payload.sub, 
+        email: payload.email,
+        role: payload.role as Role,
+        centerId: ('centerId' in payload && payload.centerId) ? payload.centerId as string : null
+      };
       next();
     } else {
       return res.status(401).json({ message: 'Token inválido' });
@@ -8462,10 +8570,76 @@ export function auth(req: Request, res: Response, next: NextFunction) {
 --- END OF FILE: src\middleware\auth.ts ---
 
 
+--- START OF FILE: src\middleware\checkCenterAccess.ts ---
+import type { Request, Response, NextFunction } from 'express';
+import { Role } from '../types/role.js';
+import { prisma } from '../config/db.js';
+
+/**
+ * Middleware para verificar que ADMIN_CENTER solo accede a recursos de su propio centro.
+ * SUPERADMIN tiene acceso completo a todos los recursos sin restricciones.
+ * Retorna 403 si el usuario no tiene un centro asignado o si no tiene permisos.
+ */
+export function checkCenterAccess(req: Request, res: Response, next: NextFunction) {
+  if (!req.user) {
+    return res.status(401).json({ message: 'No autorizado' });
+  }
+
+  if (req.user.role === Role.SUPERADMIN) {
+    return next();
+  }
+
+  if (req.user.role === Role.ADMIN_CENTER) {
+    if (!req.user.centerId) {
+      return res.status(403).json({ message: 'No tienes un centro asignado' });
+    }
+    return next();
+  }
+
+  return res.status(403).json({ message: 'No tienes permisos para realizar esta acción' });
+}
+
+/**
+ * Middleware asíncrono que verifica que el centroId en los parámetros de ruta pertenece al usuario autenticado.
+ * SUPERADMIN puede acceder a cualquier centro sin verificación.
+ * ADMIN_CENTER solo puede acceder a recursos de su propio centro identificado por centerId.
+ * Retorna 403 si el usuario intenta acceder a un centro que no le pertenece.
+ */
+export async function verifyCenterOwnership(req: Request, res: Response, next: NextFunction) {
+  if (!req.user) {
+    return res.status(401).json({ message: 'No autorizado' });
+  }
+
+  if (req.user.role === Role.SUPERADMIN) {
+    return next();
+  }
+
+  if (req.user.role === Role.ADMIN_CENTER) {
+    const centerId = req.params.id || req.params.centerId;
+    
+    if (!centerId || centerId !== req.user.centerId) {
+      return res.status(403).json({ message: 'No tienes acceso a este centro' });
+    }
+    
+    return next();
+  }
+
+  return res.status(403).json({ message: 'No tienes permisos para realizar esta acción' });
+}
+
+
+--- END OF FILE: src\middleware\checkCenterAccess.ts ---
+
+
 --- START OF FILE: src\middleware\error.ts ---
 import type { Request, Response, NextFunction } from 'express';
 import { logger } from '../utils/logger.js';
 
+/**
+ * Middleware de manejo global de errores que captura todas las excepciones no controladas.
+ * Registra el error en los logs con su stack trace y retorna una respuesta JSON con el mensaje de error.
+ * Usa el status code del error si está disponible, de lo contrario retorna 500.
+ */
 export function errorHandler(err: any, req: Request, res: Response, _next: NextFunction) {
   logger.error(`${req.method} ${req.path} - ${err.message}`);
   logger.error(err.stack);
@@ -8478,9 +8652,40 @@ export function errorHandler(err: any, req: Request, res: Response, _next: NextF
 --- END OF FILE: src\middleware\error.ts ---
 
 
+--- START OF FILE: src\middleware\hasRole.ts ---
+import type { Request, Response, NextFunction } from 'express';
+import { Role } from '../types/role.js';
+
+/**
+ * Middleware para verificar que el usuario autenticado tenga uno de los roles permitidos
+ * @param roles Roles permitidos para acceder a la ruta
+ */
+export function hasRole(...allowedRoles: Role[]) {
+  return (req: Request, res: Response, next: NextFunction) => {
+    if (!req.user) {
+      return res.status(401).json({ message: 'No autorizado' });
+    }
+
+    if (!allowedRoles.includes(req.user.role)) {
+      return res.status(403).json({ message: 'No tienes permisos para realizar esta acción' });
+    }
+
+    next();
+  };
+}
+
+
+--- END OF FILE: src\middleware\hasRole.ts ---
+
+
 --- START OF FILE: src\middleware\rateLimiter.ts ---
 import rateLimit from 'express-rate-limit';
 
+/**
+ * Limitador de tasa general para todas las rutas de la API.
+ * Permite máximo 100 peticiones por IP en una ventana de 15 minutos.
+ * Útil para prevenir abuso general de la API.
+ */
 export const generalLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 100,
@@ -8489,6 +8694,12 @@ export const generalLimiter = rateLimit({
   legacyHeaders: false,
 });
 
+/**
+ * Limitador de tasa específico para rutas de autenticación (login y registro).
+ * Permite máximo 5 intentos por IP en una ventana de 15 minutos.
+ * Solo cuenta los intentos fallidos, ignorando las peticiones exitosas.
+ * Útil para prevenir ataques de fuerza bruta en autenticación.
+ */
 export const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 5,
@@ -8506,6 +8717,11 @@ export const authLimiter = rateLimit({
 import type { Request, Response, NextFunction } from 'express';
 import { logger } from '../utils/logger.js';
 
+/**
+ * Middleware que registra todas las peticiones HTTP recibidas con su método, ruta, código de estado y tiempo de respuesta.
+ * Usa diferentes niveles de log según el código de estado: error para 5xx, warn para 4xx, http para exitosas.
+ * Mide el tiempo transcurrido desde que se recibe la petición hasta que se completa la respuesta.
+ */
 export function requestLogger(req: Request, res: Response, next: NextFunction) {
   const start = Date.now();
   
@@ -8539,20 +8755,25 @@ type CompositeSchema = {
   query?: ZodTypeAny;
 };
 
-// Detecta si el argumento es un ZodObject "plano" (para body)
+/**
+ * Detecta si el schema proporcionado es un ZodObject plano usado para validar el body de la petición.
+ */
 function isPlainZodObject(schema: any): schema is ZodObject<any> {
   return !!schema && typeof schema === 'object' && typeof schema.safeParse === 'function' && schema instanceof ZodObject;
 }
 
-// Detecta si el argumento es un objeto compuesto { body?, params?, query? }
+/**
+ * Detecta si el schema proporcionado es un objeto compuesto que puede validar body, params y/o query por separado.
+ */
 function isComposite(schema: any): schema is CompositeSchema {
   return !!schema && (schema.body || schema.params || schema.query);
 }
 
 /**
- * Middleware de validación flexible:
- * - Si recibe ZodObject -> valida req.body
- * - Si recibe { body?, params?, query? } -> valida cada parte
+ * Middleware de validación flexible que acepta schemas Zod simples o compuestos.
+ * Si recibe un ZodObject simple, valida solo el body de la petición.
+ * Si recibe un objeto compuesto con body, params y/o query, valida cada parte presente.
+ * Retorna un error 400 con los detalles de validación si algún campo no cumple el schema.
  */
 export const validate = (schema: CompositeSchema | ZodObject<any>) => (
   req: Request,
@@ -8560,7 +8781,6 @@ export const validate = (schema: CompositeSchema | ZodObject<any>) => (
   next: NextFunction
 ) => {
   try {
-    // Caso 1: esquema plano -> validar body
     if (isPlainZodObject(schema)) {
       const parsed = schema.safeParse(req.body);
       if (!parsed.success) return res.status(400).json({ errors: parsed.error.flatten() });
@@ -8568,7 +8788,6 @@ export const validate = (schema: CompositeSchema | ZodObject<any>) => (
       return next();
     }
 
-    // Caso 2: compuesto -> validar cada parte presente
     if (isComposite(schema)) {
       if (schema.body) {
         const p = schema.body.safeParse(req.body);
@@ -8588,7 +8807,6 @@ export const validate = (schema: CompositeSchema | ZodObject<any>) => (
       return next();
     }
 
-    // Si llega aquí, el schema no es válido
     return res.status(500).json({ message: 'Invalid schema passed to validate()' });
   } catch (err: any) {
     return res.status(400).json({ message: 'Validation error', detail: err.message });
@@ -8603,10 +8821,16 @@ import type { Request, Response } from 'express';
 import { register, login } from './auth.service.js';
 import { registerSchema, loginSchema } from '../users/users.schema.js';
 
+/**
+ * Controlador para registrar un nuevo usuario en el sistema.
+ * Valida los datos con Zod antes de procesar el registro.
+ * Retorna el usuario creado y un token JWT con status 201.
+ * Retorna status 409 si el email ya está registrado.
+ */
 export async function registerCtrl(req: Request, res: Response) {
   try {
-    const { email, name, password } = registerSchema.parse(req.body);
-    const data = await register(email, name, password);
+    const { email, name, password, role } = registerSchema.parse(req.body);
+    const data = await register(email, name, password, role);
     res.status(201).json(data);
   } catch (e: any) {
     if (e.message === 'Email ya registrado') {
@@ -8616,6 +8840,12 @@ export async function registerCtrl(req: Request, res: Response) {
   }
 }
 
+/**
+ * Controlador para autenticar un usuario existente.
+ * Valida las credenciales y genera un token JWT válido por 7 días.
+ * Retorna el usuario y el token si las credenciales son correctas.
+ * Retorna status 401 si las credenciales son inválidas.
+ */
 export async function loginCtrl(req: Request, res: Response) {
   try {
     const { email, password } = loginSchema.parse(req.body);
@@ -8718,21 +8948,46 @@ export default router;
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { env } from '../../config/env.js';
-import { createUser, findUserByEmail } from '../users/users.service.js';
+import { createUser, findUserByEmail, getMeWithCenter } from '../users/users.service.js';
+import { Role } from '../../types/role.js';
 
-export async function register(email: string, name: string, password: string) {
+/**
+ * Registra un nuevo usuario en el sistema.
+ * Verifica que el email no esté ya registrado, hashea la contraseña y crea el usuario.
+ * Genera un token JWT que incluye el ID del usuario, email, rol y centerId.
+ * Lanza un error si el email ya está registrado.
+ */
+export async function register(email: string, name: string, password: string, role?: Role) {
   const existing = await findUserByEmail(email);
   if (existing) {
     throw new Error('Email ya registrado');
   }
   
   const hash = await bcrypt.hash(password, env.BCRYPT_SALT_ROUNDS);
-  const user = await createUser(email, name, hash);
-  const token = jwt.sign({ sub: user.id, email: user.email }, env.JWT_SECRET, { expiresIn: '7d' });
+  const user = await createUser(email, name, hash, role);
+  
+  const userWithCenter = await getMeWithCenter(user.id);
+  
+  const token = jwt.sign(
+    { 
+      sub: user.id, 
+      email: user.email,
+      role: user.role,
+      centerId: userWithCenter?.centerId || null
+    }, 
+    env.JWT_SECRET, 
+    { expiresIn: '7d' }
+  );
   
   return { user, token };
 }
 
+/**
+ * Autentica un usuario con su email y contraseña.
+ * Verifica las credenciales comparando el hash de la contraseña almacenada.
+ * Genera un token JWT válido por 7 días que incluye información del usuario y su centro.
+ * Lanza un error si las credenciales son inválidas.
+ */
 export async function login(email: string, password: string) {
   const user = await findUserByEmail(email);
   if (!user) {
@@ -8744,13 +8999,25 @@ export async function login(email: string, password: string) {
     throw new Error('Credenciales inválidas');
   }
   
-  const token = jwt.sign({ sub: user.id, email: user.email }, env.JWT_SECRET, { expiresIn: '7d' });
+  const userWithCenter = await getMeWithCenter(user.id);
+  
+  const token = jwt.sign(
+    { 
+      sub: user.id, 
+      email: user.email,
+      role: user.role,
+      centerId: userWithCenter?.centerId || null
+    }, 
+    env.JWT_SECRET, 
+    { expiresIn: '7d' }
+  );
   
   return { 
     user: { 
       id: user.id, 
       email: user.email, 
       name: user.name,
+      role: user.role,
       createdAt: user.createdAt
     }, 
     token 
@@ -8764,9 +9031,15 @@ export async function login(email: string, password: string) {
 --- START OF FILE: src\modules\centers\centers.controller.ts ---
 import type { Request, Response } from 'express';
 import {
-  createCenter, listCenters, getCenterById, updateCenter, deleteCenter, listUsersInCenter,
+  createCenter, listCenters, getCenterById, updateCenter, deleteCenter, listUsersInCenter, getCenterNameByUserId,
 } from './centers.service.js';
+import { Role } from '../../types/role.js';
 
+/**
+ * Controlador para crear un nuevo centro de entrenamiento.
+ * Solo accesible para SUPERADMIN según las rutas protegidas.
+ * Retorna el centro creado con un status 201.
+ */
 export async function createCenterCtrl(req: Request, res: Response) {
   try {
     const center = await createCenter(req.body);
@@ -8777,19 +9050,63 @@ export async function createCenterCtrl(req: Request, res: Response) {
   }
 }
 
-export async function listCentersCtrl(_req: Request, res: Response) {
+/**
+ * Controlador para listar todos los centros de entrenamiento disponibles.
+ * Retorna una lista ordenada por fecha de creación descendente.
+ * 
+ * Permisos:
+ * - USER, TRAINER, CLEANER: Solo ven el nombre del centro al que pertenecen (sin ID)
+ * - ADMIN_CENTER: Ven todos los centros con ID
+ * - SUPERADMIN: Ven todos los centros con ID
+ */
+export async function listCentersCtrl(req: Request, res: Response) {
   try {
-    const centers = await listCenters();
+    if (!req.user) {
+      return res.status(401).json({ message: 'No autorizado' });
+    }
+
+    const { role, centerId } = req.user;
+
+    // USER, TRAINER, CLEANER: Solo ven el nombre de su centro (sin ID)
+    if (role === Role.USER || role === Role.TRAINER || role === Role.CLEANER) {
+      if (!centerId) {
+        return res.json([]);
+      }
+      const centerName = await getCenterNameByUserId(centerId);
+      return res.json(centerName ? [centerName] : []);
+    }
+
+    // ADMIN_CENTER y SUPERADMIN: Ven todos los centros con ID
+    const centers = await listCenters(null, true);
     res.json(centers);
   } catch (error: any) {
     res.status(500).json({ message: error.message });
   }
 }
 
+/**
+ * Controlador para obtener un centro específico por su ID.
+ * Retorna todos los datos del centro incluyendo información de contacto y ubicación.
+ * 
+ * Permisos:
+ * - USER, TRAINER, CLEANER: No pueden ver ningún centro por ID (403)
+ * - ADMIN_CENTER: Puede ver todos los centros
+ * - SUPERADMIN: Puede ver todos los centros
+ */
 export async function getCenterCtrl(req: Request, res: Response) {
   try {
-    const id = Number(req.params.id);
-    if (isNaN(id)) return res.status(400).json({ message: 'ID inválido' });
+    if (!req.user) {
+      return res.status(401).json({ message: 'No autorizado' });
+    }
+
+    const { role } = req.user;
+
+    // USER, TRAINER, CLEANER: No pueden ver centros por ID
+    if (role === Role.USER || role === Role.TRAINER || role === Role.CLEANER) {
+      return res.status(403).json({ message: 'No tienes permiso para ver este centro' });
+    }
+
+    const id = req.params.id;
     const center = await getCenterById(id);
     if (!center) return res.status(404).json({ message: 'Centro no encontrado' });
     res.json(center);
@@ -8798,10 +9115,14 @@ export async function getCenterCtrl(req: Request, res: Response) {
   }
 }
 
+/**
+ * Controlador para actualizar los datos de un centro existente.
+ * Solo accesible para SUPERADMIN según las rutas protegidas.
+ * Permite modificar cualquier campo del centro excepto el ID.
+ */
 export async function updateCenterCtrl(req: Request, res: Response) {
   try {
-    const id = Number(req.params.id);
-    if (isNaN(id)) return res.status(400).json({ message: 'ID inválido' });
+    const id = req.params.id;
     const updated = await updateCenter(id, req.body);
     res.json(updated);
   } catch (error: any) {
@@ -8811,10 +9132,14 @@ export async function updateCenterCtrl(req: Request, res: Response) {
   }
 }
 
+/**
+ * Controlador para eliminar un centro de entrenamiento.
+ * Solo accesible para SUPERADMIN según las rutas protegidas.
+ * Retorna un status 204 sin contenido en caso de éxito.
+ */
 export async function deleteCenterCtrl(req: Request, res: Response) {
   try {
-    const id = Number(req.params.id);
-    if (isNaN(id)) return res.status(400).json({ message: 'ID inválido' });
+    const id = req.params.id;
     await deleteCenter(id);
     res.status(204).send();
   } catch (error: any) {
@@ -8823,10 +9148,25 @@ export async function deleteCenterCtrl(req: Request, res: Response) {
   }
 }
 
+/**
+ * Controlador para listar los usuarios asignados a un centro específico.
+ * ADMIN_CENTER solo puede ver usuarios de su propio centro.
+ * SUPERADMIN puede ver usuarios de cualquier centro.
+ */
 export async function listCenterUsersCtrl(req: Request, res: Response) {
   try {
-    const id = Number(req.params.id);
-    if (isNaN(id)) return res.status(400).json({ message: 'ID inválido' });
+    if (!req.user) {
+      return res.status(401).json({ message: 'No autorizado' });
+    }
+
+    const id = req.params.id;
+    
+    if (req.user.role === Role.ADMIN_CENTER) {
+      if (id !== req.user.centerId) {
+        return res.status(403).json({ message: 'No tienes acceso a este centro' });
+      }
+    }
+
     const users = await listUsersInCenter(id);
     res.json(users);
   } catch (error: any) {
@@ -8842,6 +9182,8 @@ import { Router } from 'express';
 import { auth } from '../../middleware/auth.js';
 import { validate } from '../../middleware/validate.js';
 import { createCenterSchema, updateCenterSchema, centerIdParamSchema } from './centers.schema.js';
+import { hasRole } from '../../middleware/hasRole.js';
+import { Role } from '../../types/role.js';
 import {
   createCenterCtrl, listCentersCtrl, getCenterCtrl, updateCenterCtrl, deleteCenterCtrl, listCenterUsersCtrl,
 } from './centers.controller.js';
@@ -8885,7 +9227,7 @@ router.get('/', auth, listCentersCtrl);
  *       201: { description: Creado }
  *       409: { description: Nombre ya existe }
  */
-router.post('/', auth, validate(createCenterSchema), createCenterCtrl);
+router.post('/', auth, hasRole(Role.SUPERADMIN), validate(createCenterSchema), createCenterCtrl);
 
 /**
  * @swagger
@@ -8928,7 +9270,7 @@ router.get('/:id', auth, validate(centerIdParamSchema), getCenterCtrl);
  *       404: { description: No encontrado }
  *       409: { description: Nombre ya existe }
  */
-router.patch('/:id', auth, validate(updateCenterSchema), updateCenterCtrl);
+router.patch('/:id', auth, hasRole(Role.SUPERADMIN), validate(updateCenterSchema), updateCenterCtrl);
 
 /**
  * @swagger
@@ -8946,7 +9288,7 @@ router.patch('/:id', auth, validate(updateCenterSchema), updateCenterCtrl);
  *       204: { description: Eliminado }
  *       404: { description: No encontrado }
  */
-router.delete('/:id', auth, validate(centerIdParamSchema), deleteCenterCtrl);
+router.delete('/:id', auth, hasRole(Role.SUPERADMIN), validate(centerIdParamSchema), deleteCenterCtrl);
 
 /**
  * @swagger
@@ -8963,7 +9305,7 @@ router.delete('/:id', auth, validate(centerIdParamSchema), deleteCenterCtrl);
  *     responses:
  *       200: { description: OK }
  */
-router.get('/:id/users', auth, validate(centerIdParamSchema), listCenterUsersCtrl);
+router.get('/:id/users', auth, hasRole(Role.SUPERADMIN, Role.ADMIN_CENTER), validate(centerIdParamSchema), listCenterUsersCtrl);
 
 export default router;
 
@@ -8972,6 +9314,7 @@ export default router;
 
 --- START OF FILE: src\modules\centers\centers.schema.ts ---
 import { z } from 'zod';
+import { cuidSchema } from '../../utils/validation.js';
 
 export const createCenterSchema = {
   body: z.object({
@@ -8986,7 +9329,7 @@ export const createCenterSchema = {
 };
 
 export const updateCenterSchema = {
-  params: z.object({ id: z.string().regex(/^\d+$/, 'ID inválido') }),
+  params: z.object({ id: cuidSchema }),
   body: z.object({
     name: z.string().min(1).optional(),
     description: z.string().optional(),
@@ -8999,7 +9342,7 @@ export const updateCenterSchema = {
 };
 
 export const centerIdParamSchema = {
-  params: z.object({ id: z.string().regex(/^\d+$/, 'ID inválido') }),
+  params: z.object({ id: cuidSchema }),
 };
 
 --- END OF FILE: src\modules\centers\centers.schema.ts ---
@@ -9008,6 +9351,10 @@ export const centerIdParamSchema = {
 --- START OF FILE: src\modules\centers\centers.service.ts ---
 import { prisma } from '../../config/db.js';
 
+/**
+ * Crea un nuevo centro de entrenamiento en el sistema con los datos proporcionados.
+ * Todos los campos excepto el nombre son opcionales.
+ */
 export async function createCenter(data: {
   name: string;
   description?: string;
@@ -9020,29 +9367,74 @@ export async function createCenter(data: {
   return prisma.center.create({ data });
 }
 
-export async function listCenters() {
+/**
+ * Lista todos los centros de entrenamiento ordenados por fecha de creación descendente.
+ * Retorna solo información básica de cada centro.
+ * Si se proporciona centerId, solo retorna ese centro específico.
+ * Si includeId es false, no incluye el ID en la respuesta (solo nombre).
+ */
+export async function listCenters(centerId?: string | null, includeId: boolean = true) {
+  const where = centerId ? { id: centerId } : {};
+  const select = includeId 
+    ? { id: true, name: true, city: true, country: true, createdAt: true }
+    : { name: true, city: true, country: true, createdAt: true };
+  
   return prisma.center.findMany({
+    where,
     orderBy: { createdAt: 'desc' },
-    select: { id: true, name: true, city: true, country: true, createdAt: true },
+    select,
   });
 }
 
-export async function getCenterById(id: number) {
+/**
+ * Obtiene el nombre del centro al que pertenece un usuario.
+ * Retorna solo el nombre, sin el ID.
+ */
+export async function getCenterNameByUserId(userCenterId: string | null) {
+  if (!userCenterId) {
+    return null;
+  }
+  
+  const center = await prisma.center.findUnique({
+    where: { id: userCenterId },
+    select: { name: true },
+  });
+  
+  return center ? { name: center.name } : null;
+}
+
+/**
+ * Obtiene un centro de entrenamiento completo por su ID.
+ * Retorna todos los campos del centro incluyendo información de contacto y ubicación.
+ */
+export async function getCenterById(id: string) {
   return prisma.center.findUnique({ where: { id } });
 }
 
-export async function updateCenter(id: number, data: Partial<Parameters<typeof createCenter>[0]>) {
+/**
+ * Actualiza los datos de un centro de entrenamiento existente.
+ * Permite actualizar cualquier campo del centro excepto el ID.
+ */
+export async function updateCenter(id: string, data: Partial<Parameters<typeof createCenter>[0]>) {
   return prisma.center.update({ where: { id }, data });
 }
 
-export async function deleteCenter(id: number) {
+/**
+ * Elimina un centro de entrenamiento de la base de datos.
+ * Esta operación eliminará también todas las máquinas asociadas según la configuración de cascada.
+ */
+export async function deleteCenter(id: string) {
   return prisma.center.delete({ where: { id } });
 }
 
-export async function listUsersInCenter(id: number) {
+/**
+ * Lista todos los usuarios asignados a un centro específico.
+ * Retorna información pública de cada usuario incluyendo su rol y fecha de creación.
+ */
+export async function listUsersInCenter(id: string) {
   return prisma.user.findMany({
     where: { centerId: id },
-    select: { id: true, email: true, name: true, createdAt: true },
+    select: { id: true, email: true, name: true, role: true, createdAt: true },
   });
 }
 
@@ -9057,6 +9449,11 @@ import {
 } from './classes.service.js';
 import { prisma } from '../../config/db.js';
 
+/**
+ * Controlador para crear una nueva clase de gimnasio.
+ * Valida los datos del cuerpo de la petición antes de crear la clase.
+ * Retorna la clase creada con un status 201.
+ */
 export async function createClassCtrl(req: Request, res: Response) {
   try {
     const cls = await createClass(req.body);
@@ -9067,6 +9464,10 @@ export async function createClassCtrl(req: Request, res: Response) {
   }
 }
 
+/**
+ * Controlador para listar todas las clases de gimnasio disponibles.
+ * Retorna una lista ordenada por fecha de creación descendente.
+ */
 export async function listClassesCtrl(_req: Request, res: Response) {
   try {
     const list = await listClasses();
@@ -9076,10 +9477,13 @@ export async function listClassesCtrl(_req: Request, res: Response) {
   }
 }
 
+/**
+ * Controlador para obtener una clase específica por su ID.
+ * Retorna todos los datos de la clase incluyendo fechas de creación y actualización.
+ */
 export async function getClassCtrl(req: Request, res: Response) {
   try {
-    const id = Number((req.params as any).id);
-    if (isNaN(id)) return res.status(400).json({ message: 'ID inválido' });
+    const id = req.params.id;
     const cls = await getClassById(id);
     if (!cls) return res.status(404).json({ message: 'Clase no encontrada' });
     res.json(cls);
@@ -9088,10 +9492,14 @@ export async function getClassCtrl(req: Request, res: Response) {
   }
 }
 
+/**
+ * Controlador para actualizar los datos de una clase existente.
+ * Permite modificar el nombre y/o descripción de la clase.
+ * Retorna la clase actualizada con sus fechas de modificación.
+ */
 export async function updateClassCtrl(req: Request, res: Response) {
   try {
-    const id = Number((req.params as any).id);
-    if (isNaN(id)) return res.status(400).json({ message: 'ID inválido' });
+    const id = req.params.id;
     const updated = await updateClass(id, req.body);
     res.json(updated);
   } catch (error: any) {
@@ -9101,10 +9509,14 @@ export async function updateClassCtrl(req: Request, res: Response) {
   }
 }
 
+/**
+ * Controlador para eliminar una clase de gimnasio.
+ * Desconecta automáticamente a todos los usuarios apuntados antes de eliminar.
+ * Retorna un status 204 sin contenido en caso de éxito.
+ */
 export async function deleteClassCtrl(req: Request, res: Response) {
   try {
-    const id = Number((req.params as any).id);
-    if (isNaN(id)) return res.status(400).json({ message: 'ID inválido' });
+    const id = req.params.id;
     await deleteClass(id);
     res.status(204).send();
   } catch (error: any) {
@@ -9113,10 +9525,13 @@ export async function deleteClassCtrl(req: Request, res: Response) {
   }
 }
 
+/**
+ * Controlador para listar todos los usuarios apuntados a una clase específica.
+ * Retorna información pública de cada usuario ordenados por fecha de creación.
+ */
 export async function listClassUsersCtrl(req: Request, res: Response) {
   try {
-    const id = Number((req.params as any).id);
-    if (isNaN(id)) return res.status(400).json({ message: 'ID inválido' });
+    const id = req.params.id;
     const users = await listUsersInClass(id);
     res.json(users);
   } catch (error: any) {
@@ -9124,11 +9539,15 @@ export async function listClassUsersCtrl(req: Request, res: Response) {
   }
 }
 
+/**
+ * Controlador para que un usuario se apunte a una clase de gimnasio.
+ * Verifica que la clase exista antes de crear la relación.
+ * Utiliza el ID del usuario autenticado desde el token JWT.
+ */
 export async function joinClassCtrl(req: Request, res: Response) {
   try {
     if (!req.user) return res.status(401).json({ message: 'No autorizado' });
-    const classId = Number((req.params as any).id);
-    if (isNaN(classId)) return res.status(400).json({ message: 'ID inválido' });
+    const classId = req.params.id;
 
     const exists = await prisma.gymClass.findUnique({ where: { id: classId } });
     if (!exists) return res.status(404).json({ message: 'Clase no encontrada' });
@@ -9140,11 +9559,15 @@ export async function joinClassCtrl(req: Request, res: Response) {
   }
 }
 
+/**
+ * Controlador para que un usuario se desapunte de una clase de gimnasio.
+ * Verifica que la clase exista antes de eliminar la relación.
+ * Utiliza el ID del usuario autenticado desde el token JWT.
+ */
 export async function leaveClassCtrl(req: Request, res: Response) {
   try {
     if (!req.user) return res.status(401).json({ message: 'No autorizado' });
-    const classId = Number((req.params as any).id);
-    if (isNaN(classId)) return res.status(400).json({ message: 'ID inválido' });
+    const classId = req.params.id;
 
     const exists = await prisma.gymClass.findUnique({ where: { id: classId } });
     if (!exists) return res.status(404).json({ message: 'Clase no encontrada' });
@@ -9265,6 +9688,7 @@ export default router;
 
 --- START OF FILE: src\modules\classes\classes.schema.ts ---
 import { z } from 'zod';
+import { cuidSchema } from '../../utils/validation.js';
 
 export const createClassSchema = {
   body: z.object({
@@ -9274,7 +9698,7 @@ export const createClassSchema = {
 };
 
 export const updateClassSchema = {
-  params: z.object({ id: z.string().regex(/^\d+$/, 'ID inválido') }),
+  params: z.object({ id: cuidSchema }),
   body: z.object({
     name: z.string().min(1).optional(),
     description: z.string().optional(),
@@ -9282,7 +9706,7 @@ export const updateClassSchema = {
 };
 
 export const classIdParamSchema = {
-  params: z.object({ id: z.string().regex(/^\d+$/, 'ID inválido') }),
+  params: z.object({ id: cuidSchema }),
 };
 
 --- END OF FILE: src\modules\classes\classes.schema.ts ---
@@ -9291,6 +9715,10 @@ export const classIdParamSchema = {
 --- START OF FILE: src\modules\classes\classes.service.ts ---
 import { prisma } from '../../config/db.js';
 
+/**
+ * Crea una nueva clase de gimnasio en el sistema.
+ * Requiere al menos un nombre para la clase, la descripción es opcional.
+ */
 export async function createClass(data: { name: string; description?: string }) {
   return prisma.gymClass.create({
     data,
@@ -9298,6 +9726,10 @@ export async function createClass(data: { name: string; description?: string }) 
   });
 }
 
+/**
+ * Lista todas las clases de gimnasio disponibles ordenadas por fecha de creación descendente.
+ * Retorna información básica de cada clase sin incluir la lista de usuarios apuntados.
+ */
 export async function listClasses() {
   return prisma.gymClass.findMany({
     select: { id: true, name: true, description: true, createdAt: true },
@@ -9305,7 +9737,11 @@ export async function listClasses() {
   });
 }
 
-export async function getClassById(id: number) {
+/**
+ * Obtiene una clase de gimnasio completa por su ID.
+ * Incluye todas las propiedades de la clase incluyendo fechas de creación y actualización.
+ */
+export async function getClassById(id: string) {
   return prisma.gymClass.findUnique({
     where: { id },
     select: {
@@ -9318,7 +9754,11 @@ export async function getClassById(id: number) {
   });
 }
 
-export async function updateClass(id: number, data: { name?: string; description?: string }) {
+/**
+ * Actualiza los datos de una clase de gimnasio existente.
+ * Permite modificar el nombre y/o la descripción de la clase.
+ */
+export async function updateClass(id: string, data: { name?: string; description?: string }) {
   return prisma.gymClass.update({
     where: { id },
     data,
@@ -9326,31 +9766,47 @@ export async function updateClass(id: number, data: { name?: string; description
   });
 }
 
-export async function deleteClass(id: number) {
+/**
+ * Elimina una clase de gimnasio de la base de datos.
+ * Esta operación desconectará automáticamente a todos los usuarios apuntados a la clase.
+ */
+export async function deleteClass(id: string) {
   return prisma.gymClass.delete({ where: { id } });
 }
 
-export async function listUsersInClass(classId: number) {
+/**
+ * Lista todos los usuarios que están apuntados a una clase específica.
+ * Retorna información pública de cada usuario ordenados por fecha de creación.
+ */
+export async function listUsersInClass(classId: string) {
   return prisma.user.findMany({
     where: { classes: { some: { id: classId } } },
-    select: { id: true, email: true, name: true, createdAt: true },
-    orderBy: { id: 'asc' },
+    select: { id: true, email: true, name: true, role: true, createdAt: true },
+    orderBy: { createdAt: 'asc' },
   });
 }
 
-export async function joinClass(userId: number, classId: number) {
+/**
+ * Apunta un usuario a una clase de gimnasio.
+ * Crea una relación many-to-many entre el usuario y la clase.
+ */
+export async function joinClass(userId: string, classId: string) {
   return prisma.user.update({
     where: { id: userId },
     data: { classes: { connect: { id: classId } } },
-    select: { id: true, email: true, name: true },
+    select: { id: true, email: true, name: true, role: true },
   });
 }
 
-export async function leaveClass(userId: number, classId: number) {
+/**
+ * Desapunta un usuario de una clase de gimnasio.
+ * Elimina la relación entre el usuario y la clase sin afectar a otros usuarios.
+ */
+export async function leaveClass(userId: string, classId: string) {
   return prisma.user.update({
     where: { id: userId },
     data: { classes: { disconnect: { id: classId } } },
-    select: { id: true, email: true, name: true },
+    select: { id: true, email: true, name: true, role: true },
   });
 }
 
@@ -9363,6 +9819,11 @@ import {
   createMachine, listMachines, getMachineById, updateMachine, deleteMachine, listMachinesByCenter,
 } from './machines.service.js';
 
+/**
+ * Controlador para crear una nueva máquina de gimnasio.
+ * Valida que el centro especificado exista antes de crear la máquina.
+ * Retorna la máquina creada con un status 201.
+ */
 export async function createMachineCtrl(req: Request, res: Response) {
   try {
     const machine = await createMachine(req.body);
@@ -9373,6 +9834,11 @@ export async function createMachineCtrl(req: Request, res: Response) {
   }
 }
 
+/**
+ * Controlador para listar todas las máquinas de todos los centros.
+ * Incluye información del centro al que pertenece cada máquina.
+ * Retorna las máquinas ordenadas por fecha de creación descendente.
+ */
 export async function listMachinesCtrl(_req: Request, res: Response) {
   try {
     const machines = await listMachines();
@@ -9382,10 +9848,13 @@ export async function listMachinesCtrl(_req: Request, res: Response) {
   }
 }
 
+/**
+ * Controlador para obtener una máquina específica por su ID.
+ * Retorna todos los datos de la máquina incluyendo información detallada del centro.
+ */
 export async function getMachineCtrl(req: Request, res: Response) {
   try {
-    const id = Number(req.params.id);
-    if (isNaN(id)) return res.status(400).json({ message: 'ID inválido' });
+    const id = req.params.id;
     const machine = await getMachineById(id);
     if (!machine) return res.status(404).json({ message: 'Máquina no encontrada' });
     res.json(machine);
@@ -9394,10 +9863,14 @@ export async function getMachineCtrl(req: Request, res: Response) {
   }
 }
 
+/**
+ * Controlador para actualizar los datos de una máquina existente.
+ * Permite modificar el nombre, tipo, estado y/o el centro al que pertenece.
+ * Valida que el nuevo centro exista si se modifica.
+ */
 export async function updateMachineCtrl(req: Request, res: Response) {
   try {
-    const id = Number(req.params.id);
-    if (isNaN(id)) return res.status(400).json({ message: 'ID inválido' });
+    const id = req.params.id;
     const updated = await updateMachine(id, req.body);
     res.json(updated);
   } catch (error: any) {
@@ -9407,10 +9880,14 @@ export async function updateMachineCtrl(req: Request, res: Response) {
   }
 }
 
+/**
+ * Controlador para eliminar una máquina de gimnasio.
+ * Esta operación es permanente y no afecta al centro al que pertenecía.
+ * Retorna un status 204 sin contenido en caso de éxito.
+ */
 export async function deleteMachineCtrl(req: Request, res: Response) {
   try {
-    const id = Number(req.params.id);
-    if (isNaN(id)) return res.status(400).json({ message: 'ID inválido' });
+    const id = req.params.id;
     await deleteMachine(id);
     res.status(204).send();
   } catch (error: any) {
@@ -9419,10 +9896,14 @@ export async function deleteMachineCtrl(req: Request, res: Response) {
   }
 }
 
+/**
+ * Controlador para listar todas las máquinas de un centro específico.
+ * Retorna las máquinas ordenadas por fecha de creación descendente.
+ * Útil para mostrar el inventario completo de un centro.
+ */
 export async function listMachinesByCenterCtrl(req: Request, res: Response) {
   try {
-    const centerId = Number(req.params.centerId);
-    if (isNaN(centerId)) return res.status(400).json({ message: 'ID de centro inválido' });
+    const centerId = req.params.centerId;
     const machines = await listMachinesByCenter(centerId);
     res.json(machines);
   } catch (error: any) {
@@ -9438,7 +9919,7 @@ export async function listMachinesByCenterCtrl(req: Request, res: Response) {
 import { Router } from 'express';
 import { auth } from '../../middleware/auth.js';
 import { validate } from '../../middleware/validate.js';
-import { createMachineSchema, updateMachineSchema, machineIdParamSchema } from './machines.schema.js';
+import { createMachineSchema, updateMachineSchema, machineIdParamSchema, centerIdParamSchema } from './machines.schema.js';
 import {
   createMachineCtrl, listMachinesCtrl, getMachineCtrl, updateMachineCtrl, deleteMachineCtrl, listMachinesByCenterCtrl,
 } from './machines.controller.js';
@@ -9582,7 +10063,7 @@ router.delete('/:id', auth, validate(machineIdParamSchema), deleteMachineCtrl);
  *       200:
  *         description: Lista de máquinas del centro
  */
-router.get('/center/:centerId', auth, listMachinesByCenterCtrl);
+router.get('/center/:centerId', auth, validate(centerIdParamSchema), listMachinesByCenterCtrl);
 
 export default router;
 
@@ -9592,6 +10073,7 @@ export default router;
 
 --- START OF FILE: src\modules\machines\machines.schema.ts ---
 import { z } from 'zod';
+import { cuidSchema } from '../../utils/validation.js';
 
 export const createMachineSchema = {
   body: z.object({
@@ -9602,22 +10084,26 @@ export const createMachineSchema = {
     status: z.enum(['operativa', 'en mantenimiento', 'fuera de servicio'], {
       errorMap: () => ({ message: 'status debe ser: operativa, en mantenimiento o fuera de servicio' }),
     }),
-    centerId: z.number().int().positive('centerId debe ser un número positivo'),
+    centerId: cuidSchema,
   }),
 };
 
 export const updateMachineSchema = {
-  params: z.object({ id: z.string().regex(/^\d+$/, 'ID inválido') }),
+  params: z.object({ id: cuidSchema }),
   body: z.object({
     name: z.string().min(1).optional(),
     type: z.enum(['cardio', 'fuerza', 'peso libre', 'funcional', 'otro']).optional(),
     status: z.enum(['operativa', 'en mantenimiento', 'fuera de servicio']).optional(),
-    centerId: z.number().int().positive().optional(),
+    centerId: cuidSchema.optional(),
   }),
 };
 
 export const machineIdParamSchema = {
-  params: z.object({ id: z.string().regex(/^\d+$/, 'ID inválido') }),
+  params: z.object({ id: cuidSchema }),
+};
+
+export const centerIdParamSchema = {
+  params: z.object({ centerId: cuidSchema }),
 };
 
 
@@ -9627,15 +10113,23 @@ export const machineIdParamSchema = {
 --- START OF FILE: src\modules\machines\machines.service.ts ---
 import { prisma } from '../../config/db.js';
 
+/**
+ * Crea una nueva máquina de gimnasio y la asigna a un centro específico.
+ * Requiere nombre, tipo, estado y el ID del centro al que pertenece.
+ */
 export async function createMachine(data: {
   name: string;
   type: string;
   status: string;
-  centerId: number;
+  centerId: string;
 }) {
   return prisma.machine.create({ data });
 }
 
+/**
+ * Lista todas las máquinas de todos los centros ordenadas por fecha de creación descendente.
+ * Incluye información del centro al que pertenece cada máquina.
+ */
 export async function listMachines() {
   return prisma.machine.findMany({
     orderBy: { createdAt: 'desc' },
@@ -9647,7 +10141,11 @@ export async function listMachines() {
   });
 }
 
-export async function getMachineById(id: number) {
+/**
+ * Obtiene una máquina de gimnasio completa por su ID.
+ * Incluye toda la información de la máquina y detalles del centro al que pertenece.
+ */
+export async function getMachineById(id: string) {
   return prisma.machine.findUnique({
     where: { id },
     include: {
@@ -9658,15 +10156,27 @@ export async function getMachineById(id: number) {
   });
 }
 
-export async function updateMachine(id: number, data: Partial<Parameters<typeof createMachine>[0]>) {
+/**
+ * Actualiza los datos de una máquina de gimnasio existente.
+ * Permite modificar el nombre, tipo, estado y/o el centro al que pertenece.
+ */
+export async function updateMachine(id: string, data: Partial<Parameters<typeof createMachine>[0]>) {
   return prisma.machine.update({ where: { id }, data });
 }
 
-export async function deleteMachine(id: number) {
+/**
+ * Elimina una máquina de gimnasio de la base de datos.
+ * Esta operación es permanente y no afecta al centro al que pertenecía.
+ */
+export async function deleteMachine(id: string) {
   return prisma.machine.delete({ where: { id } });
 }
 
-export async function listMachinesByCenter(centerId: number) {
+/**
+ * Lista todas las máquinas de un centro específico.
+ * Retorna las máquinas ordenadas por fecha de creación descendente.
+ */
+export async function listMachinesByCenter(centerId: string) {
   return prisma.machine.findMany({
     where: { centerId },
     orderBy: { createdAt: 'desc' },
@@ -9683,18 +10193,19 @@ import { auth } from '../../middleware/auth.js';
 import { validate } from '../../middleware/validate.js';
 import { z } from 'zod';
 import { prisma } from '../../config/db.js';
+import { cuidSchema } from '../../utils/validation.js';
 
 const router = Router();
 
 const setMyCenterSchema = {
-  body: z.object({ centerId: z.number().int().positive() }),
+  body: z.object({ centerId: cuidSchema }),
 };
 
 router.patch('/me/center', auth, validate(setMyCenterSchema), async (req, res) => {
   try {
     if (!req.user) return res.status(401).json({ message: 'No autorizado' });
 
-    const { centerId } = req.body as { centerId: number };
+    const { centerId } = req.body as { centerId: string };
 
     const exists = await prisma.center.findUnique({ where: { id: centerId } });
     if (!exists) return res.status(404).json({ message: 'Centro no encontrado' });
@@ -9702,7 +10213,7 @@ router.patch('/me/center', auth, validate(setMyCenterSchema), async (req, res) =
     const u = await prisma.user.update({
       where: { id: req.user.sub },
       data: { centerId },
-      select: { id: true, email: true, name: true, centerId: true },
+      select: { id: true, email: true, name: true, role: true, centerId: true },
     });
 
     return res.json(u);
@@ -9722,21 +10233,21 @@ import { auth } from '../../middleware/auth.js';
 import { validate } from '../../middleware/validate.js';
 import { z } from 'zod';
 import { prisma } from '../../config/db.js';
+import { cuidSchema } from '../../utils/validation.js';
 
 const router = Router();
 
-// Schemas compuestos para validate()
-const listMyClassesSchema = {}; // no valida nada (solo auth)
+const listMyClassesSchema = {};
 
 const joinMyClassSchema = {
   body: z.object({
-    classId: z.number().int().positive(),
+    classId: cuidSchema,
   }),
 };
 
 const leaveMyClassSchema = {
   params: z.object({
-    id: z.string().regex(/^\d+$/, 'ID inválido'),
+    id: cuidSchema,
   }),
 };
 
@@ -9757,6 +10268,7 @@ router.get('/me/classes', auth, validate(listMyClassesSchema), async (req, res) 
       select: {
         id: true,
         email: true,
+        role: true,
         classes: { select: { id: true, name: true, description: true, createdAt: true } },
       },
     });
@@ -9790,7 +10302,7 @@ router.post('/me/classes', auth, validate(joinMyClassSchema), async (req, res) =
   try {
     if (!req.user) return res.status(401).json({ message: 'No autorizado' });
 
-    const { classId } = req.body as { classId: number };
+    const { classId } = req.body as { classId: string };
 
     const exists = await prisma.gymClass.findUnique({ where: { id: classId } });
     if (!exists) return res.status(404).json({ message: 'Clase no encontrada' });
@@ -9824,8 +10336,7 @@ router.delete('/me/classes/:id', auth, validate(leaveMyClassSchema), async (req,
   try {
     if (!req.user) return res.status(401).json({ message: 'No autorizado' });
 
-    const classId = Number((req.params as any).id);
-    if (isNaN(classId)) return res.status(400).json({ message: 'ID inválido' });
+    const classId = req.params.id;
 
     const exists = await prisma.gymClass.findUnique({ where: { id: classId } });
     if (!exists) return res.status(404).json({ message: 'Clase no encontrada' });
@@ -9858,26 +10369,54 @@ import {
   changePassword,
   getMeWithCenter,
 } from './users.service.js';
+import { Role } from '../../types/role.js';
+import { prisma } from '../../config/db.js';
 
-export async function listUsersCtrl(_req: Request, res: Response) {
+/**
+ * Controlador para listar usuarios del sistema.
+ * SUPERADMIN puede ver todos los usuarios, ADMIN_CENTER solo ve usuarios de su centro.
+ * Retorna un array con la información pública de cada usuario.
+ */
+export async function listUsersCtrl(req: Request, res: Response) {
   try {
-    const users = await listUsers();
+    if (!req.user) {
+      return res.status(401).json({ message: 'No autorizado' });
+    }
+
+    const centerId = req.user.role === Role.SUPERADMIN ? undefined : req.user.centerId || null;
+    
+    const users = await listUsers(centerId);
     res.json(users);
   } catch (error: any) {
     res.status(500).json({ message: error.message });
   }
 }
 
+/**
+ * Controlador para obtener un usuario específico por su ID.
+ * Verifica los permisos según el rol del usuario autenticado.
+ * ADMIN_CENTER solo puede ver usuarios de su propio centro.
+ */
 export async function getUserCtrl(req: Request, res: Response) {
   try {
-    const id = Number(req.params.id);
-    if (isNaN(id)) {
-      return res.status(400).json({ message: 'ID inválido' });
+    if (!req.user) {
+      return res.status(401).json({ message: 'No autorizado' });
     }
 
-    const user = await findUserById(id);
+    const id = req.params.id;
+    const user = await prisma.user.findUnique({
+      where: { id },
+      select: { id: true, email: true, name: true, role: true, centerId: true, createdAt: true }
+    });
+
     if (!user) {
       return res.status(404).json({ message: 'Usuario no encontrado' });
+    }
+
+    if (req.user.role === Role.ADMIN_CENTER) {
+      if (user.centerId !== req.user.centerId) {
+        return res.status(403).json({ message: 'No tienes acceso a este usuario' });
+      }
     }
 
     res.json(user);
@@ -9886,6 +10425,11 @@ export async function getUserCtrl(req: Request, res: Response) {
   }
 }
 
+/**
+ * Controlador para obtener la información del usuario autenticado.
+ * Incluye información del centro asignado si tiene uno.
+ * Utiliza el ID del usuario desde el token JWT.
+ */
 export async function meCtrl(req: Request, res: Response) {
   try {
     if (!req.user) {
@@ -9903,11 +10447,36 @@ export async function meCtrl(req: Request, res: Response) {
   }
 }
 
+/**
+ * Controlador para actualizar un usuario existente.
+ * ADMIN_CENTER no puede cambiar roles ni asignar usuarios a otros centros.
+ * SUPERADMIN tiene acceso completo para actualizar cualquier campo del usuario.
+ */
 export async function updateUserCtrl(req: Request, res: Response) {
   try {
-    const id = Number(req.params.id);
-    if (isNaN(id)) {
-      return res.status(400).json({ message: 'ID inválido' });
+    if (!req.user) {
+      return res.status(401).json({ message: 'No autorizado' });
+    }
+
+    const id = req.params.id;
+    
+    const existingUser = await prisma.user.findUnique({
+      where: { id },
+      select: { centerId: true, role: true }
+    });
+
+    if (!existingUser) {
+      return res.status(404).json({ message: 'Usuario no encontrado' });
+    }
+
+    if (req.user.role === Role.ADMIN_CENTER) {
+      if (existingUser.centerId !== req.user.centerId) {
+        return res.status(403).json({ message: 'No tienes acceso a este usuario' });
+      }
+      
+      const { role, centerId, ...updateData } = req.body;
+      const user = await updateUser(id, updateData);
+      return res.json(user);
     }
 
     const user = await updateUser(id, req.body);
@@ -9923,11 +10492,32 @@ export async function updateUserCtrl(req: Request, res: Response) {
   }
 }
 
+/**
+ * Controlador para eliminar un usuario del sistema.
+ * Verifica que el usuario autenticado tenga permisos para eliminar al usuario especificado.
+ * ADMIN_CENTER solo puede eliminar usuarios de su propio centro.
+ */
 export async function deleteUserCtrl(req: Request, res: Response) {
   try {
-    const id = Number(req.params.id);
-    if (isNaN(id)) {
-      return res.status(400).json({ message: 'ID inválido' });
+    if (!req.user) {
+      return res.status(401).json({ message: 'No autorizado' });
+    }
+
+    const id = req.params.id;
+
+    const existingUser = await prisma.user.findUnique({
+      where: { id },
+      select: { centerId: true }
+    });
+
+    if (!existingUser) {
+      return res.status(404).json({ message: 'Usuario no encontrado' });
+    }
+
+    if (req.user.role === Role.ADMIN_CENTER) {
+      if (existingUser.centerId !== req.user.centerId) {
+        return res.status(403).json({ message: 'No tienes acceso a este usuario' });
+      }
     }
 
     await deleteUser(id);
@@ -9940,6 +10530,11 @@ export async function deleteUserCtrl(req: Request, res: Response) {
   }
 }
 
+/**
+ * Controlador para que un usuario actualice su propio perfil.
+ * Solo permite modificar nombre y email, no permite cambiar el rol.
+ * Utiliza el ID del usuario autenticado desde el token JWT.
+ */
 export async function updateProfileCtrl(req: Request, res: Response) {
   try {
     if (!req.user) {
@@ -9956,6 +10551,11 @@ export async function updateProfileCtrl(req: Request, res: Response) {
   }
 }
 
+/**
+ * Controlador para cambiar la contraseña del usuario autenticado.
+ * Verifica que la contraseña actual sea correcta antes de actualizarla.
+ * Hashea la nueva contraseña antes de almacenarla en la base de datos.
+ */
 export async function changePasswordCtrl(req: Request, res: Response) {
   try {
     if (!req.user) {
@@ -9980,7 +10580,9 @@ export async function changePasswordCtrl(req: Request, res: Response) {
 import { Router } from 'express';
 import { auth } from '../../middleware/auth.js';
 import { validate } from '../../middleware/validate.js';
-import { updateUserSchema, updateProfileSchema, changePasswordSchema } from './users.schema.js';
+import { updateUserSchema, updateProfileSchema, changePasswordSchema, userIdParamSchema } from './users.schema.js';
+import { hasRole } from '../../middleware/hasRole.js';
+import { Role } from '../../types/role.js';
 import { listUsersCtrl, getUserCtrl, meCtrl, updateUserCtrl, deleteUserCtrl, updateProfileCtrl, changePasswordCtrl } from './users.controller.js';
 
 const router = Router();
@@ -10009,7 +10611,7 @@ const router = Router();
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.get('/', auth, listUsersCtrl);
+router.get('/', auth, hasRole(Role.SUPERADMIN, Role.ADMIN_CENTER), listUsersCtrl);
 
 /**
  * @swagger
@@ -10234,9 +10836,9 @@ router.patch('/me/password', auth, validate(changePasswordSchema), changePasswor
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.get('/:id', auth, getUserCtrl);
-router.patch('/:id', auth, validate(updateUserSchema), updateUserCtrl);
-router.delete('/:id', auth, deleteUserCtrl);
+router.get('/:id', auth, hasRole(Role.SUPERADMIN, Role.ADMIN_CENTER), validate(userIdParamSchema), getUserCtrl);
+router.patch('/:id', auth, hasRole(Role.SUPERADMIN, Role.ADMIN_CENTER), validate(updateUserSchema), updateUserCtrl);
+router.delete('/:id', auth, hasRole(Role.SUPERADMIN, Role.ADMIN_CENTER), validate(userIdParamSchema), deleteUserCtrl);
 
 export default router;
 
@@ -10246,11 +10848,15 @@ export default router;
 
 --- START OF FILE: src\modules\users\users.schema.ts ---
 import { z } from 'zod';
+import { cuidSchema } from '../../utils/validation.js';
+
+export const roleEnum = z.enum(['SUPERADMIN', 'ADMIN_CENTER', 'TRAINER', 'CLEANER', 'USER']);
 
 export const registerSchema = z.object({
   email: z.string().email('Email inválido'),
   name: z.string().min(2, 'El nombre debe tener al menos 2 caracteres'),
-  password: z.string().min(8, 'La contraseña debe tener al menos 8 caracteres')
+  password: z.string().min(8, 'La contraseña debe tener al menos 8 caracteres'),
+  role: roleEnum.optional(),
 });
 
 export const loginSchema = z.object({
@@ -10258,10 +10864,14 @@ export const loginSchema = z.object({
   password: z.string().min(8, 'La contraseña debe tener al menos 8 caracteres')
 });
 
-export const updateUserSchema = z.object({
-  name: z.string().min(2, 'El nombre debe tener al menos 2 caracteres').optional(),
-  email: z.string().email('Email inválido').optional(),
-});
+export const updateUserSchema = {
+  params: z.object({ id: cuidSchema }),
+  body: z.object({
+    name: z.string().min(2, 'El nombre debe tener al menos 2 caracteres').optional(),
+    email: z.string().email('Email inválido').optional(),
+    role: roleEnum.optional(),
+  }),
+};
 
 export const updateProfileSchema = z.object({
   name: z.string().min(2, 'El nombre debe tener al menos 2 caracteres').optional(),
@@ -10273,9 +10883,13 @@ export const changePasswordSchema = z.object({
   newPassword: z.string().min(8, 'La nueva contraseña debe tener al menos 8 caracteres')
 });
 
+export const userIdParamSchema = {
+  params: z.object({ id: cuidSchema }),
+};
+
 export type RegisterInput = z.infer<typeof registerSchema>;
 export type LoginInput = z.infer<typeof loginSchema>;
-export type UpdateUserInput = z.infer<typeof updateUserSchema>;
+export type UpdateUserInput = z.infer<typeof updateUserSchema.body>;
 export type UpdateProfileInput = z.infer<typeof updateProfileSchema>;
 export type ChangePasswordInput = z.infer<typeof changePasswordSchema>;
 
@@ -10287,53 +10901,99 @@ export type ChangePasswordInput = z.infer<typeof changePasswordSchema>;
 import { prisma } from '../../config/db.js';
 import bcrypt from 'bcrypt';
 import { env } from '../../config/env.js';
+import { Role } from '../../types/role.js';
 
-export async function createUser(email: string, name: string, passwordHash: string) {
+/**
+ * Crea un nuevo usuario en el sistema con el email, nombre, hash de contraseña y rol proporcionados.
+ * Si no se especifica un rol, se asigna el rol USER por defecto.
+ */
+export async function createUser(email: string, name: string, passwordHash: string, role?: Role | string) {
   return prisma.user.create({
-    data: { email, name, passwordHash },
-    select: { id: true, email: true, name: true, createdAt: true }
+    data: { 
+      email, 
+      name, 
+      passwordHash,
+      role: (role as string) || Role.USER
+    },
+    select: { id: true, email: true, name: true, role: true, createdAt: true }
   });
 }
 
+/**
+ * Busca un usuario en la base de datos por su dirección de email.
+ * Retorna el usuario completo incluyendo el hash de contraseña si existe.
+ */
 export async function findUserByEmail(email: string) {
   return prisma.user.findUnique({ where: { email } });
 }
 
-export async function findUserById(id: number) {
+/**
+ * Busca un usuario en la base de datos por su ID.
+ * Retorna información pública del usuario sin incluir el hash de contraseña.
+ */
+export async function findUserById(id: string) {
   return prisma.user.findUnique({
     where: { id },
-    select: { id: true, email: true, name: true, createdAt: true }
+    select: { id: true, email: true, name: true, role: true, createdAt: true }
   });
 }
 
-export async function listUsers() {
+/**
+ * Lista todos los usuarios del sistema.
+ * Si se proporciona un centerId, filtra para mostrar solo los usuarios de ese centro.
+ * Los usuarios se ordenan por fecha de creación ascendente.
+ */
+export async function listUsers(centerId?: string | null) {
+  const where = centerId ? { centerId } : {};
+  
   return prisma.user.findMany({
-    select: { id: true, email: true, name: true, createdAt: true },
-    orderBy: { id: 'asc' }
+    where,
+    select: { id: true, email: true, name: true, role: true, centerId: true, createdAt: true },
+    orderBy: { createdAt: 'asc' }
   });
 }
 
-export async function updateUser(id: number, data: { name?: string; email?: string }) {
+/**
+ * Actualiza los datos de un usuario existente en la base de datos.
+ * Permite actualizar el nombre, email y/o rol del usuario identificado por su ID.
+ */
+export async function updateUser(id: string, data: { name?: string; email?: string; role?: Role | string }) {
   return prisma.user.update({
     where: { id },
-    data,
-    select: { id: true, email: true, name: true, createdAt: true }
+    data: {
+      ...data,
+      role: data.role as string | undefined
+    },
+    select: { id: true, email: true, name: true, role: true, createdAt: true }
   });
 }
 
-export async function deleteUser(id: number) {
+/**
+ * Elimina un usuario de la base de datos usando su ID.
+ * Esta operación es permanente y eliminará todas las relaciones asociadas según la configuración de Prisma.
+ */
+export async function deleteUser(id: string) {
   return prisma.user.delete({ where: { id } });
 }
 
-export async function updateProfile(userId: number, data: { name?: string; email?: string }) {
+/**
+ * Actualiza el perfil de un usuario autenticado.
+ * Solo permite modificar el nombre y el email, no permite cambiar el rol ni otros datos sensibles.
+ */
+export async function updateProfile(userId: string, data: { name?: string; email?: string }) {
   return prisma.user.update({
     where: { id: userId },
     data,
-    select: { id: true, email: true, name: true, createdAt: true }
+    select: { id: true, email: true, name: true, role: true, createdAt: true }
   });
 }
 
-export async function changePassword(userId: number, currentPassword: string, newPassword: string) {
+/**
+ * Cambia la contraseña de un usuario verificando primero que la contraseña actual sea correcta.
+ * Hashea la nueva contraseña antes de almacenarla en la base de datos.
+ * Lanza un error si el usuario no existe o si la contraseña actual es incorrecta.
+ */
+export async function changePassword(userId: string, currentPassword: string, newPassword: string) {
   const user = await prisma.user.findUnique({ where: { id: userId } });
 
   if (!user) {
@@ -10356,13 +11016,18 @@ export async function changePassword(userId: number, currentPassword: string, ne
   return { message: 'Contraseña actualizada correctamente' };
 }
 
-export async function getMeWithCenter(id: number) {
+/**
+ * Obtiene la información completa del usuario autenticado incluyendo los datos de su centro asignado.
+ * Retorna información pública del usuario y datos básicos del centro si tiene uno asignado.
+ */
+export async function getMeWithCenter(id: string) {
   return prisma.user.findUnique({
     where: { id },
     select: {
       id: true,
       email: true,
       name: true,
+      role: true,
       createdAt: true,
       centerId: true,
       center: { select: { id: true, name: true } },
@@ -10654,10 +11319,31 @@ describe('Users Endpoints', () => {
 --- END OF FILE: src\tests\users.test.ts ---
 
 
+--- START OF FILE: src\types\role.ts ---
+/**
+ * Enum de roles del sistema
+ * Este tipo debe coincidir con el enum Role definido en Prisma schema
+ */
+export enum Role {
+  SUPERADMIN = 'SUPERADMIN',
+  ADMIN_CENTER = 'ADMIN_CENTER',
+  TRAINER = 'TRAINER',
+  CLEANER = 'CLEANER',
+  USER = 'USER'
+}
+
+
+--- END OF FILE: src\types\role.ts ---
+
+
 --- START OF FILE: src\utils\logger.ts ---
 import winston from 'winston';
 import { env } from '../config/env.js';
 
+/**
+ * Configuración de niveles de log para Winston.
+ * Define la jerarquía de severidad de los mensajes de log.
+ */
 const levels = {
   error: 0,
   warn: 1,
@@ -10666,6 +11352,10 @@ const levels = {
   debug: 4,
 };
 
+/**
+ * Configuración de colores para cada nivel de log en la consola.
+ * Facilita la identificación visual de los diferentes tipos de mensajes.
+ */
 const colors = {
   error: 'red',
   warn: 'yellow',
@@ -10693,6 +11383,12 @@ const transports = [
   new winston.transports.File({ filename: 'logs/all.log' }),
 ];
 
+/**
+ * Instancia configurada del logger Winston para toda la aplicación.
+ * Registra mensajes en consola y archivos según el entorno.
+ * En desarrollo muestra todos los logs (debug), en producción solo warnings y errores.
+ * Los errores se guardan en logs/error.log y todos los logs en logs/all.log.
+ */
 export const logger = winston.createLogger({
   level: env.NODE_ENV === 'development' ? 'debug' : 'warn',
   levels,
@@ -10702,6 +11398,31 @@ export const logger = winston.createLogger({
 
 
 --- END OF FILE: src\utils\logger.ts ---
+
+
+--- START OF FILE: src\utils\validation.ts ---
+import { z } from 'zod';
+
+/**
+ * Schema de validación Zod para CUIDs (Collision-resistant Unique Identifier).
+ * Valida que el string tenga exactamente 25 caracteres, empiece con 'c' y continúe con 24 caracteres alfanuméricos en minúsculas.
+ * Utilizado para validar IDs de parámetros de ruta y cuerpos de peticiones.
+ */
+export const cuidSchema = z.string().regex(/^c[a-z0-9]{24}$/, {
+  message: 'ID inválido: debe ser un CUID válido'
+});
+
+/**
+ * Schema de validación Zod para CUIDs opcionales.
+ * Aplica la misma validación que cuidSchema pero permite valores undefined o null.
+ * Útil para campos opcionales que cuando están presentes deben ser CUIDs válidos.
+ */
+export const optionalCuidSchema = z.string().regex(/^c[a-z0-9]{24}$/, {
+  message: 'ID inválido: debe ser un CUID válido'
+}).optional();
+
+
+--- END OF FILE: src\utils\validation.ts ---
 
 
 --- START OF FILE: tsconfig.json ---

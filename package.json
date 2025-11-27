@@ -4,17 +4,18 @@
   "type": "module",
   "description": "Este proyecto implementa una API REST con Node.js, Express y PostgreSQL siguiendo un desarrollo incremental versionado con Git tags.",
   "main": "index.js",
-  "scripts": {
-    "dev": "nodemon src/index.ts",
-    "build": "tsc -p .",
-    "start": "node dist/index.js",
-    "test": "NODE_ENV=test NODE_OPTIONS=--experimental-vm-modules jest",
-    "test:watch": "NODE_ENV=test NODE_OPTIONS=--experimental-vm-modules jest --watch",
-    "test:coverage": "NODE_ENV=test NODE_OPTIONS=--experimental-vm-modules jest --coverage",
-    "prisma:migrate": "prisma migrate dev",
-    "prisma:generate": "prisma generate",
-    "prisma:studio": "prisma studio"
-  },
+ "scripts": {
+  "dev": "nodemon src/index.ts",
+  "build": "tsc -p .",
+  "start": "node dist/index.js",
+  "test": "NODE_ENV=test NODE_OPTIONS=--experimental-vm-modules jest",
+  "test:watch": "NODE_ENV=test NODE_OPTIONS=--experimental-vm-modules jest --watch",
+  "test:coverage": "NODE_ENV=test NODE_OPTIONS=--experimental-vm-modules jest --coverage",
+  "prisma:migrate": "dotenv prisma migrate dev",
+  "prisma:generate": "dotenv prisma generate",
+  "prisma:studio": "dotenv prisma studio",
+  "prisma:status": "dotenv prisma migrate status"
+},
   "keywords": [],
   "author": "",
   "license": "ISC",
@@ -44,6 +45,7 @@
     "@types/node": "^24.10.0",
     "@types/supertest": "^6.0.3",
     "@types/swagger-jsdoc": "^6.0.4",
+    "dotenv-cli": "^11.0.0",
     "jest": "^30.2.0",
     "nodemon": "^3.1.10",
     "prisma": "^6.18.0",
@@ -54,4 +56,3 @@
     "typescript": "^5.9.3"
   }
 }
-

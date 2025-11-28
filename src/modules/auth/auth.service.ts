@@ -6,9 +6,6 @@ import { Role } from '../../types/role.js';
 
 /**
  * Registra un nuevo usuario en el sistema.
- * Verifica que el email no esté ya registrado, hashea la contraseña y crea el usuario.
- * Genera un token JWT que incluye el ID del usuario, email, rol y centerId.
- * Lanza un error si el email ya está registrado.
  */
 export async function register(email: string, name: string, password: string, role?: Role) {
   const existing = await findUserByEmail(email);
@@ -18,7 +15,6 @@ export async function register(email: string, name: string, password: string, ro
   
   const hash = await bcrypt.hash(password, env.BCRYPT_SALT_ROUNDS);
   const user = await createUser(email, name, hash, role);
-  
   const userWithCenter = await getMeWithCenter(user.id);
   
   const token = jwt.sign(
@@ -32,14 +28,18 @@ export async function register(email: string, name: string, password: string, ro
     { expiresIn: '7d' }
   );
   
-  return { user, token };
+  // CORRECCIÓN: Devolver centerId también en el registro
+  return { 
+    user: {
+      ...user,
+      centerId: userWithCenter?.centerId || null
+    }, 
+    token 
+  };
 }
 
 /**
  * Autentica un usuario con su email y contraseña.
- * Verifica las credenciales comparando el hash de la contraseña almacenada.
- * Genera un token JWT válido por 7 días que incluye información del usuario y su centro.
- * Lanza un error si las credenciales son inválidas.
  */
 export async function login(email: string, password: string) {
   const user = await findUserByEmail(email);
@@ -56,8 +56,9 @@ export async function login(email: string, password: string) {
     throw new Error('Credenciales inválidas');
   }
   
+  // Obtenemos datos frescos del centro
   const userWithCenter = await getMeWithCenter(user.id);
-  
+
   const token = jwt.sign(
     { 
       sub: user.id, 
@@ -68,16 +69,18 @@ export async function login(email: string, password: string) {
     env.JWT_SECRET, 
     { expiresIn: '7d' }
   );
-  
+
+  // CORRECCIÓN CRÍTICA AQUÍ 👇
+  // Antes no devolvíamos el centerId en el objeto user, por eso el frontend lo veía NULL
   return { 
     user: { 
       id: user.id, 
       email: user.email, 
       name: user.name,
       role: user.role,
-      createdAt: user.createdAt
+      createdAt: user.createdAt,
+      centerId: userWithCenter?.centerId || null // <--- ESTO FALTABA
     }, 
     token 
   };
 }
-

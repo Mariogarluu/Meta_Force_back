@@ -4,11 +4,6 @@ import {
 } from './centers.service.js';
 import { Role } from '../../types/role.js';
 
-/**
- * Controlador para crear un nuevo centro de entrenamiento.
- * Solo accesible para SUPERADMIN según las rutas protegidas.
- * Retorna el centro creado con un status 201.
- */
 export async function createCenterCtrl(req: Request, res: Response) {
   try {
     const center = await createCenter(req.body);
@@ -19,15 +14,6 @@ export async function createCenterCtrl(req: Request, res: Response) {
   }
 }
 
-/**
- * Controlador para listar todos los centros de entrenamiento disponibles.
- * Retorna una lista ordenada por fecha de creación descendente.
- * 
- * Permisos:
- * - USER, TRAINER, CLEANER: Solo ven el nombre del centro al que pertenecen (sin ID)
- * - ADMIN_CENTER: Ven todos los centros con ID
- * - SUPERADMIN: Ven todos los centros con ID
- */
 export async function listCentersCtrl(req: Request, res: Response) {
   try {
     if (!req.user) {
@@ -35,8 +21,8 @@ export async function listCentersCtrl(req: Request, res: Response) {
     }
 
     const { role, centerId } = req.user;
-
-    // USER, TRAINER, CLEANER: Solo ven el nombre de su centro (sin ID)
+    
+    // 1. USER, TRAINER, CLEANER: Solo ven el nombre de su centro (sin ID)
     if (role === Role.USER || role === Role.TRAINER || role === Role.CLEANER) {
       if (!centerId) {
         return res.json([]);
@@ -45,23 +31,18 @@ export async function listCentersCtrl(req: Request, res: Response) {
       return res.json(centerName ? [centerName] : []);
     }
 
-    // ADMIN_CENTER y SUPERADMIN: Ven todos los centros con ID
-    const centers = await listCenters(null, true);
+    // 2. ADMIN_CENTER y SUPERADMIN
+    // LOGICA CAMBIADA: Si es SuperAdmin, filterId es null (trae todos). 
+    // Si es AdminCenter, filterId es su centerId (trae solo el suyo).
+    const filterId = role === Role.SUPERADMIN ? null : centerId;
+
+    const centers = await listCenters(filterId, true);
     res.json(centers);
   } catch (error: any) {
     res.status(500).json({ message: error.message });
   }
 }
 
-/**
- * Controlador para obtener un centro específico por su ID.
- * Retorna todos los datos del centro incluyendo información de contacto y ubicación.
- * 
- * Permisos:
- * - USER, TRAINER, CLEANER: No pueden ver ningún centro por ID (403)
- * - ADMIN_CENTER: Puede ver todos los centros
- * - SUPERADMIN: Puede ver todos los centros
- */
 export async function getCenterCtrl(req: Request, res: Response) {
   try {
     if (!req.user) {
@@ -69,13 +50,20 @@ export async function getCenterCtrl(req: Request, res: Response) {
     }
 
     const { role } = req.user;
-
-    // USER, TRAINER, CLEANER: No pueden ver centros por ID
+    
     if (role === Role.USER || role === Role.TRAINER || role === Role.CLEANER) {
       return res.status(403).json({ message: 'No tienes permiso para ver este centro' });
     }
 
-    const id = req.params.id;
+    const id = req.params.id as string;
+    
+    // Seguridad adicional: Si es Admin de centro, verificar que pide SU centro
+    if (role === Role.ADMIN_CENTER) {
+      if (req.user.centerId !== id) {
+         return res.status(403).json({ message: 'No tienes permiso para ver este centro' });
+      }
+    }
+    
     const center = await getCenterById(id);
     if (!center) return res.status(404).json({ message: 'Centro no encontrado' });
     res.json(center);
@@ -84,14 +72,17 @@ export async function getCenterCtrl(req: Request, res: Response) {
   }
 }
 
-/**
- * Controlador para actualizar los datos de un centro existente.
- * Solo accesible para SUPERADMIN según las rutas protegidas.
- * Permite modificar cualquier campo del centro excepto el ID.
- */
 export async function updateCenterCtrl(req: Request, res: Response) {
   try {
-    const id = req.params.id;
+    const id = req.params.id as string;
+
+    // SEGURIDAD: Verificar propiedad si es ADMIN_CENTER
+    if (req.user?.role === Role.ADMIN_CENTER) {
+      if (req.user.centerId !== id) {
+        return res.status(403).json({ message: 'No tienes permiso para editar este centro' });
+      }
+    }
+
     const updated = await updateCenter(id, req.body);
     res.json(updated);
   } catch (error: any) {
@@ -101,14 +92,10 @@ export async function updateCenterCtrl(req: Request, res: Response) {
   }
 }
 
-/**
- * Controlador para eliminar un centro de entrenamiento.
- * Solo accesible para SUPERADMIN según las rutas protegidas.
- * Retorna un status 204 sin contenido en caso de éxito.
- */
 export async function deleteCenterCtrl(req: Request, res: Response) {
   try {
-    const id = req.params.id;
+    const id = req.params.id as string;
+    
     await deleteCenter(id);
     res.status(204).send();
   } catch (error: any) {
@@ -117,18 +104,13 @@ export async function deleteCenterCtrl(req: Request, res: Response) {
   }
 }
 
-/**
- * Controlador para listar los usuarios asignados a un centro específico.
- * ADMIN_CENTER solo puede ver usuarios de su propio centro.
- * SUPERADMIN puede ver usuarios de cualquier centro.
- */
 export async function listCenterUsersCtrl(req: Request, res: Response) {
   try {
     if (!req.user) {
       return res.status(401).json({ message: 'No autorizado' });
     }
 
-    const id = req.params.id;
+    const id = req.params.id as string;
     
     if (req.user.role === Role.ADMIN_CENTER) {
       if (id !== req.user.centerId) {

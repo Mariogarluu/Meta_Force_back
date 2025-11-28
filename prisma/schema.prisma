@@ -28,32 +28,35 @@ enum UserStatus {
 }
 
 model User {
-  id           String      @id @default(cuid())
-  email        String      @unique
-  name         String
-  passwordHash String
-  role         Role        @default(USER)
-  status       UserStatus  @default(PENDING)
-  createdAt    DateTime    @default(now())
-  updatedAt    DateTime    @updatedAt
-  centerId     String?
-  center       Center?     @relation(fields: [centerId], references: [id], onDelete: SetNull)
-  classes      GymClass[]
+  id               String      @id @default(cuid())
+  email            String      @unique
+  name             String
+  passwordHash     String
+  role             Role        @default(USER)
+  status           UserStatus  @default(PENDING)
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+  centerId         String?     // Centro actual donde está físicamente (activado por QR scanner)
+  center           Center?     @relation("CurrentCenter", fields: [centerId], references: [id], onDelete: SetNull)
+  favoriteCenterId String?     // Centro favorito/asignado del usuario (puede ser cambiado desde CRUD)
+  favoriteCenter   Center?     @relation("FavoriteCenter", fields: [favoriteCenterId], references: [id], onDelete: SetNull)
+  classes          GymClass[]
 }
 
 model Center {
-  id          String    @id @default(cuid())
-  name        String    @unique
-  description String?
-  address     String?
-  city        String?
-  country     String?
-  phone       String?
-  email       String?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  users       User[]
-  machines    Machine[]
+  id                String    @id @default(cuid())
+  name              String    @unique
+  description       String?
+  address           String?
+  city              String?
+  country           String?
+  phone             String?
+  email             String?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  currentUsers      User[]    @relation("CurrentCenter")
+  favoriteUsers     User[]    @relation("FavoriteCenter")
+  machines          Machine[]
 }
 
 model GymClass {

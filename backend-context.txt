@@ -9035,11 +9035,6 @@ import {
 } from './centers.service.js';
 import { Role } from '../../types/role.js';
 
-/**
- * Controlador para crear un nuevo centro de entrenamiento.
- * Solo accesible para SUPERADMIN según las rutas protegidas.
- * Retorna el centro creado con un status 201.
- */
 export async function createCenterCtrl(req: Request, res: Response) {
   try {
     const center = await createCenter(req.body);
@@ -9050,15 +9045,6 @@ export async function createCenterCtrl(req: Request, res: Response) {
   }
 }
 
-/**
- * Controlador para listar todos los centros de entrenamiento disponibles.
- * Retorna una lista ordenada por fecha de creación descendente.
- * 
- * Permisos:
- * - USER, TRAINER, CLEANER: Solo ven el nombre del centro al que pertenecen (sin ID)
- * - ADMIN_CENTER: Ven todos los centros con ID
- * - SUPERADMIN: Ven todos los centros con ID
- */
 export async function listCentersCtrl(req: Request, res: Response) {
   try {
     if (!req.user) {
@@ -9066,7 +9052,7 @@ export async function listCentersCtrl(req: Request, res: Response) {
     }
 
     const { role, centerId } = req.user;
-
+    
     // USER, TRAINER, CLEANER: Solo ven el nombre de su centro (sin ID)
     if (role === Role.USER || role === Role.TRAINER || role === Role.CLEANER) {
       if (!centerId) {
@@ -9084,15 +9070,6 @@ export async function listCentersCtrl(req: Request, res: Response) {
   }
 }
 
-/**
- * Controlador para obtener un centro específico por su ID.
- * Retorna todos los datos del centro incluyendo información de contacto y ubicación.
- * 
- * Permisos:
- * - USER, TRAINER, CLEANER: No pueden ver ningún centro por ID (403)
- * - ADMIN_CENTER: Puede ver todos los centros
- * - SUPERADMIN: Puede ver todos los centros
- */
 export async function getCenterCtrl(req: Request, res: Response) {
   try {
     if (!req.user) {
@@ -9100,13 +9077,14 @@ export async function getCenterCtrl(req: Request, res: Response) {
     }
 
     const { role } = req.user;
-
-    // USER, TRAINER, CLEANER: No pueden ver centros por ID
+    
     if (role === Role.USER || role === Role.TRAINER || role === Role.CLEANER) {
       return res.status(403).json({ message: 'No tienes permiso para ver este centro' });
     }
 
-    const id = req.params.id;
+    // CORRECCIÓN AQUI: "as string"
+    const id = req.params.id as string;
+    
     const center = await getCenterById(id);
     if (!center) return res.status(404).json({ message: 'Centro no encontrado' });
     res.json(center);
@@ -9115,14 +9093,18 @@ export async function getCenterCtrl(req: Request, res: Response) {
   }
 }
 
-/**
- * Controlador para actualizar los datos de un centro existente.
- * Solo accesible para SUPERADMIN según las rutas protegidas.
- * Permite modificar cualquier campo del centro excepto el ID.
- */
 export async function updateCenterCtrl(req: Request, res: Response) {
   try {
-    const id = req.params.id;
+    // CORRECCIÓN AQUI: "as string"
+    const id = req.params.id as string;
+
+    // SEGURIDAD: Verificar propiedad si es ADMIN_CENTER
+    if (req.user?.role === Role.ADMIN_CENTER) {
+      if (req.user.centerId !== id) {
+        return res.status(403).json({ message: 'No tienes permiso para editar este centro' });
+      }
+    }
+
     const updated = await updateCenter(id, req.body);
     res.json(updated);
   } catch (error: any) {
@@ -9132,14 +9114,11 @@ export async function updateCenterCtrl(req: Request, res: Response) {
   }
 }
 
-/**
- * Controlador para eliminar un centro de entrenamiento.
- * Solo accesible para SUPERADMIN según las rutas protegidas.
- * Retorna un status 204 sin contenido en caso de éxito.
- */
 export async function deleteCenterCtrl(req: Request, res: Response) {
   try {
-    const id = req.params.id;
+    // CORRECCIÓN AQUI: "as string"
+    const id = req.params.id as string;
+    
     await deleteCenter(id);
     res.status(204).send();
   } catch (error: any) {
@@ -9148,18 +9127,14 @@ export async function deleteCenterCtrl(req: Request, res: Response) {
   }
 }
 
-/**
- * Controlador para listar los usuarios asignados a un centro específico.
- * ADMIN_CENTER solo puede ver usuarios de su propio centro.
- * SUPERADMIN puede ver usuarios de cualquier centro.
- */
 export async function listCenterUsersCtrl(req: Request, res: Response) {
   try {
     if (!req.user) {
       return res.status(401).json({ message: 'No autorizado' });
     }
 
-    const id = req.params.id;
+    // CORRECCIÓN AQUI: "as string"
+    const id = req.params.id as string;
     
     if (req.user.role === Role.ADMIN_CENTER) {
       if (id !== req.user.centerId) {
@@ -9173,7 +9148,6 @@ export async function listCenterUsersCtrl(req: Request, res: Response) {
     res.status(500).json({ message: error.message });
   }
 }
-
 --- END OF FILE: src\modules\centers\centers.controller.ts ---
 
 
@@ -9193,122 +9167,141 @@ const router = Router();
 /**
  * @swagger
  * tags:
- *   - name: Centers
- *     description: Gestión de centros (gimnasios)
+ * name: Centers
+ * description: Gestión de centros (gimnasios)
  */
 
 /**
  * @swagger
  * /api/centers:
- *   get:
- *     summary: Lista todos los centros
- *     tags: [Centers]
- *     security: [ { bearerAuth: [] } ]
- *     responses:
- *       200:
- *         description: Lista de centros
+ * get:
+ * summary: Lista todos los centros
+ * tags: [Centers]
+ * security:
+ * - bearerAuth: []
+ * responses:
+ * 200:
+ * description: Lista de centros
  */
 router.get('/', auth, listCentersCtrl);
 
 /**
  * @swagger
  * /api/centers:
- *   post:
- *     summary: Crea un centro
- *     tags: [Centers]
- *     security: [ { bearerAuth: [] } ]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/CreateCenterInput'
- *     responses:
- *       201: { description: Creado }
- *       409: { description: Nombre ya existe }
+ * post:
+ * summary: Crea un centro
+ * tags: [Centers]
+ * security:
+ * - bearerAuth: []
+ * requestBody:
+ * required: true
+ * content:
+ * application/json:
+ * schema:
+ * $ref: '#/components/schemas/CreateCenterInput'
+ * responses:
+ * 201:
+ * description: Creado
+ * 409:
+ * description: Nombre ya existe
  */
 router.post('/', auth, hasRole(Role.SUPERADMIN), validate(createCenterSchema), createCenterCtrl);
 
 /**
  * @swagger
  * /api/centers/{id}:
- *   get:
- *     summary: Obtiene un centro por ID
- *     tags: [Centers]
- *     security: [ { bearerAuth: [] } ]
- *     parameters:
- *       - in: path
- *         name: id
- *         schema: { type: integer }
- *         required: true
- *     responses:
- *       200: { description: OK }
- *       404: { description: No encontrado }
+ * get:
+ * summary: Obtiene un centro por ID
+ * tags: [Centers]
+ * security:
+ * - bearerAuth: []
+ * parameters:
+ * - in: path
+ * name: id
+ * schema:
+ * type: integer
+ * required: true
+ * responses:
+ * 200:
+ * description: OK
+ * 404:
+ * description: No encontrado
  */
 router.get('/:id', auth, validate(centerIdParamSchema), getCenterCtrl);
 
 /**
  * @swagger
  * /api/centers/{id}:
- *   patch:
- *     summary: Actualiza un centro
- *     tags: [Centers]
- *     security: [ { bearerAuth: [] } ]
- *     parameters:
- *       - in: path
- *         name: id
- *         schema: { type: integer }
- *         required: true
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/UpdateCenterInput'
- *     responses:
- *       200: { description: Actualizado }
- *       404: { description: No encontrado }
- *       409: { description: Nombre ya existe }
+ * patch:
+ * summary: Actualiza un centro
+ * tags: [Centers]
+ * security:
+ * - bearerAuth: []
+ * parameters:
+ * - in: path
+ * name: id
+ * schema:
+ * type: integer
+ * required: true
+ * requestBody:
+ * required: true
+ * content:
+ * application/json:
+ * schema:
+ * $ref: '#/components/schemas/UpdateCenterInput'
+ * responses:
+ * 200:
+ * description: Actualizado
+ * 404:
+ * description: No encontrado
+ * 409:
+ * description: Nombre ya existe
  */
-router.patch('/:id', auth, hasRole(Role.SUPERADMIN), validate(updateCenterSchema), updateCenterCtrl);
+router.patch('/:id', auth, hasRole(Role.SUPERADMIN, Role.ADMIN_CENTER), validate(updateCenterSchema), updateCenterCtrl);
 
 /**
  * @swagger
  * /api/centers/{id}:
- *   delete:
- *     summary: Elimina un centro por ID
- *     tags: [Centers]
- *     security: [ { bearerAuth: [] } ]
- *     parameters:
- *       - in: path
- *         name: id
- *         schema: { type: integer }
- *         required: true
- *     responses:
- *       204: { description: Eliminado }
- *       404: { description: No encontrado }
+ * delete:
+ * summary: Elimina un centro por ID
+ * tags: [Centers]
+ * security:
+ * - bearerAuth: []
+ * parameters:
+ * - in: path
+ * name: id
+ * schema:
+ * type: integer
+ * required: true
+ * responses:
+ * 204:
+ * description: Eliminado
+ * 404:
+ * description: No encontrado
  */
 router.delete('/:id', auth, hasRole(Role.SUPERADMIN), validate(centerIdParamSchema), deleteCenterCtrl);
 
 /**
  * @swagger
  * /api/centers/{id}/users:
- *   get:
- *     summary: Lista los usuarios asignados a un centro
- *     tags: [Centers]
- *     security: [ { bearerAuth: [] } ]
- *     parameters:
- *       - in: path
- *         name: id
- *         schema: { type: integer }
- *         required: true
- *     responses:
- *       200: { description: OK }
+ * get:
+ * summary: Lista los usuarios asignados a un centro
+ * tags: [Centers]
+ * security:
+ * - bearerAuth: []
+ * parameters:
+ * - in: path
+ * name: id
+ * schema:
+ * type: integer
+ * required: true
+ * responses:
+ * 200:
+ * description: OK
  */
 router.get('/:id/users', auth, hasRole(Role.SUPERADMIN, Role.ADMIN_CENTER), validate(centerIdParamSchema), listCenterUsersCtrl);
 
 export default router;
-
 --- END OF FILE: src\modules\centers\centers.routes.ts ---
 
 
@@ -11450,8 +11443,8 @@ export const optionalCuidSchema = z.string().regex(/^c[a-z0-9]{24}$/, {
   "exclude": [
     "node_modules",
     "dist",
-    "src/tests"
+    "src/tests",
+    "scripts"
   ]
 }
-
 --- END OF FILE: tsconfig.json ---

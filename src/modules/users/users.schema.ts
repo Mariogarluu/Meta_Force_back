@@ -23,7 +23,8 @@ export const updateUserSchema = {
     email: z.string().email('Email inválido').optional(),
     role: roleEnum.optional(),
     status: userStatusEnum.optional(),
-    centerId: cuidSchema.optional().nullable(),
+    favoriteCenterId: cuidSchema.optional().nullable(), // Centro favorito/asignado (se puede cambiar desde CRUD)
+    // centerId NO se puede cambiar desde CRUD, solo desde el escáner QR
   }),
 };
 

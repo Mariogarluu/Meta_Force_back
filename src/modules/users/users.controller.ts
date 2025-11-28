@@ -42,10 +42,14 @@ export async function getUserCtrl(req: Request, res: Response) {
       return res.status(401).json({ message: 'No autorizado' });
     }
 
-    const id = req.params.id;
+    const id = req.params.id as string;
+    if (!id) {
+      return res.status(400).json({ message: 'ID inválido' });
+    }
+    
     const user = await prisma.user.findUnique({
       where: { id },
-      select: { id: true, email: true, name: true, role: true, status: true, centerId: true, createdAt: true }
+      select: { id: true, email: true, name: true, role: true, status: true, centerId: true, favoriteCenterId: true, createdAt: true }
     });
 
     if (!user) {
@@ -88,8 +92,22 @@ export async function meCtrl(req: Request, res: Response) {
 
 /**
  * Controlador para actualizar un usuario existente.
- * ADMIN_CENTER no puede cambiar roles ni asignar usuarios a otros centros.
- * SUPERADMIN tiene acceso completo para actualizar cualquier campo del usuario.
+ * 
+ * IMPORTANTE: El campo centerId (centro actual) NO se puede cambiar desde este endpoint.
+ * Solo se puede modificar desde el escáner QR (/api/access/scan). Si se intenta cambiar centerId
+ * desde aquí, se ignora silenciosamente.
+ * 
+ * Permisos:
+ * - ADMIN_CENTER: Solo puede actualizar usuarios cuyo favoriteCenterId coincida con su centro.
+ *   Puede cambiar favoriteCenterId pero solo a su propio centro. No puede asignar SUPERADMIN.
+ * - SUPERADMIN: Acceso completo para actualizar cualquier campo excepto centerId.
+ * 
+ * Campos actualizables:
+ * - name, email, role, status, favoriteCenterId
+ * - centerId: IGNORADO (solo se actualiza desde QR scanner)
+ * 
+ * @param req - Request con el ID del usuario en req.params.id y datos en req.body
+ * @param res - Response con el usuario actualizado o error
  */
 export async function updateUserCtrl(req: Request, res: Response) {
   try {
@@ -97,26 +115,40 @@ export async function updateUserCtrl(req: Request, res: Response) {
       return res.status(401).json({ message: 'No autorizado' });
     }
 
-    const id = req.params.id;
+    const id = req.params.id as string;
+    if (!id) {
+      return res.status(400).json({ message: 'ID inválido' });
+    }
 
     const existingUser = await prisma.user.findUnique({
       where: { id },
-      select: { centerId: true, role: true }
+      select: { centerId: true, favoriteCenterId: true, role: true }
     });
 
     if (!existingUser) {
       return res.status(404).json({ message: 'Usuario no encontrado' });
     }
 
-    // ADMIN_CENTER solo puede gestionar usuarios de su propio centro,
-    // pero sí puede cambiar estado y rol dentro de su centro.
+    // Eliminar centerId del body si viene - solo se puede cambiar desde el escáner QR
+    const { centerId, ...updateData } = req.body;
+    
     if (req.user.role === Role.ADMIN_CENTER) {
-      if (existingUser.centerId !== req.user.centerId) {
+      // ADMIN_CENTER solo puede gestionar usuarios de su centro favorito
+      if (existingUser.favoriteCenterId !== req.user.centerId) {
         return res.status(403).json({ message: 'No tienes acceso a este usuario' });
+      }
+      
+      // Validar que favoriteCenterId sea del centro del admin
+      if (updateData.favoriteCenterId && updateData.favoriteCenterId !== req.user.centerId) {
+        return res.status(403).json({ message: 'No puedes asignar usuarios a otros centros' });
+      }
+      
+      if (updateData.role === Role.SUPERADMIN) {
+        return res.status(403).json({ message: 'No puedes asignar el rol SUPERADMIN' });
       }
     }
 
-    const user = await updateUser(id, req.body);
+    const user = await updateUser(id, updateData);
     res.json(user);
   } catch (error: any) {
     if (error.code === 'P2025') {
@@ -140,11 +172,14 @@ export async function deleteUserCtrl(req: Request, res: Response) {
       return res.status(401).json({ message: 'No autorizado' });
     }
 
-    const id = req.params.id;
+    const id = req.params.id as string;
+    if (!id) {
+      return res.status(400).json({ message: 'ID inválido' });
+    }
 
     const existingUser = await prisma.user.findUnique({
       where: { id },
-      select: { centerId: true }
+      select: { centerId: true, favoriteCenterId: true }
     });
 
     if (!existingUser) {
@@ -178,7 +213,12 @@ export async function updateProfileCtrl(req: Request, res: Response) {
       return res.status(401).json({ message: 'No autorizado' });
     }
 
-    const user = await updateProfile(req.user.sub, req.body);
+    const userId = req.user.sub;
+    if (!userId) {
+      return res.status(401).json({ message: 'Usuario no autenticado' });
+    }
+    
+    const user = await updateProfile(userId, req.body);
     res.json(user);
   } catch (error: any) {
     if (error.code === 'P2002') {
@@ -200,7 +240,12 @@ export async function changePasswordCtrl(req: Request, res: Response) {
     }
 
     const { currentPassword, newPassword } = req.body;
-    const result = await changePassword(req.user.sub, currentPassword, newPassword);
+    const userId = req.user.sub;
+    if (!userId) {
+      return res.status(401).json({ message: 'Usuario no autenticado' });
+    }
+    
+    const result = await changePassword(userId, currentPassword, newPassword);
     res.json(result);
   } catch (error: any) {
     if (error.message === 'Contraseña actual incorrecta') {

@@ -14,6 +14,7 @@ import userCenterRouter from './modules/users/user-center.routes.js';
 import classRoutes from './modules/classes/classes.routes.js';
 import userClassRouter from './modules/users/user-class.routes.js';
 import machineRoutes from './modules/machines/machines.routes.js';
+import accessRoutes from './modules/access/access.routes.js';
 
 
 const app = express();
@@ -56,6 +57,7 @@ app.use('/api/users', userCenterRouter);
 app.use('/api/classes', classRoutes);
 app.use('/api/users', userClassRouter);
 app.use('/api/machines', machineRoutes);
+app.use('/api/access', accessRoutes);
 
 app.use(errorHandler);
 

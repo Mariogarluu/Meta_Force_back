@@ -174,18 +174,6 @@ npm run test:watch
 npm run test:coverage
 ```
 
-## 🐳 Docker
-
-### Desarrollo
-```bash
-docker-compose up
-```
-
-### Producción
-```bash
-docker-compose -f docker-compose.prod.yml up -d
-```
-
 ## 📖 Documentación Adicional
 
 - `docs/API_EXAMPLES.md` - Ejemplos de uso de la API

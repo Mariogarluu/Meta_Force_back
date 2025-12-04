@@ -3,18 +3,13 @@ import jwt from 'jsonwebtoken';
 import { env } from '../../config/env.js';
 import { createUser, findUserByEmail, getMeWithCenter } from '../users/users.service.js';
 import { Role } from '../../types/role.js';
+import { notifySuperAdmins } from '../notifications/notifications.service.js';
 
 /**
  * Registra un nuevo usuario en el sistema.
  * Valida que el email no esté ya registrado, hashea la contraseña con bcrypt,
  * crea el usuario con estado PENDING por defecto y genera un token JWT.
- * 
- * @param email - Email único del usuario
- * @param name - Nombre completo del usuario
- * @param password - Contraseña en texto plano (será hasheada)
- * @param role - Rol opcional del usuario (por defecto USER)
- * @returns Objeto con el usuario creado (incluyendo centerId) y token JWT
- * @throws Error si el email ya está registrado
+ * * NOTIFICACIÓN: Avisa a los Superadmins sobre el nuevo registro pendiente.
  */
 export async function register(email: string, name: string, password: string, role?: Role) {
   const existing = await findUserByEmail(email);
@@ -26,6 +21,18 @@ export async function register(email: string, name: string, password: string, ro
   const user = await createUser(email, name, hash, role);
   const userWithCenter = await getMeWithCenter(user.id);
   
+  // Notificar a Superadmins
+  try {
+    await notifySuperAdmins(
+      'Nuevo Usuario Registrado 👤',
+      `El usuario ${name} (${email}) se ha registrado y espera validación.`,
+      '/users?status=PENDING',
+      'INFO'
+    );
+  } catch (error) {
+    console.error('Error enviando notificación de registro:', error);
+  }
+
   const token = jwt.sign(
     { 
       sub: user.id, 
@@ -36,7 +43,7 @@ export async function register(email: string, name: string, password: string, ro
     env.JWT_SECRET, 
     { expiresIn: '7d' }
   );
-  
+
   return { 
     user: {
       ...user,
@@ -50,11 +57,6 @@ export async function register(email: string, name: string, password: string, ro
  * Autentica un usuario con su email y contraseña.
  * Verifica que el usuario exista, que su cuenta esté activa (status ACTIVE),
  * compara la contraseña con el hash almacenado y genera un token JWT válido por 7 días.
- * 
- * @param email - Email del usuario
- * @param password - Contraseña en texto plano
- * @returns Objeto con información del usuario (incluyendo centerId) y token JWT
- * @throws Error si las credenciales son inválidas o la cuenta no está activa
  */
 export async function login(email: string, password: string) {
   const user = await findUserByEmail(email);

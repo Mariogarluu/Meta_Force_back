@@ -36,11 +36,28 @@ model User {
   status           UserStatus  @default(PENDING)
   createdAt        DateTime    @default(now())
   updatedAt        DateTime    @updatedAt
-  centerId         String?     // Centro actual donde está físicamente (activado por QR scanner)
+  centerId         String?     // Centro actual
   center           Center?     @relation("CurrentCenter", fields: [centerId], references: [id], onDelete: SetNull)
-  favoriteCenterId String?     // Centro favorito/asignado del usuario (puede ser cambiado desde CRUD)
+  favoriteCenterId String?     // Centro favorito
   favoriteCenter   Center?     @relation("FavoriteCenter", fields: [favoriteCenterId], references: [id], onDelete: SetNull)
   classes          GymClass[]
+  notifications    Notification[]
+}
+
+// ... (modelos Center, GymClass, Machine iguales)
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String   // El destinatario de la notificación
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String
+  message   String
+  read      Boolean  @default(false)
+  type      String   @default("INFO") // INFO, WARNING, SUCCESS, ERROR
+  link      String?  // Enlace opcional (ej: /users/123)
+  createdAt DateTime @default(now())
+
+  @@index([userId])
 }
 
 model Center {

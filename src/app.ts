@@ -15,7 +15,7 @@ import classRoutes from './modules/classes/classes.routes.js';
 import userClassRouter from './modules/users/user-class.routes.js';
 import machineRoutes from './modules/machines/machines.routes.js';
 import accessRoutes from './modules/access/access.routes.js';
-
+import notificationRoutes from './modules/notifications/notifications.routes.js';
 
 const app = express();
 
@@ -58,7 +58,7 @@ app.use('/api/classes', classRoutes);
 app.use('/api/users', userClassRouter);
 app.use('/api/machines', machineRoutes);
 app.use('/api/access', accessRoutes);
-
+app.use('/api/notifications', notificationRoutes);
 app.use(errorHandler);
 
 export default app;

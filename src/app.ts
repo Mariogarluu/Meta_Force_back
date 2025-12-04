@@ -16,6 +16,7 @@ import userClassRouter from './modules/users/user-class.routes.js';
 import machineRoutes from './modules/machines/machines.routes.js';
 import accessRoutes from './modules/access/access.routes.js';
 import notificationRoutes from './modules/notifications/notifications.routes.js';
+import healthRoutes from './modules/health/health.routes.js';
 
 const app = express();
 
@@ -25,6 +26,7 @@ app.use(helmet({
 app.use(cors());
 app.use(express.json({ limit: '10mb' }));
 app.use(requestLogger);
+app.use('/api/health', healthRoutes);
 
 if (env.NODE_ENV !== 'test') {
   app.use(generalLimiter);

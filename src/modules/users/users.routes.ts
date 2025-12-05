@@ -4,7 +4,8 @@ import { validate } from '../../middleware/validate.js';
 import { updateUserSchema, updateProfileSchema, changePasswordSchema, userIdParamSchema } from './users.schema.js';
 import { hasRole } from '../../middleware/hasRole.js';
 import { Role } from '../../types/role.js';
-import { listUsersCtrl, getUserCtrl, meCtrl, updateUserCtrl, deleteUserCtrl, updateProfileCtrl, changePasswordCtrl } from './users.controller.js';
+import { listUsersCtrl, getUserCtrl, meCtrl, updateUserCtrl, deleteUserCtrl, updateProfileCtrl, changePasswordCtrl, uploadProfileImageCtrl, deleteProfileImageCtrl } from './users.controller.js';
+import { upload } from '../../middleware/upload.js';
 
 const router = Router();
 
@@ -94,6 +95,8 @@ router.get('/', auth, hasRole(Role.SUPERADMIN, Role.ADMIN_CENTER), listUsersCtrl
  */
 router.get('/me', auth, meCtrl);
 router.patch('/me', auth, validate(updateProfileSchema), updateProfileCtrl);
+router.post('/me/profile-image', auth, upload.single('image'), uploadProfileImageCtrl);
+router.delete('/me/profile-image', auth, deleteProfileImageCtrl);
 
 /**
  * @swagger

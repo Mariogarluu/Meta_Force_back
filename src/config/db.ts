@@ -1,7 +1,14 @@
 import { PrismaClient } from '@prisma/client';
+import { getDatabaseUrl } from './env.js';
 
 /**
  * Inicializa el cliente de Prisma.
- * PrismaClient leerá la DATABASE_URL de las variables de entorno cargadas.
+ * Construye la DATABASE_URL desde las variables de entorno separadas.
  */
-export const prisma = new PrismaClient();
+export const prisma = new PrismaClient({
+  datasources: {
+    db: {
+      url: getDatabaseUrl(),
+    },
+  },
+});

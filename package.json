@@ -12,10 +12,11 @@
     "test": "NODE_ENV=test NODE_OPTIONS=--experimental-vm-modules jest",
     "test:watch": "NODE_ENV=test NODE_OPTIONS=--experimental-vm-modules jest --watch",
     "test:coverage": "NODE_ENV=test NODE_OPTIONS=--experimental-vm-modules jest --coverage",
-    "prisma:migrate": "dotenv prisma migrate dev",
-    "prisma:generate": "dotenv prisma generate",
-    "prisma:studio": "dotenv prisma studio",
-    "prisma:status": "dotenv prisma migrate status"
+    "prisma:sync-url": "node scripts/sync-database-url.js",
+    "prisma:migrate": "npm run prisma:sync-url && dotenv -e .env -- prisma migrate dev",
+    "prisma:generate": "npm run prisma:sync-url && dotenv -e .env -- prisma generate",
+    "prisma:studio": "npm run prisma:sync-url && dotenv -e .env -- prisma studio",
+    "prisma:status": "npm run prisma:sync-url && dotenv -e .env -- prisma migrate status"
   },
   "keywords": [],
   "author": "",

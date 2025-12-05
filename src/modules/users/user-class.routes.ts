@@ -107,6 +107,7 @@ router.delete('/me/classes/:id', auth, validate(leaveMyClassSchema), async (req,
     if (!req.user) return res.status(401).json({ message: 'No autorizado' });
 
     const classId = req.params.id;
+    if (!classId) return res.status(400).json({ message: 'ID de clase requerido' });
 
     const exists = await prisma.gymClass.findUnique({ where: { id: classId } });
     if (!exists) return res.status(404).json({ message: 'Clase no encontrada' });

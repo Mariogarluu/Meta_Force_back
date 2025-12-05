@@ -39,6 +39,7 @@ export async function listMachinesCtrl(_req: Request, res: Response) {
 export async function getMachineCtrl(req: Request, res: Response) {
   try {
     const id = req.params.id;
+    if (!id) return res.status(400).json({ message: 'ID requerido' });
     const machine = await getMachineById(id);
     if (!machine) return res.status(404).json({ message: 'Máquina no encontrada' });
     res.json(machine);
@@ -55,6 +56,7 @@ export async function getMachineCtrl(req: Request, res: Response) {
 export async function updateMachineCtrl(req: Request, res: Response) {
   try {
     const id = req.params.id;
+    if (!id) return res.status(400).json({ message: 'ID requerido' });
     const updated = await updateMachine(id, req.body);
     res.json(updated);
   } catch (error: any) {
@@ -72,6 +74,7 @@ export async function updateMachineCtrl(req: Request, res: Response) {
 export async function deleteMachineCtrl(req: Request, res: Response) {
   try {
     const id = req.params.id;
+    if (!id) return res.status(400).json({ message: 'ID requerido' });
     await deleteMachine(id);
     res.status(204).send();
   } catch (error: any) {
@@ -88,6 +91,7 @@ export async function deleteMachineCtrl(req: Request, res: Response) {
 export async function listMachinesByCenterCtrl(req: Request, res: Response) {
   try {
     const centerId = req.params.centerId;
+    if (!centerId) return res.status(400).json({ message: 'ID de centro requerido' });
     const machines = await listMachinesByCenter(centerId);
     res.json(machines);
   } catch (error: any) {

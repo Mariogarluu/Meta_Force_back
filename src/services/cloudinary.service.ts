@@ -36,7 +36,14 @@ export class CloudinaryService {
         }
       );
 
-      uploadStream.end(fileBuffer);
+      // Escribir el buffer directamente en el stream usando el método end
+      if (uploadStream && typeof (uploadStream as any).end === 'function') {
+        (uploadStream as any).end(fileBuffer);
+      } else {
+        // Fallback: intentar escribir directamente
+        (uploadStream as any).write(fileBuffer);
+        (uploadStream as any).end();
+      }
     });
   }
 
@@ -84,4 +91,3 @@ export class CloudinaryService {
     }
   }
 }
-

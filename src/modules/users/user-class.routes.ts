@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import { Router, Request, Response } from 'express';
 import { auth } from '../../middleware/auth.js';
 import { validate } from '../../middleware/validate.js';
 import { z } from 'zod';
@@ -29,7 +29,7 @@ const leaveMyClassSchema = {
  *     tags: [Users, Classes]
  *     security: [ { bearerAuth: [] } ]
  */
-router.get('/me/classes', auth, validate(listMyClassesSchema), async (req, res) => {
+router.get('/me/classes', auth, validate(listMyClassesSchema), async (req: Request, res: Response) => {
   try {
     if (!req.user) return res.status(401).json({ message: 'No autorizado' });
 
@@ -68,7 +68,7 @@ router.get('/me/classes', auth, validate(listMyClassesSchema), async (req, res) 
  *               classId:
  *                 type: integer
  */
-router.post('/me/classes', auth, validate(joinMyClassSchema), async (req, res) => {
+router.post('/me/classes', auth, validate(joinMyClassSchema), async (req: Request, res: Response) => {
   try {
     if (!req.user) return res.status(401).json({ message: 'No autorizado' });
 
@@ -102,7 +102,7 @@ router.post('/me/classes', auth, validate(joinMyClassSchema), async (req, res) =
  *         schema: { type: integer }
  *         required: true
  */
-router.delete('/me/classes/:id', auth, validate(leaveMyClassSchema), async (req, res) => {
+router.delete('/me/classes/:id', auth, validate(leaveMyClassSchema), async (req: Request, res: Response) => {
   try {
     if (!req.user) return res.status(401).json({ message: 'No autorizado' });
 

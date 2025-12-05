@@ -1,5 +1,5 @@
 import multer from 'multer';
-import { Request } from 'express';
+import type { Request } from 'express';
 
 /**
  * Configuración de Multer para manejar la subida de archivos.

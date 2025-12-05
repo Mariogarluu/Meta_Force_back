@@ -7,9 +7,12 @@ import {
   updateProfile,
   changePassword,
   getMeWithCenter,
+  updateProfileImage,
+  deleteProfileImage,
 } from './users.service.js';
 import { Role } from '../../types/role.js';
 import { prisma } from '../../config/db.js';
+import { CloudinaryService } from '../../services/cloudinary.service.js';
 
 /**
  * Controlador para listar usuarios del sistema.
@@ -49,7 +52,7 @@ export async function getUserCtrl(req: Request, res: Response) {
     
     const user = await prisma.user.findUnique({
       where: { id },
-      select: { id: true, email: true, name: true, role: true, status: true, centerId: true, favoriteCenterId: true, createdAt: true }
+      select: { id: true, email: true, name: true, role: true, status: true, centerId: true, favoriteCenterId: true, profileImageUrl: true, createdAt: true }
     });
 
     if (!user) {
@@ -252,5 +255,91 @@ export async function changePasswordCtrl(req: Request, res: Response) {
       return res.status(400).json({ message: error.message });
     }
     res.status(500).json({ message: error.message });
+  }
+}
+
+/**
+ * Controlador para subir una imagen de perfil.
+ * Sube la imagen a Cloudinary y actualiza la URL en la base de datos.
+ * Si el usuario ya tiene una imagen (y no es fauno.png), la elimina de Cloudinary antes de subir la nueva.
+ */
+export async function uploadProfileImageCtrl(req: Request, res: Response) {
+  try {
+    if (!req.user) {
+      return res.status(401).json({ message: 'No autorizado' });
+    }
+
+    const userId = req.user.sub;
+    if (!userId) {
+      return res.status(401).json({ message: 'Usuario no autenticado' });
+    }
+
+    if (!req.file) {
+      return res.status(400).json({ message: 'No se proporcionó ninguna imagen' });
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { profileImageUrl: true }
+    });
+
+    if (!user) {
+      return res.status(404).json({ message: 'Usuario no encontrado' });
+    }
+
+    // Eliminar imagen anterior si existe y no es fauno.png
+    if (user.profileImageUrl && !user.profileImageUrl.includes('fauno.png')) {
+      await CloudinaryService.deleteImage(user.profileImageUrl);
+    }
+
+    // Subir nueva imagen
+    const imageUrl = await CloudinaryService.uploadProfileImage(req.file.buffer, userId);
+    
+    // Actualizar en base de datos
+    const updatedUser = await updateProfileImage(userId, imageUrl);
+    
+    res.json(updatedUser);
+  } catch (error: any) {
+    console.error('Error subiendo imagen de perfil:', error);
+    res.status(500).json({ message: error.message || 'Error al subir la imagen' });
+  }
+}
+
+/**
+ * Controlador para eliminar la imagen de perfil del usuario autenticado.
+ * Elimina la imagen de Cloudinary y establece profileImageUrl a null en la base de datos.
+ */
+export async function deleteProfileImageCtrl(req: Request, res: Response) {
+  try {
+    if (!req.user) {
+      return res.status(401).json({ message: 'No autorizado' });
+    }
+
+    const userId = req.user.sub;
+    if (!userId) {
+      return res.status(401).json({ message: 'Usuario no autenticado' });
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { profileImageUrl: true }
+    });
+
+    if (!user) {
+      return res.status(404).json({ message: 'Usuario no encontrado' });
+    }
+
+    // Eliminar imagen de Cloudinary si existe y no es fauno.png
+    if (user.profileImageUrl && !user.profileImageUrl.includes('fauno.png')) {
+      await CloudinaryService.deleteImage(user.profileImageUrl);
+    }
+
+    // Actualizar en base de datos
+    const updatedUser = await deleteProfileImage(userId);
+    
+    res.json(updatedUser);
+  } catch (error: any) {
+    console.error('Error eliminando imagen de perfil:', error);
+    res.status(500).json({ message: error.message || 'Error al eliminar la imagen' });
   }
 }

@@ -3,7 +3,7 @@ import { z } from 'zod';
 
 /**
  * Esquema de validación para las variables de entorno del Servidor.
- * No incluye DATABASE_URL, ya que es gestionada directamente por Prisma.
+ * Usa variables separadas para la base de datos en lugar de DATABASE_URL.
  */
 const envSchema = z.object({
   // General Server
@@ -23,8 +23,15 @@ const envSchema = z.object({
     z.number().int().min(10, 'El SALT_ROUNDS debe ser 10 o superior para un hashing seguro.'),
   ).default(10),
 
-  // CRÍTICO: Validamos que DATABASE_URL exista, aunque no la exportemos.
-  DATABASE_URL: z.string().url('DATABASE_URL debe ser una URL de conexión válida.').nonempty(),
+  // Database Configuration (variables separadas)
+  DB_USER: z.string().min(1, 'DB_USER es requerido'),
+  DB_PASSWORD: z.string().min(1, 'DB_PASSWORD es requerido'),
+  DB_HOST: z.string().min(1, 'DB_HOST es requerido').default('localhost'),
+  DB_PORT: z.preprocess(
+    (a) => parseInt(z.string().parse(a), 10),
+    z.number().positive().int().safe(),
+  ).default(5432),
+  DB_DATABASE: z.string().min(1, 'DB_DATABASE es requerido'),
 });
 
 
@@ -42,7 +49,19 @@ if (!envParseResult.success) {
 
 /**
  * El objeto 'env' ahora está validado, tipado y listo para usar de forma segura.
- * Excluimos DATABASE_URL del objeto exportado, pues solo la usa Prisma.
  */
-// Utilizamos Omit de TypeScript para eliminar DATABASE_URL de la salida tipada.
-export const env = envParseResult.data as Omit<z.infer<typeof envSchema>, 'DATABASE_URL'>;
+export const env = envParseResult.data;
+
+/**
+ * Construye la URL de conexión a la base de datos desde las variables de entorno separadas.
+ * Formato: postgresql://user:password@host:port/database?schema=public
+ */
+export function getDatabaseUrl(): string {
+  const { DB_USER, DB_PASSWORD, DB_HOST, DB_PORT, DB_DATABASE } = env;
+  return `postgresql://${encodeURIComponent(DB_USER)}:${encodeURIComponent(DB_PASSWORD)}@${DB_HOST}:${DB_PORT}/${DB_DATABASE}?schema=public`;
+}
+
+// Establece DATABASE_URL en process.env para que Prisma la pueda usar
+if (!process.env.DATABASE_URL) {
+  process.env.DATABASE_URL = getDatabaseUrl();
+}

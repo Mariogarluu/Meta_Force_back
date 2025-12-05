@@ -28,18 +28,19 @@ enum UserStatus {
 }
 
 model User {
-  id               String      @id @default(cuid())
-  email            String      @unique
+  id               String         @id @default(cuid())
+  email            String         @unique
   name             String
   passwordHash     String
-  role             Role        @default(USER)
-  status           UserStatus  @default(PENDING)
-  createdAt        DateTime    @default(now())
-  updatedAt        DateTime    @updatedAt
-  centerId         String?     // Centro actual
-  center           Center?     @relation("CurrentCenter", fields: [centerId], references: [id], onDelete: SetNull)
-  favoriteCenterId String?     // Centro favorito
-  favoriteCenter   Center?     @relation("FavoriteCenter", fields: [favoriteCenterId], references: [id], onDelete: SetNull)
+  role             Role           @default(USER)
+  status           UserStatus     @default(PENDING)
+  profileImageUrl  String? // URL de la imagen de perfil en Cloudinary
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+  centerId         String? // Centro actual
+  center           Center?        @relation("CurrentCenter", fields: [centerId], references: [id], onDelete: SetNull)
+  favoriteCenterId String? // Centro favorito
+  favoriteCenter   Center?        @relation("FavoriteCenter", fields: [favoriteCenterId], references: [id], onDelete: SetNull)
   classes          GymClass[]
   notifications    Notification[]
 }
@@ -48,51 +49,51 @@ model User {
 
 model Notification {
   id        String   @id @default(cuid())
-  userId    String   // El destinatario de la notificación
+  userId    String // El destinatario de la notificación
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   title     String
   message   String
   read      Boolean  @default(false)
   type      String   @default("INFO") // INFO, WARNING, SUCCESS, ERROR
-  link      String?  // Enlace opcional (ej: /users/123)
+  link      String? // Enlace opcional (ej: /users/123)
   createdAt DateTime @default(now())
 
   @@index([userId])
 }
 
 model Center {
-  id                String    @id @default(cuid())
-  name              String    @unique
-  description       String?
-  address           String?
-  city              String?
-  country           String?
-  phone             String?
-  email             String?
-  createdAt         DateTime  @default(now())
-  updatedAt         DateTime  @updatedAt
-  currentUsers      User[]    @relation("CurrentCenter")
-  favoriteUsers     User[]    @relation("FavoriteCenter")
-  machines          Machine[]
+  id            String    @id @default(cuid())
+  name          String    @unique
+  description   String?
+  address       String?
+  city          String?
+  country       String?
+  phone         String?
+  email         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  currentUsers  User[]    @relation("CurrentCenter")
+  favoriteUsers User[]    @relation("FavoriteCenter")
+  machines      Machine[]
 }
 
 model GymClass {
-  id          String    @id @default(cuid())
+  id          String   @id @default(cuid())
   name        String
   description String?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
-  users       User[]
+  users User[]
 }
 
 model Machine {
-  id          String    @id @default(cuid())
-  name        String
-  type        String
-  status      String
-  centerId    String
-  center      Center   @relation(fields: [centerId], references: [id], onDelete: Cascade)
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  id        String   @id @default(cuid())
+  name      String
+  type      String
+  status    String
+  centerId  String
+  center    Center   @relation(fields: [centerId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

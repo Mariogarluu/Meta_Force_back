@@ -5,10 +5,10 @@ export const createMachineSchema = {
   body: z.object({
     name: z.string().min(1, 'name is required'),
     type: z.enum(['cardio', 'fuerza', 'peso libre', 'funcional', 'otro'], {
-      errorMap: () => ({ message: 'type debe ser: cardio, fuerza, peso libre, funcional u otro' }),
+      message: 'type debe ser: cardio, fuerza, peso libre, funcional u otro',
     }),
     status: z.enum(['operativa', 'en mantenimiento', 'fuera de servicio'], {
-      errorMap: () => ({ message: 'status debe ser: operativa, en mantenimiento o fuera de servicio' }),
+      message: 'status debe ser: operativa, en mantenimiento o fuera de servicio',
     }),
     centerId: cuidSchema,
   }),

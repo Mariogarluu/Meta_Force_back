@@ -11,7 +11,7 @@ import { registerSchema, loginSchema } from '../users/users.schema.js';
 export async function registerCtrl(req: Request, res: Response) {
   try {
     const { email, name, password, role } = registerSchema.parse(req.body);
-    const data = await register(email, name, password, role);
+    const data = await register(email, name, password, role as any);
     res.status(201).json(data);
   } catch (e: any) {
     if (e.message === 'Email ya registrado') {

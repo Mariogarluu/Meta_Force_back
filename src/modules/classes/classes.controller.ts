@@ -40,6 +40,7 @@ export async function listClassesCtrl(_req: Request, res: Response) {
 export async function getClassCtrl(req: Request, res: Response) {
   try {
     const id = req.params.id;
+    if (!id) return res.status(400).json({ message: 'ID requerido' });
     const cls = await getClassById(id);
     if (!cls) return res.status(404).json({ message: 'Clase no encontrada' });
     res.json(cls);
@@ -56,6 +57,7 @@ export async function getClassCtrl(req: Request, res: Response) {
 export async function updateClassCtrl(req: Request, res: Response) {
   try {
     const id = req.params.id;
+    if (!id) return res.status(400).json({ message: 'ID requerido' });
     const updated = await updateClass(id, req.body);
     res.json(updated);
   } catch (error: any) {
@@ -73,6 +75,7 @@ export async function updateClassCtrl(req: Request, res: Response) {
 export async function deleteClassCtrl(req: Request, res: Response) {
   try {
     const id = req.params.id;
+    if (!id) return res.status(400).json({ message: 'ID requerido' });
     await deleteClass(id);
     res.status(204).send();
   } catch (error: any) {
@@ -88,6 +91,7 @@ export async function deleteClassCtrl(req: Request, res: Response) {
 export async function listClassUsersCtrl(req: Request, res: Response) {
   try {
     const id = req.params.id;
+    if (!id) return res.status(400).json({ message: 'ID requerido' });
     const users = await listUsersInClass(id);
     res.json(users);
   } catch (error: any) {
@@ -104,6 +108,7 @@ export async function joinClassCtrl(req: Request, res: Response) {
   try {
     if (!req.user) return res.status(401).json({ message: 'No autorizado' });
     const classId = req.params.id;
+    if (!classId) return res.status(400).json({ message: 'ID de clase requerido' });
 
     const exists = await prisma.gymClass.findUnique({ where: { id: classId } });
     if (!exists) return res.status(404).json({ message: 'Clase no encontrada' });
@@ -124,6 +129,7 @@ export async function leaveClassCtrl(req: Request, res: Response) {
   try {
     if (!req.user) return res.status(401).json({ message: 'No autorizado' });
     const classId = req.params.id;
+    if (!classId) return res.status(400).json({ message: 'ID de clase requerido' });
 
     const exists = await prisma.gymClass.findUnique({ where: { id: classId } });
     if (!exists) return res.status(404).json({ message: 'Clase no encontrada' });

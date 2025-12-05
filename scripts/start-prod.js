@@ -15,17 +15,19 @@ const projectRoot = join(__dirname, '..');
  * Establece DATABASE_URL en process.env desde las variables de entorno separadas.
  */
 function setupDatabaseUrl() {
-  // Si DATABASE_URL ya existe, no hacer nada
+  // Si DATABASE_URL ya existe, no hacer nada (prioridad más alta)
   if (process.env.DATABASE_URL) {
     console.log('✅ DATABASE_URL ya está establecida');
     return;
   }
 
+  // Si no existe, intentar construir desde variables separadas
   const { DB_USER, DB_PASSWORD, DB_HOST, DB_PORT, DB_DATABASE } = process.env;
 
   if (!DB_USER || !DB_PASSWORD || !DB_DATABASE) {
     console.error('❌ Error: Faltan variables de entorno de base de datos');
-    console.error('Se requieren: DB_USER, DB_PASSWORD, DB_DATABASE');
+    console.error('Se requiere: DATABASE_URL (recomendado)');
+    console.error('O alternativamente: DB_USER, DB_PASSWORD, DB_DATABASE');
     console.error('Opcional: DB_HOST (default: localhost), DB_PORT (default: 5432)');
     process.exit(1);
   }

@@ -1,4 +1,5 @@
 import multer from 'multer';
+import { Request } from 'express';
 
 /**
  * Configuración de Multer para manejar la subida de archivos.
@@ -6,7 +7,7 @@ import multer from 'multer';
  */
 const storage = multer.memoryStorage();
 
-const fileFilter = (req: Express.Request, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
+const fileFilter = (req: Request, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
   const allowedMimes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
   
   if (allowedMimes.includes(file.mimetype)) {

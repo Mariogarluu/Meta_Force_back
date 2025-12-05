@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import { Router, Request, Response } from 'express';
 import { auth } from '../../middleware/auth.js';
 import { validate } from '../../middleware/validate.js';
 import { z } from 'zod';
@@ -11,7 +11,7 @@ const setMyCenterSchema = {
   body: z.object({ centerId: cuidSchema }),
 };
 
-router.patch('/me/center', auth, validate(setMyCenterSchema), async (req, res) => {
+router.patch('/me/center', auth, validate(setMyCenterSchema), async (req: Request, res: Response) => {
   try {
     if (!req.user) return res.status(401).json({ message: 'No autorizado' });
 

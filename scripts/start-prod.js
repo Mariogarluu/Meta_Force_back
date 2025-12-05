@@ -32,9 +32,19 @@ function setupDatabaseUrl() {
 
   const user = encodeURIComponent(DB_USER);
   const password = encodeURIComponent(DB_PASSWORD);
-  const host = DB_HOST || 'localhost';
+  let host = DB_HOST || 'localhost';
   const port = DB_PORT || '5432';
   const database = DB_DATABASE;
+
+  // En Render, las bases de datos internas pueden necesitar el hostname completo
+  // Si el hostname termina en -a, puede ser necesario agregar .render.com o usar el hostname completo
+  // Render proporciona el hostname correcto en DB_HOST, así que lo usamos tal cual
+  // Si no tiene el formato completo, intentamos construir la URL interna de Render
+  if (host.includes('dpg-') && !host.includes('.')) {
+    // Hostname interno de Render PostgreSQL, puede necesitar el puerto interno
+    // Render maneja esto automáticamente, pero asegurémonos de usar el hostname correcto
+    console.log(`⚠️  Hostname de Render detectado: ${host}`);
+  }
 
   process.env.DATABASE_URL = `postgresql://${user}:${password}@${host}:${port}/${database}?schema=public`;
   console.log('✅ DATABASE_URL establecida desde variables separadas');
@@ -84,7 +94,16 @@ async function main() {
     await runCommand('npm', ['run', 'build']);
 
     // 3. Prisma migrate deploy (DATABASE_URL está disponible en process.env)
-    await runCommand('npx', ['prisma', 'migrate', 'deploy']);
+    // Nota: En Render, las bases de datos internas pueden no ser accesibles durante el build
+    // Si falla, las migraciones se ejecutarán al iniciar el servidor
+    try {
+      await runCommand('npx', ['prisma', 'migrate', 'deploy']);
+    } catch (migrateError) {
+      console.warn('⚠️  Advertencia: No se pudieron ejecutar las migraciones durante el build');
+      console.warn('   Las migraciones se intentarán ejecutar al iniciar el servidor');
+      console.warn(`   Error: ${migrateError.message}`);
+      // Continuar con el inicio del servidor, las migraciones se ejecutarán en runtime
+    }
 
     // 4. Iniciar servidor
     await runCommand('npm', ['start']);

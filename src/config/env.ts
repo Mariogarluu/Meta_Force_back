@@ -2,6 +2,30 @@ import 'dotenv/config';
 import { z } from 'zod';
 
 /**
+ * Establece DATABASE_URL en process.env ANTES de la validación
+ * para que Prisma Studio y otros comandos de Prisma puedan encontrarla.
+ * Esto debe hacerse de forma síncrona y temprana.
+ */
+function setupDatabaseUrl() {
+  // Solo establecer si no existe y tenemos las variables necesarias
+  if (!process.env.DATABASE_URL) {
+    const { DB_USER, DB_PASSWORD, DB_HOST, DB_PORT, DB_DATABASE } = process.env;
+    
+    if (DB_USER && DB_PASSWORD && DB_DATABASE) {
+      const user = encodeURIComponent(DB_USER);
+      const password = encodeURIComponent(DB_PASSWORD);
+      const host = DB_HOST || 'localhost';
+      const port = DB_PORT || '5432';
+      const database = DB_DATABASE;
+      process.env.DATABASE_URL = `postgresql://${user}:${password}@${host}:${port}/${database}?schema=public`;
+    }
+  }
+}
+
+// Establecer DATABASE_URL inmediatamente (esto se ejecuta cuando se importa el módulo)
+setupDatabaseUrl();
+
+/**
  * Esquema de validación para las variables de entorno del Servidor.
  * Usa variables separadas para la base de datos en lugar de DATABASE_URL.
  */
@@ -61,7 +85,12 @@ export function getDatabaseUrl(): string {
   return `postgresql://${encodeURIComponent(DB_USER)}:${encodeURIComponent(DB_PASSWORD)}@${DB_HOST}:${DB_PORT}/${DB_DATABASE}?schema=public`;
 }
 
-// Establece DATABASE_URL en process.env para que Prisma la pueda usar
+// Asegurar que DATABASE_URL esté establecida (por si acaso)
 if (!process.env.DATABASE_URL) {
-  process.env.DATABASE_URL = getDatabaseUrl();
+  try {
+    process.env.DATABASE_URL = getDatabaseUrl();
+  } catch (error) {
+    // Si falla, significa que las variables no están validadas aún
+    // pero setupDatabaseUrl() ya debería haberlo hecho
+  }
 }

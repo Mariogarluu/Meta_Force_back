@@ -32,29 +32,29 @@ Si prefieres usar variables separadas, configura las siguientes:
 ### Variables Requeridas:
 
 1. **DB_USER**
-   - Valor: `jim` (según tu configuración)
+   - Valor: Tu usuario de la base de datos (ejemplo: `usuario_db`)
 
 2. **DB_PASSWORD**
    - Valor: Tu contraseña de la base de datos (haz clic en el ojo 👁️ para verla)
 
 3. **DB_HOST**
-   - Valor: `dpg-d4oktnndiees739km8m0-a` (el hostname interno de Render)
+   - Valor: El hostname interno de Render (formato: `dpg-xxxxx-a`)
 
 4. **DB_PORT**
    - Valor: `5432`
 
 5. **DB_DATABASE**
-   - Valor: `meta_force`
+   - Valor: Nombre de tu base de datos (ejemplo: `nombre_base_datos`)
 
 ### Pasos:
 
 1. Ve a tu servicio web en Render → "Environment"
 2. Agrega cada variable una por una:
-   - `DB_USER` = `jim`
+   - `DB_USER` = (tu usuario de la base de datos)
    - `DB_PASSWORD` = (tu contraseña)
-   - `DB_HOST` = `dpg-d4oktnndiees739km8m0-a`
+   - `DB_HOST` = (el hostname interno de Render, formato: `dpg-xxxxx-a`)
    - `DB_PORT` = `5432`
-   - `DB_DATABASE` = `meta_force`
+   - `DB_DATABASE` = (nombre de tu base de datos)
 
 ---
 
@@ -97,11 +97,11 @@ NODE_ENV=production
 
 ### Mínimas Requeridas (Opción 2 - Variables Separadas):
 ```
-DB_USER=jim
+DB_USER=tu-usuario-db
 DB_PASSWORD=tu-contraseña
-DB_HOST=dpg-d4oktnndiees739km8m0-a
+DB_HOST=dpg-xxxxx-a
 DB_PORT=5432
-DB_DATABASE=meta_force
+DB_DATABASE=nombre-base-datos
 JWT_SECRET=tu-secret-super-seguro-de-al-menos-32-caracteres
 NODE_ENV=production
 ```

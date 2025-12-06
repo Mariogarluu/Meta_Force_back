@@ -16,6 +16,7 @@
     "prisma:migrate": "npm run prisma:sync-url && dotenv -e .env -- prisma migrate dev",
     "prisma:generate": "npm run prisma:sync-url && dotenv -e .env -- prisma generate",
     "prisma:studio": "npm run prisma:sync-url && dotenv -e .env -- prisma studio",
+    "prisma:studio:prod": "dotenv -e .env.production.local -- prisma studio",
     "prisma:status": "npm run prisma:sync-url && dotenv -e .env -- prisma migrate status"
   },
   "keywords": [],

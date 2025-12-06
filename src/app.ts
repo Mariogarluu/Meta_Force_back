@@ -20,9 +20,14 @@ import healthRoutes from './modules/health/health.routes.js';
 
 const app = express();
 
-// Configurar trust proxy para Render y otros servicios con proxy reverso
-// Render usa 1 proxy, así que confiamos en el primer proxy
-// Esto permite que express-rate-limit identifique correctamente las IPs reales
+/**
+ * Configuración de trust proxy para Render y otros servicios con proxy reverso.
+ * Render usa 1 proxy, así que confiamos en el primer proxy.
+ * Esto permite que express-rate-limit identifique correctamente las IPs reales
+ * de los clientes a través del header X-Forwarded-For.
+ * 
+ * @see https://expressjs.com/en/guide/behind-proxies.html
+ */
 app.set('trust proxy', 1);
 
 app.use(helmet({
@@ -30,22 +35,6 @@ app.use(helmet({
 }));
 app.use(cors());
 app.use(express.json({ limit: '10mb' }));
-
-// Middleware temporal para debuggear el body en producción
-app.use((req, res, next) => {
-  if (req.path.includes('/register') && req.method === 'POST') {
-    console.log('=== REGISTER REQUEST DEBUG ===');
-    console.log('Path:', req.path);
-    console.log('Method:', req.method);
-    console.log('Content-Type:', req.headers['content-type']);
-    console.log('Body type:', typeof req.body);
-    console.log('Body:', JSON.stringify(req.body));
-    console.log('Body keys:', req.body ? Object.keys(req.body) : 'no body');
-    console.log('============================');
-  }
-  next();
-});
-
 app.use(requestLogger);
 app.use('/api/health', healthRoutes);
 

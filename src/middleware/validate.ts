@@ -45,10 +45,19 @@ export const validate = (schema: CompositeSchema | ZodObject<any>) => (
         const firstError = errors[0];
         const errorMessage = firstError ? firstError.message : 'Error de validación';
         
-        // Log del error de validación
-        logger.warn(`Validation error on ${req.method} ${req.path}: ${errorMessage}`);
-        logger.warn(`Request body: ${JSON.stringify(req.body)}`);
-        logger.warn(`Validation errors: ${JSON.stringify(errors)}`);
+        // Log del error de validación (siempre loguear, incluso en producción)
+        const logMessage = `Validation error on ${req.method} ${req.path}: ${errorMessage}`;
+        const bodyMessage = `Request body: ${JSON.stringify(req.body)}`;
+        const errorsMessage = `Validation errors: ${JSON.stringify(errors)}`;
+        
+        // Usar console.error para asegurar que se vea en producción
+        console.error(logMessage);
+        console.error(bodyMessage);
+        console.error(errorsMessage);
+        
+        logger.warn(logMessage);
+        logger.warn(bodyMessage);
+        logger.warn(errorsMessage);
         
         return res.status(400).json({ 
           message: errorMessage,

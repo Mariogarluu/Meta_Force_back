@@ -4,7 +4,7 @@ import { logger } from './utils/logger.js';
 
 // Render requiere que el servidor escuche en 0.0.0.0 para detectar el puerto
 // También usa process.env.PORT que Render establece automáticamente
-const port = process.env.PORT || env.PORT;
+const port = process.env.PORT ? parseInt(process.env.PORT, 10) : env.PORT;
 const host = process.env.NODE_ENV === 'production' ? '0.0.0.0' : 'localhost';
 
 const server = app.listen(port, host, () => {

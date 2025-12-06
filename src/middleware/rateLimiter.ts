@@ -11,6 +11,10 @@ export const generalLimiter = rateLimit({
   message: { message: 'Demasiadas peticiones desde esta IP, intenta de nuevo en 15 minutos' },
   standardHeaders: true,
   legacyHeaders: false,
+  // Deshabilitar validación de trust proxy ya que está configurado correctamente en app.ts
+  validate: {
+    trustProxy: false,
+  },
 });
 
 /**
@@ -26,5 +30,9 @@ export const authLimiter = rateLimit({
   skipSuccessfulRequests: true,
   standardHeaders: true,
   legacyHeaders: false,
+  // Deshabilitar validación de trust proxy ya que está configurado correctamente en app.ts
+  validate: {
+    trustProxy: false,
+  },
 });
 

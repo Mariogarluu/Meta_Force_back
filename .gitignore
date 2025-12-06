@@ -11,6 +11,8 @@ coverage/
 *.swo
 .env.test
 .env.production
+.env.production.local
+.env.local
 logs/
 *.tsbuildinfo
 

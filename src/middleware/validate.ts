@@ -38,7 +38,7 @@ export const validate = (schema: CompositeSchema | ZodObject<any>) => (
       const parsed = schema.safeParse(req.body);
       if (!parsed.success) {
         // Formatear errores de Zod a un formato más legible
-        const errors = parsed.error.errors.map(err => ({
+        const errors = parsed.error.issues.map((err: z.ZodIssue) => ({
           path: err.path.join('.'),
           message: err.message
         }));
@@ -63,13 +63,18 @@ export const validate = (schema: CompositeSchema | ZodObject<any>) => (
       if (schema.body) {
         const p = schema.body.safeParse(req.body);
         if (!p.success) {
-          const errors = p.error.errors.map(err => ({
+          const errors = p.error.issues.map((err: z.ZodIssue) => ({
             path: err.path.join('.'),
             message: err.message
           }));
           const firstError = errors[0];
+          const errorMessage = firstError ? firstError.message : 'Error de validación en body';
+          
+          logger.warn(`Validation error on ${req.method} ${req.path} (body): ${errorMessage}`);
+          logger.warn(`Request body: ${JSON.stringify(req.body)}`);
+          
           return res.status(400).json({ 
-            message: firstError ? firstError.message : 'Error de validación en body',
+            message: errorMessage,
             errors: p.error.flatten()
           });
         }
@@ -78,13 +83,17 @@ export const validate = (schema: CompositeSchema | ZodObject<any>) => (
       if (schema.params) {
         const p = schema.params.safeParse(req.params);
         if (!p.success) {
-          const errors = p.error.errors.map(err => ({
+          const errors = p.error.issues.map((err: z.ZodIssue) => ({
             path: err.path.join('.'),
             message: err.message
           }));
           const firstError = errors[0];
+          const errorMessage = firstError ? firstError.message : 'Error de validación en params';
+          
+          logger.warn(`Validation error on ${req.method} ${req.path} (params): ${errorMessage}`);
+          
           return res.status(400).json({ 
-            message: firstError ? firstError.message : 'Error de validación en params',
+            message: errorMessage,
             errors: p.error.flatten()
           });
         }
@@ -93,13 +102,17 @@ export const validate = (schema: CompositeSchema | ZodObject<any>) => (
       if (schema.query) {
         const p = schema.query.safeParse(req.query);
         if (!p.success) {
-          const errors = p.error.errors.map(err => ({
+          const errors = p.error.issues.map((err: z.ZodIssue) => ({
             path: err.path.join('.'),
             message: err.message
           }));
           const firstError = errors[0];
+          const errorMessage = firstError ? firstError.message : 'Error de validación en query';
+          
+          logger.warn(`Validation error on ${req.method} ${req.path} (query): ${errorMessage}`);
+          
           return res.status(400).json({ 
-            message: firstError ? firstError.message : 'Error de validación en query',
+            message: errorMessage,
             errors: p.error.flatten()
           });
         }

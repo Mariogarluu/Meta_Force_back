@@ -1,5 +1,6 @@
 import type { Request, Response, NextFunction } from 'express';
 import { z, type ZodTypeAny, ZodObject } from 'zod';
+import { logger } from '../utils/logger.js';
 
 type CompositeSchema = {
   body?: ZodTypeAny;
@@ -35,7 +36,25 @@ export const validate = (schema: CompositeSchema | ZodObject<any>) => (
   try {
     if (isPlainZodObject(schema)) {
       const parsed = schema.safeParse(req.body);
-      if (!parsed.success) return res.status(400).json({ errors: parsed.error.flatten() });
+      if (!parsed.success) {
+        // Formatear errores de Zod a un formato más legible
+        const errors = parsed.error.errors.map(err => ({
+          path: err.path.join('.'),
+          message: err.message
+        }));
+        const firstError = errors[0];
+        const errorMessage = firstError ? firstError.message : 'Error de validación';
+        
+        // Log del error de validación
+        logger.warn(`Validation error on ${req.method} ${req.path}: ${errorMessage}`);
+        logger.warn(`Request body: ${JSON.stringify(req.body)}`);
+        logger.warn(`Validation errors: ${JSON.stringify(errors)}`);
+        
+        return res.status(400).json({ 
+          message: errorMessage,
+          errors: parsed.error.flatten()
+        });
+      }
       req.body = parsed.data as any;
       return next();
     }
@@ -43,17 +62,47 @@ export const validate = (schema: CompositeSchema | ZodObject<any>) => (
     if (isComposite(schema)) {
       if (schema.body) {
         const p = schema.body.safeParse(req.body);
-        if (!p.success) return res.status(400).json({ errors: p.error.flatten() });
+        if (!p.success) {
+          const errors = p.error.errors.map(err => ({
+            path: err.path.join('.'),
+            message: err.message
+          }));
+          const firstError = errors[0];
+          return res.status(400).json({ 
+            message: firstError ? firstError.message : 'Error de validación en body',
+            errors: p.error.flatten()
+          });
+        }
         req.body = p.data as any;
       }
       if (schema.params) {
         const p = schema.params.safeParse(req.params);
-        if (!p.success) return res.status(400).json({ errors: p.error.flatten() });
+        if (!p.success) {
+          const errors = p.error.errors.map(err => ({
+            path: err.path.join('.'),
+            message: err.message
+          }));
+          const firstError = errors[0];
+          return res.status(400).json({ 
+            message: firstError ? firstError.message : 'Error de validación en params',
+            errors: p.error.flatten()
+          });
+        }
         req.params = p.data as any;
       }
       if (schema.query) {
         const p = schema.query.safeParse(req.query);
-        if (!p.success) return res.status(400).json({ errors: p.error.flatten() });
+        if (!p.success) {
+          const errors = p.error.errors.map(err => ({
+            path: err.path.join('.'),
+            message: err.message
+          }));
+          const firstError = errors[0];
+          return res.status(400).json({ 
+            message: firstError ? firstError.message : 'Error de validación en query',
+            errors: p.error.flatten()
+          });
+        }
         req.query = p.data as any;
       }
       return next();

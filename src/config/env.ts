@@ -103,8 +103,17 @@ export const env = envParseResult.data;
 /**
  * Construye la URL de conexión a la base de datos desde las variables de entorno separadas.
  * Formato: postgresql://user:password@host:port/database?schema=public
+ * 
+ * Si DATABASE_URL está definida directamente, la usa (recomendado para Render).
+ * Si no, construye desde variables separadas.
  */
 export function getDatabaseUrl(): string {
+  // Prioridad 1: Usar DATABASE_URL directamente si existe
+  if (process.env.DATABASE_URL) {
+    return process.env.DATABASE_URL;
+  }
+  
+  // Prioridad 2: Construir desde variables separadas
   const { DB_USER, DB_PASSWORD, DB_HOST, DB_PORT, DB_DATABASE } = env;
   if (!DB_USER || !DB_PASSWORD || !DB_DATABASE) {
     throw new Error('DB_USER, DB_PASSWORD y DB_DATABASE son requeridos para construir DATABASE_URL');

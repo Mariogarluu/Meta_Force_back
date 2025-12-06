@@ -1,4 +1,5 @@
 import rateLimit from 'express-rate-limit';
+import { logger } from '../utils/logger.js';
 
 /**
  * Limitador de tasa general para todas las rutas de la API.
@@ -14,6 +15,10 @@ export const generalLimiter = rateLimit({
   // Deshabilitar validación de trust proxy ya que está configurado correctamente en app.ts
   validate: {
     trustProxy: false,
+  },
+  handler: (req, res) => {
+    logger.warn(`Rate limit exceeded for ${req.ip} on ${req.method} ${req.path}`);
+    res.status(429).json({ message: 'Demasiadas peticiones desde esta IP, intenta de nuevo en 15 minutos' });
   },
 });
 
@@ -33,6 +38,11 @@ export const authLimiter = rateLimit({
   // Deshabilitar validación de trust proxy ya que está configurado correctamente en app.ts
   validate: {
     trustProxy: false,
+  },
+  handler: (req, res) => {
+    logger.warn(`Auth rate limit exceeded for ${req.ip} on ${req.method} ${req.path}`);
+    logger.warn(`Request body: ${JSON.stringify(req.body)}`);
+    res.status(429).json({ message: 'Demasiados intentos de autenticación, intenta de nuevo en 15 minutos' });
   },
 });
 

@@ -20,6 +20,10 @@ import healthRoutes from './modules/health/health.routes.js';
 
 const app = express();
 
+// Configurar trust proxy para Render y otros servicios con proxy reverso
+// Esto permite que express-rate-limit identifique correctamente las IPs reales
+app.set('trust proxy', true);
+
 app.use(helmet({
   contentSecurityPolicy: false,
 }));

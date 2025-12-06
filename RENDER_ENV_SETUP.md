@@ -129,3 +129,4 @@ Después de configurar las variables:
 - ✅ Usa **External Database URL** si están en regiones diferentes
 - ⚠️ El hostname interno (`dpg-xxxxx-a`) solo funciona dentro de la red de Render
 
+

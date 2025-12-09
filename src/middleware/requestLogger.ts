@@ -8,9 +8,8 @@ import { logger } from '../utils/logger.js';
  */
 export function requestLogger(req: Request, res: Response, next: NextFunction) {
   const start = Date.now();
-  
   // Log del request recibido (solo en desarrollo o para debugging)
-  if (process.env.NODE_ENV === 'development') {
+  if (process.env.NODE_ENV === 'development') { 
     logger.http(`${req.method} ${req.path} - Body: ${JSON.stringify(req.body)}`);
   }
   
@@ -24,7 +23,8 @@ export function requestLogger(req: Request, res: Response, next: NextFunction) {
       // Para errores 4xx, también loguear el body de la respuesta si existe
       const responseBody = (res as any).locals?.responseBody;
       if (responseBody) {
-        logger.warn(`${message} - Response: ${JSON.stringify(responseBody)}`);
+        logger.warn(`${message} 
+ - Response: ${JSON.stringify(responseBody)}`);
       } else {
         logger.warn(message);
       }
@@ -32,7 +32,5 @@ export function requestLogger(req: Request, res: Response, next: NextFunction) {
       logger.http(message);
     }
   });
-  
   next();
 }
-

@@ -55,8 +55,17 @@ export default {
       "license": "ISC",
       "dependencies": {
         "@prisma/client": "^6.18.0",
+        "@types/bcrypt": "^6.0.0",
+        "@types/cors": "^2.8.19",
+        "@types/express": "^5.0.5",
+        "@types/jsonwebtoken": "^9.0.10",
+        "@types/morgan": "^1.9.10",
+        "@types/multer": "^2.0.0",
+        "@types/node": "^24.10.0",
+        "@types/swagger-jsdoc": "^6.0.4",
         "@types/swagger-ui-express": "^4.1.8",
         "bcrypt": "^6.0.0",
+        "cloudinary": "^2.8.0",
         "cors": "^2.8.5",
         "dotenv": "^17.2.3",
         "express": "^5.1.0",
@@ -64,21 +73,15 @@ export default {
         "helmet": "^8.1.0",
         "jsonwebtoken": "^9.0.2",
         "morgan": "^1.10.1",
+        "multer": "^2.0.2",
         "swagger-jsdoc": "^6.2.8",
         "swagger-ui-express": "^5.0.1",
         "winston": "^3.18.3",
-        "zod": "^4.1.12"
+        "zod": "^4.1.13"
       },
       "devDependencies": {
-        "@types/bcrypt": "^6.0.0",
-        "@types/cors": "^2.8.19",
-        "@types/express": "^5.0.5",
         "@types/jest": "^30.0.0",
-        "@types/jsonwebtoken": "^9.0.10",
-        "@types/morgan": "^1.9.10",
-        "@types/node": "^24.10.0",
         "@types/supertest": "^6.0.3",
-        "@types/swagger-jsdoc": "^6.0.4",
         "dotenv-cli": "^11.0.0",
         "jest": "^30.2.0",
         "nodemon": "^3.1.10",
@@ -1888,8 +1891,6 @@ export default {
       "version": "6.0.0",
       "resolved": "https://registry.npmjs.org/@types/bcrypt/-/bcrypt-6.0.0.tgz",
       "integrity": "sha512-/oJGukuH3D2+D+3H4JWLaAsJ/ji86dhRidzZ/Od7H/i8g+aCmvkeCc6Ni/f9uxGLSQVCRZkX2/lqEFG2BvWtlQ==",
-      "dev": true,
-      "license": "MIT",
       "dependencies": {
         "@types/node": "*"
       }
@@ -1924,8 +1925,6 @@ export default {
       "version": "2.8.19",
       "resolved": "https://registry.npmjs.org/@types/cors/-/cors-2.8.19.tgz",
       "integrity": "sha512-mFNylyeyqN93lfe/9CSxOGREz8cpzAhH+E93xJ4xWQf62V8sQ/24reV2nyzUWM6H6Xji+GGHpkbLe7pVoUEskg==",
-      "dev": true,
-      "license": "MIT",
       "dependencies": {
         "@types/node": "*"
       }
@@ -2007,8 +2006,6 @@ export default {
       "version": "9.0.10",
       "resolved": "https://registry.npmjs.org/@types/jsonwebtoken/-/jsonwebtoken-9.0.10.tgz",
       "integrity": "sha512-asx5hIG9Qmf/1oStypjanR7iKTv0gXQ1Ov/jfrX6kS/EO0OFni8orbmGCn0672NHR3kXHwpAwR+B368ZGN/2rA==",
-      "dev": true,
-      "license": "MIT",
       "dependencies": {
         "@types/ms": "*",
         "@types/node": "*"
@@ -2031,7 +2028,6 @@ export default {
       "version": "1.9.10",
       "resolved": "https://registry.npmjs.org/@types/morgan/-/morgan-1.9.10.tgz",
       "integrity": "sha512-sS4A1zheMvsADRVfT0lYbJ4S9lmsey8Zo2F7cnbYjWHP67Q0AwMYuuzLlkIM2N8gAbb9cubhIVFwcIN2XyYCkA==",
-      "dev": true,
       "license": "MIT",
       "dependencies": {
         "@types/node": "*"
@@ -2041,8 +2037,16 @@ export default {
       "version": "2.1.0",
       "resolved": "https://registry.npmjs.org/@types/ms/-/ms-2.1.0.tgz",
       "integrity": "sha512-GsCCIZDE/p3i96vtEqx+7dBUGXrc7zeSK3wwPHIaRThS+9OhWIXRqzs4d6k1SVU8g91DrNRWxWUGhp5KXQb2VA==",
-      "dev": true,
       "license": "MIT"
+    },
+    "node_modules/@types/multer": {
+      "version": "2.0.0",
+      "resolved": "https://registry.npmjs.org/@types/multer/-/multer-2.0.0.tgz",
+      "integrity": "sha512-C3Z9v9Evij2yST3RSBktxP9STm6OdMc5uR1xF1SGr98uv8dUlAL2hqwrZ3GVB3uyMyiegnscEK6PGtYvNrjTjw==",
+      "license": "MIT",
+      "dependencies": {
+        "@types/express": "*"
+      }
     },
     "node_modules/@types/node": {
       "version": "24.10.0",
@@ -2129,9 +2133,7 @@ export default {
     "node_modules/@types/swagger-jsdoc": {
       "version": "6.0.4",
       "resolved": "https://registry.npmjs.org/@types/swagger-jsdoc/-/swagger-jsdoc-6.0.4.tgz",
-      "integrity": "sha512-W+Xw5epcOZrF/AooUM/PccNMSAFOKWZA5dasNyMujTwsBkU74njSJBpvCCJhHAJ95XRMzQrrW844Btu0uoetwQ==",
-      "dev": true,
-      "license": "MIT"
+      "integrity": "sha512-W+Xw5epcOZrF/AooUM/PccNMSAFOKWZA5dasNyMujTwsBkU74njSJBpvCCJhHAJ95XRMzQrrW844Btu0uoetwQ=="
     },
     "node_modules/@types/swagger-ui-express": {
       "version": "4.1.8",
@@ -2540,6 +2542,12 @@ export default {
         "node": ">= 8"
       }
     },
+    "node_modules/append-field": {
+      "version": "1.0.0",
+      "resolved": "https://registry.npmjs.org/append-field/-/append-field-1.0.0.tgz",
+      "integrity": "sha512-klpgFSWLW1ZEs8svjfb7g4qWY0YS5imI82dTg+QahUvJ8YqAY0P10Uk8tTyh9ZGuYEZEMaeJYCF5BFuX552hsw==",
+      "license": "MIT"
+    },
     "node_modules/arg": {
       "version": "4.1.3",
       "resolved": "https://registry.npmjs.org/arg/-/arg-4.1.3.tgz",
@@ -2847,8 +2855,18 @@ export default {
       "version": "1.1.2",
       "resolved": "https://registry.npmjs.org/buffer-from/-/buffer-from-1.1.2.tgz",
       "integrity": "sha512-E+XQCRwSbaaiChtv6k6Dwgc+bx+Bs6vuKJHHl5kox/BaKbhiXzqQOwK4cO22yElGp2OCmjwVhT3HmxgyPGnJfQ==",
-      "dev": true,
       "license": "MIT"
+    },
+    "node_modules/busboy": {
+      "version": "1.6.0",
+      "resolved": "https://registry.npmjs.org/busboy/-/busboy-1.6.0.tgz",
+      "integrity": "sha512-8SFQbg/0hQ9xy3UNTB0YEnsNBbWfhf7RtnzpL7TkBiTBRfrQ9Fxcnz7VJsleJpyp6rVLvXiuORqjlHi5q+PYuA==",
+      "dependencies": {
+        "streamsearch": "^1.1.0"
+      },
+      "engines": {
+        "node": ">=10.16.0"
+      }
     },
     "node_modules/bytes": {
       "version": "3.1.2",
@@ -3165,6 +3183,19 @@ export default {
         "url": "https://github.com/chalk/wrap-ansi?sponsor=1"
       }
     },
+    "node_modules/cloudinary": {
+      "version": "2.8.0",
+      "resolved": "https://registry.npmjs.org/cloudinary/-/cloudinary-2.8.0.tgz",
+      "integrity": "sha512-s7frvR0HnQXeJsQSIsbLa/I09IMb1lOnVLEDH5b5E53WTiCYgrNNOBGV/i/nLHwrcEOUkqjfSwP1+enXWNYmdw==",
+      "license": "MIT",
+      "dependencies": {
+        "lodash": "^4.17.21",
+        "q": "^1.5.1"
+      },
+      "engines": {
+        "node": ">=9"
+      }
+    },
     "node_modules/co": {
       "version": "4.6.0",
       "resolved": "https://registry.npmjs.org/co/-/co-4.6.0.tgz",
@@ -3295,6 +3326,21 @@ export default {
       "resolved": "https://registry.npmjs.org/concat-map/-/concat-map-0.0.1.tgz",
       "integrity": "sha512-/Srv4dswyQNBfohGpz9o6Yb3Gz3SrUDqBH5rTuhGR7ahtlbYKnVxw2bCFMRljaA7EXHaXZ8wsHdodFvbkhKmqg==",
       "license": "MIT"
+    },
+    "node_modules/concat-stream": {
+      "version": "2.0.0",
+      "resolved": "https://registry.npmjs.org/concat-stream/-/concat-stream-2.0.0.tgz",
+      "integrity": "sha512-MWufYdFw53ccGjCA+Ol7XJYpAlW6/prSMzuPOTRnJGcGzuhLn4Scrz7qf6o8bROZ514ltazcIFJZevcfbo0x7A==",
+      "engines": [
+        "node >= 6.0"
+      ],
+      "license": "MIT",
+      "dependencies": {
+        "buffer-from": "^1.0.0",
+        "inherits": "^2.0.3",
+        "readable-stream": "^3.0.2",
+        "typedarray": "^0.0.6"
+      }
     },
     "node_modules/confbox": {
       "version": "0.2.2",
@@ -3540,6 +3586,7 @@ export default {
       "resolved": "https://registry.npmjs.org/dotenv-cli/-/dotenv-cli-11.0.0.tgz",
       "integrity": "sha512-r5pA8idbk7GFWuHEU7trSTflWcdBpQEK+Aw17UrSHjS6CReuhrrPcyC3zcQBPQvhArRHnBo/h6eLH1fkCvNlww==",
       "dev": true,
+      "license": "MIT",
       "dependencies": {
         "cross-spawn": "^7.0.6",
         "dotenv": "^17.1.0",
@@ -3555,6 +3602,7 @@ export default {
       "resolved": "https://registry.npmjs.org/dotenv-expand/-/dotenv-expand-12.0.3.tgz",
       "integrity": "sha512-uc47g4b+4k/M/SeaW1y4OApx+mtLWl92l5LMPP0GNXctZqELk+YGgOPIIC5elYmUH4OuoK3JLhuRUYegeySiFA==",
       "dev": true,
+      "license": "BSD-2-Clause",
       "dependencies": {
         "dotenv": "^16.4.5"
       },
@@ -3570,6 +3618,7 @@ export default {
       "resolved": "https://registry.npmjs.org/dotenv/-/dotenv-16.6.1.tgz",
       "integrity": "sha512-uBq4egWHTcTt33a72vpSG0z3HnPuIl6NqYcTrKEg2azoEyl2hpW0zqlxysq2pK9HlDIHyHyakeYaYnSAwd8bow==",
       "dev": true,
+      "license": "BSD-2-Clause",
       "engines": {
         "node": ">=12"
       },
@@ -5524,6 +5573,12 @@ export default {
         "node": ">=8"
       }
     },
+    "node_modules/lodash": {
+      "version": "4.17.21",
+      "resolved": "https://registry.npmjs.org/lodash/-/lodash-4.17.21.tgz",
+      "integrity": "sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==",
+      "license": "MIT"
+    },
     "node_modules/lodash.get": {
       "version": "4.4.2",
       "resolved": "https://registry.npmjs.org/lodash.get/-/lodash.get-4.4.2.tgz",
@@ -5791,7 +5846,6 @@ export default {
       "version": "1.2.8",
       "resolved": "https://registry.npmjs.org/minimist/-/minimist-1.2.8.tgz",
       "integrity": "sha512-2yyAR8qBkN3YuheJanUpWC5U3bb5osDywNB8RzDVlDwDHbocAJveqqj1u8+SVD7jkWT4yvsHCpWqqWqAxb0zCA==",
-      "dev": true,
       "license": "MIT",
       "funding": {
         "url": "https://github.com/sponsors/ljharb"
@@ -5805,6 +5859,18 @@ export default {
       "license": "ISC",
       "engines": {
         "node": ">=16 || 14 >=14.17"
+      }
+    },
+    "node_modules/mkdirp": {
+      "version": "0.5.6",
+      "resolved": "https://registry.npmjs.org/mkdirp/-/mkdirp-0.5.6.tgz",
+      "integrity": "sha512-FP+p8RB8OWpF3YZBCrP5gtADmtXApB5AMLn+vdyA+PyxCjrCs00mjyUozssO33cwDeT3wNGdLxJ5M//YqtHAJw==",
+      "license": "MIT",
+      "dependencies": {
+        "minimist": "^1.2.6"
+      },
+      "bin": {
+        "mkdirp": "bin/cmd.js"
       }
     },
     "node_modules/morgan": {
@@ -5855,6 +5921,67 @@ export default {
       "resolved": "https://registry.npmjs.org/ms/-/ms-2.1.3.tgz",
       "integrity": "sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==",
       "license": "MIT"
+    },
+    "node_modules/multer": {
+      "version": "2.0.2",
+      "resolved": "https://registry.npmjs.org/multer/-/multer-2.0.2.tgz",
+      "integrity": "sha512-u7f2xaZ/UG8oLXHvtF/oWTRvT44p9ecwBBqTwgJVq0+4BW1g8OW01TyMEGWBHbyMOYVHXslaut7qEQ1meATXgw==",
+      "license": "MIT",
+      "dependencies": {
+        "append-field": "^1.0.0",
+        "busboy": "^1.6.0",
+        "concat-stream": "^2.0.0",
+        "mkdirp": "^0.5.6",
+        "object-assign": "^4.1.1",
+        "type-is": "^1.6.18",
+        "xtend": "^4.0.2"
+      },
+      "engines": {
+        "node": ">= 10.16.0"
+      }
+    },
+    "node_modules/multer/node_modules/media-typer": {
+      "version": "0.3.0",
+      "resolved": "https://registry.npmjs.org/media-typer/-/media-typer-0.3.0.tgz",
+      "integrity": "sha512-dq+qelQ9akHpcOl/gUVRTxVIOkAJ1wR3QAvb4RsVjS8oVoFjDGTc679wJYmUmknUF5HwMLOgb5O+a3KxfWapPQ==",
+      "license": "MIT",
+      "engines": {
+        "node": ">= 0.6"
+      }
+    },
+    "node_modules/multer/node_modules/mime-db": {
+      "version": "1.52.0",
+      "resolved": "https://registry.npmjs.org/mime-db/-/mime-db-1.52.0.tgz",
+      "integrity": "sha512-sPU4uV7dYlvtWJxwwxHD0PuihVNiE7TyAbQ5SWxDCB9mUYvOgroQOwYQQOKPJ8CIbE+1ETVlOoK1UC2nU3gYvg==",
+      "license": "MIT",
+      "engines": {
+        "node": ">= 0.6"
+      }
+    },
+    "node_modules/multer/node_modules/mime-types": {
+      "version": "2.1.35",
+      "resolved": "https://registry.npmjs.org/mime-types/-/mime-types-2.1.35.tgz",
+      "integrity": "sha512-ZDY+bPm5zTTF+YpCrAU9nK0UgICYPT0QtT1NZWFv4s++TNkcgVaT0g6+4R2uI4MjQjzysHB1zxuWL50hzaeXiw==",
+      "license": "MIT",
+      "dependencies": {
+        "mime-db": "1.52.0"
+      },
+      "engines": {
+        "node": ">= 0.6"
+      }
+    },
+    "node_modules/multer/node_modules/type-is": {
+      "version": "1.6.18",
+      "resolved": "https://registry.npmjs.org/type-is/-/type-is-1.6.18.tgz",
+      "integrity": "sha512-TkRKr9sUTxEH8MdfuCSP7VizJyzRNMjj2J2do2Jr3Kym598JVdEksuzPQCnlFPW4ky9Q+iA+ma9BGm06XQBy8g==",
+      "license": "MIT",
+      "dependencies": {
+        "media-typer": "0.3.0",
+        "mime-types": "~2.1.24"
+      },
+      "engines": {
+        "node": ">= 0.6"
+      }
     },
     "node_modules/napi-postinstall": {
       "version": "0.3.4",
@@ -6464,6 +6591,17 @@ export default {
       ],
       "license": "MIT"
     },
+    "node_modules/q": {
+      "version": "1.5.1",
+      "resolved": "https://registry.npmjs.org/q/-/q-1.5.1.tgz",
+      "integrity": "sha512-kV/CThkXo6xyFEZUugw/+pIOywXcDbFYgSct5cT3gqlbkBE1SJdwy6UQoZvodiWF/ckQLZyDE/Bu1M6gVu5lVw==",
+      "deprecated": "You or someone you depend on is using Q, the JavaScript Promise library that gave JavaScript developers strong feelings about promises. They can almost certainly migrate to the native JavaScript promise now. Thank you literally everyone for joining me in this bet against the odds. Be excellent to each other.\n\n(For a CapTP with native promises, see @endo/eventual-send and @endo/captp)",
+      "license": "MIT",
+      "engines": {
+        "node": ">=0.6.0",
+        "teleport": ">=0.2.0"
+      }
+    },
     "node_modules/qs": {
       "version": "6.14.0",
       "resolved": "https://registry.npmjs.org/qs/-/qs-6.14.0.tgz",
@@ -6911,6 +7049,14 @@ export default {
       "license": "MIT",
       "engines": {
         "node": ">= 0.8"
+      }
+    },
+    "node_modules/streamsearch": {
+      "version": "1.1.0",
+      "resolved": "https://registry.npmjs.org/streamsearch/-/streamsearch-1.1.0.tgz",
+      "integrity": "sha512-Mcc5wHehp9aXz1ax6bZUyY5afg9u2rv5cqQI3mRrYkGC8rW2hM02jWuwjtL++LS5qinSyhj2QfLyNsuc+VsExg==",
+      "engines": {
+        "node": ">=10.0.0"
       }
     },
     "node_modules/string_decoder": {
@@ -7571,6 +7717,12 @@ export default {
         "node": ">= 0.6"
       }
     },
+    "node_modules/typedarray": {
+      "version": "0.0.6",
+      "resolved": "https://registry.npmjs.org/typedarray/-/typedarray-0.0.6.tgz",
+      "integrity": "sha512-/aCDEGatGvZ2BIk+HmLf4ifCJFwvKFNb9/JeZPMulfgFracn9QFcAf5GO8B/mweUjSoblS5In0cWhqpfs/5PQA==",
+      "license": "MIT"
+    },
     "node_modules/typescript": {
       "version": "5.9.3",
       "resolved": "https://registry.npmjs.org/typescript/-/typescript-5.9.3.tgz",
@@ -7917,6 +8069,15 @@ export default {
         "node": "^14.17.0 || ^16.13.0 || >=18.0.0"
       }
     },
+    "node_modules/xtend": {
+      "version": "4.0.2",
+      "resolved": "https://registry.npmjs.org/xtend/-/xtend-4.0.2.tgz",
+      "integrity": "sha512-LKYU1iAXJXUgAXn9URjiu+MWhyUXHsvfp7mcuYm9dSUKK0/CjtrUwFAxD82/mCWbtLsGjFIad0wIsod4zrTAEQ==",
+      "license": "MIT",
+      "engines": {
+        "node": ">=0.4"
+      }
+    },
     "node_modules/y18n": {
       "version": "5.0.8",
       "resolved": "https://registry.npmjs.org/y18n/-/y18n-5.0.8.tgz",
@@ -8071,10 +8232,9 @@ export default {
       }
     },
     "node_modules/zod": {
-      "version": "4.1.12",
-      "resolved": "https://registry.npmjs.org/zod/-/zod-4.1.12.tgz",
-      "integrity": "sha512-JInaHOamG8pt5+Ey8kGmdcAcg3OL9reK8ltczgHTAwNhMys/6ThXHityHxVV2p3fkw/c+MAvBHFVYHFZDmjMCQ==",
-      "license": "MIT",
+      "version": "4.1.13",
+      "resolved": "https://registry.npmjs.org/zod/-/zod-4.1.13.tgz",
+      "integrity": "sha512-AvvthqfqrAhNH9dnfmrfKzX5upOdjUVJYFqNSlkmGf64gRaTzlPwz99IHYnVs28qYAybvAlBV+H7pn0saFY4Ig==",
       "funding": {
         "url": "https://github.com/sponsors/colinhacks"
       }
@@ -8092,25 +8252,37 @@ export default {
   "type": "module",
   "description": "Este proyecto implementa una API REST con Node.js, Express y PostgreSQL siguiendo un desarrollo incremental versionado con Git tags.",
   "main": "index.js",
- "scripts": {
-  "dev": "nodemon src/index.ts",
-  "build": "tsc -p .",
-  "start": "node dist/index.js",
-  "test": "NODE_ENV=test NODE_OPTIONS=--experimental-vm-modules jest",
-  "test:watch": "NODE_ENV=test NODE_OPTIONS=--experimental-vm-modules jest --watch",
-  "test:coverage": "NODE_ENV=test NODE_OPTIONS=--experimental-vm-modules jest --coverage",
-  "prisma:migrate": "dotenv prisma migrate dev",
-  "prisma:generate": "dotenv prisma generate",
-  "prisma:studio": "dotenv prisma studio",
-  "prisma:status": "dotenv prisma migrate status"
-},
+  "scripts": {
+    "dev": "nodemon src/index.ts",
+    "build": "tsc -p .",
+    "start": "node dist/index.js",
+    "start:prod": "node scripts/start-prod.js",
+    "test": "NODE_ENV=test NODE_OPTIONS=--experimental-vm-modules jest",
+    "test:watch": "NODE_ENV=test NODE_OPTIONS=--experimental-vm-modules jest --watch",
+    "test:coverage": "NODE_ENV=test NODE_OPTIONS=--experimental-vm-modules jest --coverage",
+    "prisma:sync-url": "node scripts/sync-database-url.js",
+    "prisma:migrate": "npm run prisma:sync-url && dotenv -e .env -- prisma migrate dev",
+    "prisma:generate": "npm run prisma:sync-url && dotenv -e .env -- prisma generate",
+    "prisma:studio": "npm run prisma:sync-url && dotenv -e .env -- prisma studio",
+    "prisma:studio:prod": "dotenv -e .env.production.local -- prisma studio",
+    "prisma:status": "npm run prisma:sync-url && dotenv -e .env -- prisma migrate status"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@prisma/client": "^6.18.0",
+    "@types/bcrypt": "^6.0.0",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.5",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/morgan": "^1.9.10",
+    "@types/multer": "^2.0.0",
+    "@types/node": "^24.10.0",
+    "@types/swagger-jsdoc": "^6.0.4",
     "@types/swagger-ui-express": "^4.1.8",
     "bcrypt": "^6.0.0",
+    "cloudinary": "^2.8.0",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
@@ -8118,21 +8290,15 @@ export default {
     "helmet": "^8.1.0",
     "jsonwebtoken": "^9.0.2",
     "morgan": "^1.10.1",
+    "multer": "^2.0.2",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1",
     "winston": "^3.18.3",
-    "zod": "^4.1.12"
+    "zod": "^4.1.13"
   },
   "devDependencies": {
-    "@types/bcrypt": "^6.0.0",
-    "@types/cors": "^2.8.19",
-    "@types/express": "^5.0.5",
     "@types/jest": "^30.0.0",
-    "@types/jsonwebtoken": "^9.0.10",
-    "@types/morgan": "^1.9.10",
-    "@types/node": "^24.10.0",
     "@types/supertest": "^6.0.3",
-    "@types/swagger-jsdoc": "^6.0.4",
     "dotenv-cli": "^11.0.0",
     "jest": "^30.2.0",
     "nodemon": "^3.1.10",
@@ -8211,8 +8377,312 @@ main()
 --- END OF FILE: scripts\create-gymprep-admin.ts ---
 
 
+--- START OF FILE: scripts\init-env.js ---
+/**
+ * Script de inicialización que establece DATABASE_URL antes de cualquier operación de Prisma.
+ * Este archivo se puede requerir al inicio de cualquier script que use Prisma.
+ */
+import 'dotenv/config';
+
+const { DB_USER, DB_PASSWORD, DB_HOST, DB_PORT, DB_DATABASE } = process.env;
+
+if (DB_USER && DB_PASSWORD && DB_DATABASE && !process.env.DATABASE_URL) {
+  const user = encodeURIComponent(DB_USER);
+  const password = encodeURIComponent(DB_PASSWORD);
+  const host = DB_HOST || 'localhost';
+  const port = DB_PORT || '5432';
+  const database = DB_DATABASE;
+  
+  process.env.DATABASE_URL = `postgresql://${user}:${password}@${host}:${port}/${database}?schema=public`;
+  console.log('✅ DATABASE_URL establecida desde variables separadas');
+}
+
+
+--- END OF FILE: scripts\init-env.js ---
+
+
+--- START OF FILE: scripts\setup-database-url.js ---
+/**
+ * Script para establecer DATABASE_URL en process.env desde variables separadas.
+ * Este script se ejecuta antes de comandos de Prisma para asegurar que DATABASE_URL esté disponible.
+ * Funciona tanto en desarrollo (leyendo .env) como en producción (usando variables de entorno).
+ */
+import 'dotenv/config';
+
+/**
+ * Establece DATABASE_URL en process.env desde las variables de entorno separadas.
+ * Si DATABASE_URL ya existe, no la sobrescribe.
+ */
+function setupDatabaseUrl() {
+  // Si DATABASE_URL ya existe, no hacer nada
+  if (process.env.DATABASE_URL) {
+    console.log('✅ DATABASE_URL ya está establecida');
+    return;
+  }
+
+  const { DB_USER, DB_PASSWORD, DB_HOST, DB_PORT, DB_DATABASE } = process.env;
+
+  if (!DB_USER || !DB_PASSWORD || !DB_DATABASE) {
+    console.error('❌ Error: Faltan variables de entorno de base de datos');
+    console.error('Se requieren: DB_USER, DB_PASSWORD, DB_DATABASE');
+    console.error('Opcional: DB_HOST (default: localhost), DB_PORT (default: 5432)');
+    process.exit(1);
+  }
+
+  const user = encodeURIComponent(DB_USER);
+  const password = encodeURIComponent(DB_PASSWORD);
+  const host = DB_HOST || 'localhost';
+  const port = DB_PORT || '5432';
+  const database = DB_DATABASE;
+
+  process.env.DATABASE_URL = `postgresql://${user}:${password}@${host}:${port}/${database}?schema=public`;
+  console.log('✅ DATABASE_URL establecida desde variables separadas');
+  console.log(`   Host: ${host}:${port}`);
+  console.log(`   Database: ${database}`);
+  console.log(`   User: ${user}`);
+}
+
+// Ejecutar inmediatamente
+setupDatabaseUrl();
+
+
+--- END OF FILE: scripts\setup-database-url.js ---
+
+
+--- START OF FILE: scripts\setup-prisma-env.js ---
+/**
+ * Script helper para establecer DATABASE_URL desde variables separadas
+ * antes de ejecutar comandos de Prisma (Studio, Migrate, etc.)
+ */
+import 'dotenv/config';
+import { spawn } from 'child_process';
+
+const { DB_USER, DB_PASSWORD, DB_HOST, DB_PORT, DB_DATABASE } = process.env;
+
+// Establecer DATABASE_URL si no existe y tenemos las variables necesarias
+if (!process.env.DATABASE_URL) {
+  if (!DB_USER || !DB_PASSWORD || !DB_DATABASE) {
+    console.error('❌ Error: Faltan variables de entorno de base de datos');
+    console.error('Se requieren: DB_USER, DB_PASSWORD, DB_DATABASE');
+    console.error('O establece DATABASE_URL directamente en el .env');
+    process.exit(1);
+  }
+
+  const user = encodeURIComponent(DB_USER);
+  const password = encodeURIComponent(DB_PASSWORD);
+  const host = DB_HOST || 'localhost';
+  const port = DB_PORT || '5432';
+  const database = DB_DATABASE;
+
+  process.env.DATABASE_URL = `postgresql://${user}:${password}@${host}:${port}/${database}?schema=public`;
+  console.log('✅ DATABASE_URL establecida desde variables separadas');
+}
+
+// Ejecutar el comando de Prisma pasado como argumento
+const args = process.argv.slice(2);
+
+if (args.length === 0) {
+  console.error('❌ Error: Se requiere un comando de Prisma');
+  process.exit(1);
+}
+
+// Pasar DATABASE_URL explícitamente al proceso hijo
+const child = spawn('npx', ['prisma', ...args], {
+  stdio: 'inherit',
+  shell: true,
+  env: {
+    ...process.env,
+    DATABASE_URL: process.env.DATABASE_URL
+  }
+});
+
+child.on('exit', (code) => {
+  process.exit(code || 0);
+});
+
+--- END OF FILE: scripts\setup-prisma-env.js ---
+
+
+--- START OF FILE: scripts\start-prod.js ---
+/**
+ * Script wrapper para ejecutar el build y deploy en producción.
+ * Establece DATABASE_URL desde variables separadas antes de ejecutar Prisma.
+ */
+import 'dotenv/config';
+import { spawn } from 'child_process';
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+const projectRoot = join(__dirname, '..');
+
+/**
+ * Establece DATABASE_URL en process.env desde las variables de entorno separadas.
+ */
+function setupDatabaseUrl() {
+  // Si DATABASE_URL ya existe, no hacer nada (prioridad más alta)
+  if (process.env.DATABASE_URL) {
+    console.log('✅ DATABASE_URL ya está establecida');
+    return;
+  }
+
+  // Si no existe, intentar construir desde variables separadas
+  const { DB_USER, DB_PASSWORD, DB_HOST, DB_PORT, DB_DATABASE } = process.env;
+
+  if (!DB_USER || !DB_PASSWORD || !DB_DATABASE) {
+    console.error('❌ Error: Faltan variables de entorno de base de datos');
+    console.error('Se requiere: DATABASE_URL (recomendado)');
+    console.error('O alternativamente: DB_USER, DB_PASSWORD, DB_DATABASE');
+    console.error('Opcional: DB_HOST (default: localhost), DB_PORT (default: 5432)');
+    process.exit(1);
+  }
+
+  const user = encodeURIComponent(DB_USER);
+  const password = encodeURIComponent(DB_PASSWORD);
+  let host = DB_HOST || 'localhost';
+  const port = DB_PORT || '5432';
+  const database = DB_DATABASE;
+
+  // En Render, las bases de datos internas pueden necesitar el hostname completo
+  // Si el hostname termina en -a, puede ser necesario agregar .render.com o usar el hostname completo
+  // Render proporciona el hostname correcto en DB_HOST, así que lo usamos tal cual
+  // Si no tiene el formato completo, intentamos construir la URL interna de Render
+  if (host.includes('dpg-') && !host.includes('.')) {
+    // Hostname interno de Render PostgreSQL, puede necesitar el puerto interno
+    // Render maneja esto automáticamente, pero asegurémonos de usar el hostname correcto
+    console.log(`⚠️  Hostname de Render detectado: ${host}`);
+  }
+
+  process.env.DATABASE_URL = `postgresql://${user}:${password}@${host}:${port}/${database}?schema=public`;
+  console.log('✅ DATABASE_URL establecida desde variables separadas');
+  console.log(`   Host: ${host}:${port}`);
+  console.log(`   Database: ${database}`);
+  console.log(`   User: ${user}`);
+}
+
+/**
+ * Ejecuta un comando y espera a que termine.
+ */
+function runCommand(command, args, options = {}) {
+  return new Promise((resolve, reject) => {
+    console.log(`\n▶️  Ejecutando: ${command} ${args.join(' ')}`);
+    
+    const child = spawn(command, args, {
+      stdio: 'inherit',
+      shell: true,
+      cwd: projectRoot,
+      env: { ...process.env, ...options.env },
+      ...options
+    });
+
+    child.on('exit', (code) => {
+      if (code === 0) {
+        resolve();
+      } else {
+        reject(new Error(`Comando falló con código ${code}`));
+      }
+    });
+
+    child.on('error', (error) => {
+      reject(error);
+    });
+  });
+}
+
+/**
+ * Función principal que ejecuta todos los pasos en secuencia.
+ */
+async function main() {
+  try {
+    // 1. Establecer DATABASE_URL
+    setupDatabaseUrl();
+
+    // 2. Build TypeScript
+    await runCommand('npm', ['run', 'build']);
+
+    // 3. Prisma migrate deploy (DATABASE_URL está disponible en process.env)
+    // Nota: En Render, las bases de datos internas pueden no ser accesibles durante el build
+    // Si falla, las migraciones se ejecutarán al iniciar el servidor
+    try {
+      await runCommand('npx', ['prisma', 'migrate', 'deploy']);
+    } catch (migrateError) {
+      console.warn('⚠️  Advertencia: No se pudieron ejecutar las migraciones durante el build');
+      console.warn('   Las migraciones se intentarán ejecutar al iniciar el servidor');
+      console.warn(`   Error: ${migrateError.message}`);
+      // Continuar con el inicio del servidor, las migraciones se ejecutarán en runtime
+    }
+
+    // 4. Iniciar servidor
+    await runCommand('npm', ['start']);
+  } catch (error) {
+    console.error('❌ Error en start:prod:', error.message);
+    process.exit(1);
+  }
+}
+
+// Ejecutar
+main();
+
+
+--- END OF FILE: scripts\start-prod.js ---
+
+
+--- START OF FILE: scripts\sync-database-url.js ---
+/**
+ * Script para sincronizar DATABASE_URL en el archivo .env
+ * desde las variables separadas (DB_USER, DB_PASSWORD, etc.)
+ * 
+ * Ejecuta este script después de cambiar las variables de base de datos.
+ */
+import 'dotenv/config';
+import { readFileSync, writeFileSync } from 'fs';
+import { join } from 'path';
+
+const envPath = join(process.cwd(), '.env');
+
+try {
+  let envContent = readFileSync(envPath, 'utf-8');
+  
+  const { DB_USER, DB_PASSWORD, DB_HOST, DB_PORT, DB_DATABASE } = process.env;
+  
+  if (!DB_USER || !DB_PASSWORD || !DB_DATABASE) {
+    console.error('❌ Error: Faltan variables de entorno de base de datos');
+    console.error('Se requieren: DB_USER, DB_PASSWORD, DB_DATABASE');
+    process.exit(1);
+  }
+  
+  const user = encodeURIComponent(DB_USER);
+  const password = encodeURIComponent(DB_PASSWORD);
+  const host = DB_HOST || 'localhost';
+  const port = DB_PORT || '5432';
+  const database = DB_DATABASE;
+  
+  const databaseUrl = `postgresql://${user}:${password}@${host}:${port}/${database}?schema=public`;
+  
+  // Actualizar o agregar DATABASE_URL en el .env
+  if (envContent.includes('DATABASE_URL=')) {
+    // Reemplazar la línea existente
+    envContent = envContent.replace(/DATABASE_URL=.*/g, `DATABASE_URL="${databaseUrl}"`);
+  } else {
+    // Agregar al final
+    envContent += `\n# DATABASE_URL generada automáticamente desde variables separadas\nDATABASE_URL="${databaseUrl}"\n`;
+  }
+  
+  writeFileSync(envPath, envContent, 'utf-8');
+  console.log('✅ DATABASE_URL sincronizada en .env');
+  console.log(`   ${databaseUrl.replace(/:[^:@]+@/, ':****@')}`);
+} catch (error) {
+  console.error('❌ Error sincronizando DATABASE_URL:', error.message);
+  process.exit(1);
+}
+
+
+--- END OF FILE: scripts\sync-database-url.js ---
+
+
 --- START OF FILE: src\app.ts ---
-import express from 'express';
+import express, { type Request, type Response } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import swaggerUi from 'swagger-ui-express';
@@ -8230,8 +8700,19 @@ import userClassRouter from './modules/users/user-class.routes.js';
 import machineRoutes from './modules/machines/machines.routes.js';
 import accessRoutes from './modules/access/access.routes.js';
 import notificationRoutes from './modules/notifications/notifications.routes.js';
+import healthRoutes from './modules/health/health.routes.js';
 
 const app = express();
+
+/**
+ * Configuración de trust proxy para Render y otros servicios con proxy reverso.
+ * Render usa 1 proxy, así que confiamos en el primer proxy.
+ * Esto permite que express-rate-limit identifique correctamente las IPs reales
+ * de los clientes a través del header X-Forwarded-For.
+ * 
+ * @see https://expressjs.com/en/guide/behind-proxies.html
+ */
+app.set('trust proxy', 1);
 
 app.use(helmet({
   contentSecurityPolicy: false,
@@ -8239,12 +8720,13 @@ app.use(helmet({
 app.use(cors());
 app.use(express.json({ limit: '10mb' }));
 app.use(requestLogger);
+app.use('/api/health', healthRoutes);
 
 if (env.NODE_ENV !== 'test') {
   app.use(generalLimiter);
 }
 
-app.get('/', (_req, res) => {
+app.get('/', (_req: Request, res: Response) => {
   res.status(200).json({
     ok: true,
     message: 'Meta-Force API está funcionando correctamente',
@@ -8255,7 +8737,7 @@ app.get('/', (_req, res) => {
 // ----------------------------------------------------
 
 
-app.get('/health', (_req, res) => res.json({ ok: true }));
+app.get('/health', (_req: Request, res: Response) => res.json({ ok: true }));
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
@@ -8281,32 +8763,189 @@ export default app;
 --- END OF FILE: src\app.ts ---
 
 
+--- START OF FILE: src\config\cloudinary.ts ---
+import { v2 as cloudinary } from 'cloudinary';
+
+/**
+ * Configuración de Cloudinary para el manejo de imágenes.
+ * Requiere las siguientes variables de entorno:
+ * - CLOUDINARY_CLOUD_NAME
+ * - CLOUDINARY_API_KEY
+ * - CLOUDINARY_API_SECRET
+ */
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME || '',
+  api_key: process.env.CLOUDINARY_API_KEY || '',
+  api_secret: process.env.CLOUDINARY_API_SECRET || '',
+  secure: true
+});
+
+export { cloudinary };
+
+
+--- END OF FILE: src\config\cloudinary.ts ---
+
+
 --- START OF FILE: src\config\db.ts ---
 import { PrismaClient } from '@prisma/client';
+import { getDatabaseUrl } from './env.js';
 
-export const prisma = new PrismaClient();
+// Obtener la URL de la base de datos
+const databaseUrl = getDatabaseUrl();
+// Log de la URL (sin mostrar la contraseña completa)
+// const maskedUrl = databaseUrl.replace(/:([^:@]+)@/, ':****@');
+// console.log('🔗 Database URL configurada:', maskedUrl);
+// console.log('🔗 Hostname extraído:', new URL(databaseUrl).hostname);
 
-
+/**
+ * Inicializa el cliente de Prisma.
+ * Construye la DATABASE_URL desde las variables de entorno separadas o usa DATABASE_URL directamente.
+ */
+export const prisma = new PrismaClient({
+  datasources: {
+    db: {
+      url: databaseUrl,
+    },
+  },
+});
 --- END OF FILE: src\config\db.ts ---
 
 
 --- START OF FILE: src\config\env.ts ---
 import 'dotenv/config';
+import { z } from 'zod';
 
-const required = (v: string | undefined, k: string) => {
-  if (!v) throw new Error(`Falta variable de entorno: ${k}`);
-  return v;
-};
+/**
+ * Establece DATABASE_URL en process.env ANTES de la validación
+ * para que Prisma Studio y otros comandos de Prisma puedan encontrarla.
+ * Esto debe hacerse de forma síncrona y temprana.
+ * 
+ * Acepta dos formas de configuración:
+ * 1. DATABASE_URL directamente (recomendado para Render - usa Internal Database URL)
+ * 2. Variables separadas (DB_USER, DB_PASSWORD, DB_HOST, DB_PORT, DB_DATABASE)
+ */
+function setupDatabaseUrl() {
+  // Si DATABASE_URL ya existe, no hacer nada (prioridad más alta)
+  if (process.env.DATABASE_URL) {
+    return;
+  }
 
-export const env = {
-  PORT: Number(process.env.PORT ?? 3000),
-  NODE_ENV: process.env.NODE_ENV ?? 'development',
-  JWT_SECRET: required(process.env.JWT_SECRET, 'JWT_SECRET'),
-  DATABASE_URL: required(process.env.DATABASE_URL, 'DATABASE_URL'),
-  BCRYPT_SALT_ROUNDS: Number(process.env.BCRYPT_SALT_ROUNDS ?? 10),
-};
+  // Si no existe, intentar construir desde variables separadas
+  const { DB_USER, DB_PASSWORD, DB_HOST, DB_PORT, DB_DATABASE } = process.env;
+  
+  if (DB_USER && DB_PASSWORD && DB_DATABASE) {
+    const user = encodeURIComponent(DB_USER);
+    const password = encodeURIComponent(DB_PASSWORD);
+    const host = DB_HOST || 'localhost';
+    const port = DB_PORT || '5432';
+    const database = DB_DATABASE;
+    process.env.DATABASE_URL = `postgresql://${user}:${password}@${host}:${port}/${database}?schema=public`;
+  }
+}
+
+// Establecer DATABASE_URL inmediatamente (esto se ejecuta cuando se importa el módulo)
+setupDatabaseUrl();
+
+/**
+ * Esquema de validación para las variables de entorno del Servidor.
+ * Usa variables separadas para la base de datos en lugar de DATABASE_URL.
+ */
+const envSchema = z.object({
+  // General Server
+  PORT: z.preprocess(
+    (a) => parseInt(z.string().parse(a), 10),
+    z.number().positive().int().safe(),
+  ).default(3000),
+
+  NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
+
+  // Seguridad y Requeridos
+  JWT_SECRET: z.string().min(32, 'JWT_SECRET debe tener al menos 32 caracteres por seguridad.').nonempty(),
+
+  // Seguridad (BCrypt)
+  BCRYPT_SALT_ROUNDS: z.preprocess(
+    (a) => parseInt(z.string().parse(a), 10),
+    z.number().int().min(10, 'El SALT_ROUNDS debe ser 10 o superior para un hashing seguro.'),
+  ).default(10),
+
+  // Database Configuration (variables separadas - opcional si DATABASE_URL está definida)
+  // Si DATABASE_URL está definida, estas variables son opcionales
+  DB_USER: z.string().optional(),
+  DB_PASSWORD: z.string().optional(),
+  DB_HOST: z.string().optional(),
+  DB_PORT: z.preprocess(
+    (a) => {
+      if (!a || a === '') return undefined;
+      try {
+        return parseInt(z.string().parse(a), 10);
+      } catch {
+        return undefined;
+      }
+    },
+    z.number().positive().int().safe().optional(),
+  ).optional(),
+  DB_DATABASE: z.string().optional(),
+});
 
 
+// ----------------------------------------------------
+// 1. VALIDACIÓN
+// ----------------------------------------------------
+
+// Validar que al menos DATABASE_URL o las variables de DB estén definidas
+const hasDatabaseUrl = !!process.env.DATABASE_URL;
+const hasSeparateDbVars = !!(process.env.DB_USER && process.env.DB_PASSWORD && process.env.DB_DATABASE);
+
+if (!hasDatabaseUrl && !hasSeparateDbVars) {
+  console.error('❌ Error CRÍTICO: Se requiere DATABASE_URL o las variables DB_USER, DB_PASSWORD y DB_DATABASE');
+  throw new Error('Variables de entorno de base de datos inválidas. Se detiene el servidor.');
+}
+
+const envParseResult = envSchema.safeParse(process.env);
+
+if (!envParseResult.success) {
+  console.error('❌ Error CRÍTICO en las variables de entorno:');
+  console.error(envParseResult.error.issues);
+  throw new Error('Variables de entorno inválidas. Se detiene el servidor.');
+}
+
+/**
+ * El objeto 'env' ahora está validado, tipado y listo para usar de forma segura.
+ */
+export const env = envParseResult.data;
+
+/**
+ * Construye la URL de conexión a la base de datos desde las variables de entorno separadas.
+ * Formato: postgresql://user:password@host:port/database?schema=public
+ * 
+ * Si DATABASE_URL está definida directamente, la usa (recomendado para Render).
+ * Si no, construye desde variables separadas.
+ */
+export function getDatabaseUrl(): string {
+  // Prioridad 1: Usar DATABASE_URL directamente si existe
+  if (process.env.DATABASE_URL) {
+    return process.env.DATABASE_URL;
+  }
+  
+  // Prioridad 2: Construir desde variables separadas
+  const { DB_USER, DB_PASSWORD, DB_HOST, DB_PORT, DB_DATABASE } = env;
+  if (!DB_USER || !DB_PASSWORD || !DB_DATABASE) {
+    throw new Error('DB_USER, DB_PASSWORD y DB_DATABASE son requeridos para construir DATABASE_URL');
+  }
+  const host = DB_HOST || 'localhost';
+  const port = DB_PORT || 5432;
+  return `postgresql://${encodeURIComponent(DB_USER)}:${encodeURIComponent(DB_PASSWORD)}@${host}:${port}/${DB_DATABASE}?schema=public`;
+}
+
+// Asegurar que DATABASE_URL esté establecida (por si acaso)
+if (!process.env.DATABASE_URL) {
+  try {
+    process.env.DATABASE_URL = getDatabaseUrl();
+  } catch (error) {
+    // Si falla, significa que las variables no están validadas aún
+    // pero setupDatabaseUrl() ya debería haberlo hecho
+  }
+}
 --- END OF FILE: src\config\env.ts ---
 
 
@@ -8511,8 +9150,13 @@ import app from './app.js';
 import { env } from './config/env.js';
 import { logger } from './utils/logger.js';
 
-const server = app.listen(env.PORT, () => {
-  logger.info(`API escuchando en http://localhost:${env.PORT}`);
+// Render requiere que el servidor escuche en 0.0.0.0 para detectar el puerto
+// También usa process.env.PORT que Render establece automáticamente
+const port = process.env.PORT ? parseInt(process.env.PORT, 10) : env.PORT;
+const host = process.env.NODE_ENV === 'production' ? '0.0.0.0' : 'localhost';
+
+const server = app.listen(port, host, () => {
+  logger.info(`API escuchando en http://${host}:${port}`);
   logger.info(`Entorno: ${env.NODE_ENV}`);
 });
 
@@ -8726,18 +9370,34 @@ export function hasRole(...allowedRoles: Role[]) {
 
 --- START OF FILE: src\middleware\rateLimiter.ts ---
 import rateLimit from 'express-rate-limit';
+import { logger } from '../utils/logger.js';
 
 /**
  * Limitador de tasa general para todas las rutas de la API.
  * Permite máximo 100 peticiones por IP en una ventana de 15 minutos.
  * Útil para prevenir abuso general de la API.
+ * 
+ * @see https://github.com/express-rate-limit/express-rate-limit
  */
 export const generalLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 100,
+  windowMs: 15 * 60 * 1000, // 15 minutos
+  max: 100, // Máximo 100 peticiones por ventana
   message: { message: 'Demasiadas peticiones desde esta IP, intenta de nuevo en 15 minutos' },
-  standardHeaders: true,
-  legacyHeaders: false,
+  standardHeaders: true, // Incluir headers RateLimit-* en la respuesta
+  legacyHeaders: false, // No incluir headers X-RateLimit-*
+  // Deshabilitar validación de trust proxy ya que está configurado correctamente en app.ts
+  validate: {
+    trustProxy: false,
+  },
+  /**
+   * Handler personalizado que loguea cuando se excede el límite de tasa.
+   * @param req - Request de Express
+   * @param res - Response de Express
+   */
+  handler: (req, res) => {
+    logger.warn(`Rate limit exceeded for ${req.ip} on ${req.method} ${req.path}`);
+    res.status(429).json({ message: 'Demasiadas peticiones desde esta IP, intenta de nuevo en 15 minutos' });
+  },
 });
 
 /**
@@ -8745,14 +9405,31 @@ export const generalLimiter = rateLimit({
  * Permite máximo 5 intentos por IP en una ventana de 15 minutos.
  * Solo cuenta los intentos fallidos, ignorando las peticiones exitosas.
  * Útil para prevenir ataques de fuerza bruta en autenticación.
+ * 
+ * @see https://github.com/express-rate-limit/express-rate-limit
  */
 export const authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 5,
+  windowMs: 15 * 60 * 1000, // 15 minutos
+  max: 5, // Máximo 5 intentos por ventana
   message: { message: 'Demasiados intentos de autenticación, intenta de nuevo en 15 minutos' },
-  skipSuccessfulRequests: true,
-  standardHeaders: true,
-  legacyHeaders: false,
+  skipSuccessfulRequests: true, // Solo cuenta intentos fallidos
+  standardHeaders: true, // Incluir headers RateLimit-* en la respuesta
+  legacyHeaders: false, // No incluir headers X-RateLimit-*
+  // Deshabilitar validación de trust proxy ya que está configurado correctamente en app.ts
+  validate: {
+    trustProxy: false,
+  },
+  /**
+   * Handler personalizado que loguea cuando se excede el límite de tasa en autenticación.
+   * Incluye el body de la petición para debugging.
+   * @param req - Request de Express
+   * @param res - Response de Express
+   */
+  handler: (req, res) => {
+    logger.warn(`Auth rate limit exceeded for ${req.ip} on ${req.method} ${req.path}`);
+    logger.warn(`Request body: ${JSON.stringify(req.body)}`);
+    res.status(429).json({ message: 'Demasiados intentos de autenticación, intenta de nuevo en 15 minutos' });
+  },
 });
 
 
@@ -8770,6 +9447,10 @@ import { logger } from '../utils/logger.js';
  */
 export function requestLogger(req: Request, res: Response, next: NextFunction) {
   const start = Date.now();
+  // Log del request recibido (solo en desarrollo o para debugging)
+  if (process.env.NODE_ENV === 'development') { 
+    logger.http(`${req.method} ${req.path} - Body: ${JSON.stringify(req.body)}`);
+  }
   
   res.on('finish', () => {
     const duration = Date.now() - start;
@@ -8778,22 +9459,59 @@ export function requestLogger(req: Request, res: Response, next: NextFunction) {
     if (res.statusCode >= 500) {
       logger.error(message);
     } else if (res.statusCode >= 400) {
-      logger.warn(message);
+      // Para errores 4xx, también loguear el body de la respuesta si existe
+      const responseBody = (res as any).locals?.responseBody;
+      if (responseBody) {
+        logger.warn(`${message} 
+ - Response: ${JSON.stringify(responseBody)}`);
+      } else {
+        logger.warn(message);
+      }
     } else {
       logger.http(message);
     }
   });
-  
   next();
 }
-
-
 --- END OF FILE: src\middleware\requestLogger.ts ---
+
+
+--- START OF FILE: src\middleware\upload.ts ---
+import multer from 'multer';
+import type { Request } from 'express';
+
+/**
+ * Configuración de Multer para manejar la subida de archivos.
+ * Solo acepta imágenes (jpeg, jpg, png, gif, webp) con un tamaño máximo de 5MB.
+ */
+const storage = multer.memoryStorage();
+
+const fileFilter = (req: Request, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
+  const allowedMimes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+  
+  if (allowedMimes.includes(file.mimetype)) {
+    cb(null, true);
+  } else {
+    cb(new Error('Tipo de archivo no permitido. Solo se aceptan imágenes (JPEG, PNG, GIF, WEBP)'));
+  }
+};
+
+export const upload = multer({
+  storage,
+  fileFilter,
+  limits: {
+    fileSize: 5 * 1024 * 1024 // 5MB máximo
+  }
+});
+
+
+--- END OF FILE: src\middleware\upload.ts ---
 
 
 --- START OF FILE: src\middleware\validate.ts ---
 import type { Request, Response, NextFunction } from 'express';
 import { z, type ZodTypeAny, ZodObject } from 'zod';
+import { logger } from '../utils/logger.js';
 
 type CompositeSchema = {
   body?: ZodTypeAny;
@@ -8829,7 +9547,25 @@ export const validate = (schema: CompositeSchema | ZodObject<any>) => (
   try {
     if (isPlainZodObject(schema)) {
       const parsed = schema.safeParse(req.body);
-      if (!parsed.success) return res.status(400).json({ errors: parsed.error.flatten() });
+      if (!parsed.success) {
+        // Formatear errores de Zod a un formato más legible
+        const errors = parsed.error.issues.map((err: z.ZodIssue) => ({
+          path: err.path.join('.'),
+          message: err.message
+        }));
+        const firstError = errors[0];
+        const errorMessage = firstError ? firstError.message : 'Error de validación';
+        
+        // Log del error de validación
+        logger.warn(`Validation error on ${req.method} ${req.path}: ${errorMessage}`);
+        logger.warn(`Request body: ${JSON.stringify(req.body)}`);
+        logger.warn(`Validation errors: ${JSON.stringify(errors)}`);
+        
+        return res.status(400).json({ 
+          message: errorMessage,
+          errors: parsed.error.flatten()
+        });
+      }
       req.body = parsed.data as any;
       return next();
     }
@@ -8837,17 +9573,60 @@ export const validate = (schema: CompositeSchema | ZodObject<any>) => (
     if (isComposite(schema)) {
       if (schema.body) {
         const p = schema.body.safeParse(req.body);
-        if (!p.success) return res.status(400).json({ errors: p.error.flatten() });
+        if (!p.success) {
+          const errors = p.error.issues.map((err: z.ZodIssue) => ({
+            path: err.path.join('.'),
+            message: err.message
+          }));
+          const firstError = errors[0];
+          const errorMessage = firstError ? firstError.message : 'Error de validación en body';
+          
+          logger.warn(`Validation error on ${req.method} ${req.path} (body): ${errorMessage}`);
+          logger.warn(`Request body: ${JSON.stringify(req.body)}`);
+          
+          return res.status(400).json({ 
+            message: errorMessage,
+            errors: p.error.flatten()
+          });
+        }
         req.body = p.data as any;
       }
       if (schema.params) {
         const p = schema.params.safeParse(req.params);
-        if (!p.success) return res.status(400).json({ errors: p.error.flatten() });
+        if (!p.success) {
+          const errors = p.error.issues.map((err: z.ZodIssue) => ({
+            path: err.path.join('.'),
+            message: err.message
+          }));
+          const firstError = errors[0];
+          const errorMessage = firstError ? firstError.message : 'Error de validación en params';
+          
+          logger.warn(`Validation error on ${req.method} ${req.path} (params): ${errorMessage}`);
+          
+          return res.status(400).json({ 
+            message: errorMessage,
+            errors: p.error.flatten()
+          });
+        }
         req.params = p.data as any;
       }
       if (schema.query) {
         const p = schema.query.safeParse(req.query);
-        if (!p.success) return res.status(400).json({ errors: p.error.flatten() });
+        if (!p.success) {
+          const errors = p.error.issues.map((err: z.ZodIssue) => ({
+            path: err.path.join('.'),
+            message: err.message
+          }));
+          const firstError = errors[0];
+          const errorMessage = firstError ? firstError.message : 'Error de validación en query';
+          
+          logger.warn(`Validation error on ${req.method} ${req.path} (query): ${errorMessage}`);
+          
+          return res.status(400).json({ 
+            message: errorMessage,
+            errors: p.error.flatten()
+          });
+        }
         req.query = p.data as any;
       }
       return next();
@@ -9231,7 +10010,7 @@ import { registerSchema, loginSchema } from '../users/users.schema.js';
 export async function registerCtrl(req: Request, res: Response) {
   try {
     const { email, name, password, role } = registerSchema.parse(req.body);
-    const data = await register(email, name, password, role);
+    const data = await register(email, name, password, role as any);
     res.status(201).json(data);
   } catch (e: any) {
     if (e.message === 'Email ya registrado') {
@@ -9351,18 +10130,13 @@ import jwt from 'jsonwebtoken';
 import { env } from '../../config/env.js';
 import { createUser, findUserByEmail, getMeWithCenter } from '../users/users.service.js';
 import { Role } from '../../types/role.js';
+import { notifySuperAdmins } from '../notifications/notifications.service.js';
 
 /**
  * Registra un nuevo usuario en el sistema.
  * Valida que el email no esté ya registrado, hashea la contraseña con bcrypt,
  * crea el usuario con estado PENDING por defecto y genera un token JWT.
- * 
- * @param email - Email único del usuario
- * @param name - Nombre completo del usuario
- * @param password - Contraseña en texto plano (será hasheada)
- * @param role - Rol opcional del usuario (por defecto USER)
- * @returns Objeto con el usuario creado (incluyendo centerId) y token JWT
- * @throws Error si el email ya está registrado
+ * * NOTIFICACIÓN: Avisa a los Superadmins sobre el nuevo registro pendiente.
  */
 export async function register(email: string, name: string, password: string, role?: Role) {
   const existing = await findUserByEmail(email);
@@ -9374,6 +10148,18 @@ export async function register(email: string, name: string, password: string, ro
   const user = await createUser(email, name, hash, role);
   const userWithCenter = await getMeWithCenter(user.id);
   
+  // Notificar a Superadmins
+  try {
+    await notifySuperAdmins(
+      'Nuevo Usuario Registrado 👤',
+      `El usuario ${name} (${email}) se ha registrado y espera validación.`,
+      '/users?status=PENDING',
+      'INFO'
+    );
+  } catch (error) {
+    console.error('Error enviando notificación de registro:', error);
+  }
+
   const token = jwt.sign(
     { 
       sub: user.id, 
@@ -9384,7 +10170,7 @@ export async function register(email: string, name: string, password: string, ro
     env.JWT_SECRET, 
     { expiresIn: '7d' }
   );
-  
+
   return { 
     user: {
       ...user,
@@ -9398,11 +10184,6 @@ export async function register(email: string, name: string, password: string, ro
  * Autentica un usuario con su email y contraseña.
  * Verifica que el usuario exista, que su cuenta esté activa (status ACTIVE),
  * compara la contraseña con el hash almacenado y genera un token JWT válido por 7 días.
- * 
- * @param email - Email del usuario
- * @param password - Contraseña en texto plano
- * @returns Objeto con información del usuario (incluyendo centerId) y token JWT
- * @throws Error si las credenciales son inválidas o la cuenta no está activa
  */
 export async function login(email: string, password: string) {
   const user = await findUserByEmail(email);
@@ -9947,6 +10728,7 @@ export async function listClassesCtrl(_req: Request, res: Response) {
 export async function getClassCtrl(req: Request, res: Response) {
   try {
     const id = req.params.id;
+    if (!id) return res.status(400).json({ message: 'ID requerido' });
     const cls = await getClassById(id);
     if (!cls) return res.status(404).json({ message: 'Clase no encontrada' });
     res.json(cls);
@@ -9963,6 +10745,7 @@ export async function getClassCtrl(req: Request, res: Response) {
 export async function updateClassCtrl(req: Request, res: Response) {
   try {
     const id = req.params.id;
+    if (!id) return res.status(400).json({ message: 'ID requerido' });
     const updated = await updateClass(id, req.body);
     res.json(updated);
   } catch (error: any) {
@@ -9980,6 +10763,7 @@ export async function updateClassCtrl(req: Request, res: Response) {
 export async function deleteClassCtrl(req: Request, res: Response) {
   try {
     const id = req.params.id;
+    if (!id) return res.status(400).json({ message: 'ID requerido' });
     await deleteClass(id);
     res.status(204).send();
   } catch (error: any) {
@@ -9995,6 +10779,7 @@ export async function deleteClassCtrl(req: Request, res: Response) {
 export async function listClassUsersCtrl(req: Request, res: Response) {
   try {
     const id = req.params.id;
+    if (!id) return res.status(400).json({ message: 'ID requerido' });
     const users = await listUsersInClass(id);
     res.json(users);
   } catch (error: any) {
@@ -10011,6 +10796,7 @@ export async function joinClassCtrl(req: Request, res: Response) {
   try {
     if (!req.user) return res.status(401).json({ message: 'No autorizado' });
     const classId = req.params.id;
+    if (!classId) return res.status(400).json({ message: 'ID de clase requerido' });
 
     const exists = await prisma.gymClass.findUnique({ where: { id: classId } });
     if (!exists) return res.status(404).json({ message: 'Clase no encontrada' });
@@ -10031,6 +10817,7 @@ export async function leaveClassCtrl(req: Request, res: Response) {
   try {
     if (!req.user) return res.status(401).json({ message: 'No autorizado' });
     const classId = req.params.id;
+    if (!classId) return res.status(400).json({ message: 'ID de clase requerido' });
 
     const exists = await prisma.gymClass.findUnique({ where: { id: classId } });
     if (!exists) return res.status(404).json({ message: 'Clase no encontrada' });
@@ -10276,6 +11063,60 @@ export async function leaveClass(userId: string, classId: string) {
 --- END OF FILE: src\modules\classes\classes.service.ts ---
 
 
+--- START OF FILE: src\modules\health\health.controller.ts ---
+import type { Request, Response } from 'express';
+import { prisma } from '../../config/db.js';
+
+/**
+ * @desc    Verifica el estado del servidor y la conexión a la base de datos.
+ * @route   GET /api/health
+ */
+export const checkHealth = async (req: Request, res: Response) => {
+  try {
+    // Consulta mínima a la base de datos (Prisma realiza un SELECT 1).
+    // Si esta consulta falla, significa que la BD está caída o la conexión es incorrecta.
+    await prisma.$queryRaw`SELECT 1`; 
+
+    // Si la consulta es exitosa, el servidor y la BD están OK.
+    const healthcheck = {
+      uptime: process.uptime(),
+      message: 'OK',
+      timestamp: new Date().toISOString(),
+      database: 'Connected',
+      environment: process.env.NODE_ENV,
+    };
+    
+    res.status(200).json(healthcheck);
+  } catch (error) {
+    // Si hay un error, el servidor está vivo pero la DB está caída.
+    const errorHealthCheck = {
+      uptime: process.uptime(),
+      message: 'Service Unavailable',
+      timestamp: new Date().toISOString(),
+      database: 'Disconnected',
+      error: (error as Error).message,
+    };
+    
+    // Devolvemos el estado 503 (Servicio no disponible)
+    res.status(503).json(errorHealthCheck);
+  }
+};
+--- END OF FILE: src\modules\health\health.controller.ts ---
+
+
+--- START OF FILE: src\modules\health\health.routes.ts ---
+import { Router } from 'express';
+import { checkHealth } from './health.controller.js';
+
+const router = Router();
+
+// Ruta pública: GET /api/health
+router.get('/', checkHealth);
+
+export default router;
+--- END OF FILE: src\modules\health\health.routes.ts ---
+
+
 --- START OF FILE: src\modules\machines\machines.controller.ts ---
 import type { Request, Response } from 'express';
 import {
@@ -10318,6 +11159,7 @@ export async function listMachinesCtrl(_req: Request, res: Response) {
 export async function getMachineCtrl(req: Request, res: Response) {
   try {
     const id = req.params.id;
+    if (!id) return res.status(400).json({ message: 'ID requerido' });
     const machine = await getMachineById(id);
     if (!machine) return res.status(404).json({ message: 'Máquina no encontrada' });
     res.json(machine);
@@ -10334,6 +11176,7 @@ export async function getMachineCtrl(req: Request, res: Response) {
 export async function updateMachineCtrl(req: Request, res: Response) {
   try {
     const id = req.params.id;
+    if (!id) return res.status(400).json({ message: 'ID requerido' });
     const updated = await updateMachine(id, req.body);
     res.json(updated);
   } catch (error: any) {
@@ -10351,6 +11194,7 @@ export async function updateMachineCtrl(req: Request, res: Response) {
 export async function deleteMachineCtrl(req: Request, res: Response) {
   try {
     const id = req.params.id;
+    if (!id) return res.status(400).json({ message: 'ID requerido' });
     await deleteMachine(id);
     res.status(204).send();
   } catch (error: any) {
@@ -10367,6 +11211,7 @@ export async function deleteMachineCtrl(req: Request, res: Response) {
 export async function listMachinesByCenterCtrl(req: Request, res: Response) {
   try {
     const centerId = req.params.centerId;
+    if (!centerId) return res.status(400).json({ message: 'ID de centro requerido' });
     const machines = await listMachinesByCenter(centerId);
     res.json(machines);
   } catch (error: any) {
@@ -10542,10 +11387,10 @@ export const createMachineSchema = {
   body: z.object({
     name: z.string().min(1, 'name is required'),
     type: z.enum(['cardio', 'fuerza', 'peso libre', 'funcional', 'otro'], {
-      errorMap: () => ({ message: 'type debe ser: cardio, fuerza, peso libre, funcional u otro' }),
+      message: 'type debe ser: cardio, fuerza, peso libre, funcional u otro',
     }),
     status: z.enum(['operativa', 'en mantenimiento', 'fuera de servicio'], {
-      errorMap: () => ({ message: 'status debe ser: operativa, en mantenimiento o fuera de servicio' }),
+      message: 'status debe ser: operativa, en mantenimiento o fuera de servicio',
     }),
     centerId: cuidSchema,
   }),
@@ -10575,10 +11420,45 @@ export const centerIdParamSchema = {
 
 --- START OF FILE: src\modules\machines\machines.service.ts ---
 import { prisma } from '../../config/db.js';
+// 1. Importamos las funciones (Valores reales)
+import { notifyCenterAdmins, notifySuperAdmins } from '../notifications/notifications.service.js';
+// 2. Importamos el tipo por separado (Solo TypeScript)
+import type { NotificationType } from '../notifications/notifications.service.js';
+
+// --- HELPER INTERNO PARA NOTIFICACIONES DUALES ---
+/**
+ * Envía notificaciones tanto a los administradores del centro afectado como a los Superadministradores globales.
+ * Busca el nombre del centro para mostrarlo de forma legible.
+ */
+async function notifyMachineEvent(
+  centerId: string,
+  title: string,
+  message: string,
+  machineId?: string,
+  type: NotificationType = 'INFO'
+) {
+  const link = machineId ? `/machines?search=${machineId}` : '/machines';
+
+  // Buscar el nombre del centro para que el mensaje sea legible
+  const center = await prisma.center.findUnique({
+    where: { id: centerId },
+    select: { name: true }
+  });
+  
+  const centerName = center ? center.name : 'Centro desconocido';
+
+  // 1. Notificar a los Admins del Centro (ellos ya saben su centro, mensaje directo)
+  await notifyCenterAdmins(centerId, title, message, link, type);
+
+  // 2. Notificar a los Superadmins (añadimos el NOMBRE del centro al mensaje)
+  // Cambio clave: Usamos centerName en lugar de centerId
+  await notifySuperAdmins(title, `[Centro: ${centerName}] ${message}`, link, type);
+}
+// --------------------------------------------------
+
 
 /**
- * Crea una nueva máquina de gimnasio y la asigna a un centro específico.
- * Requiere nombre, tipo, estado y el ID del centro al que pertenece.
+ * Crea una nueva máquina de gimnasio y notifica el evento.
  */
 export async function createMachine(data: {
   name: string;
@@ -10586,67 +11466,139 @@ export async function createMachine(data: {
   status: string;
   centerId: string;
 }) {
-  return prisma.machine.create({ data });
+  const machine = await prisma.machine.create({ data });
+
+  try {
+    await notifyMachineEvent(
+      machine.centerId,
+      'Nueva Máquina Añadida 🆕',
+      `Se ha añadido la máquina "${machine.name}" (${machine.type}) en estado "${machine.status}".`,
+      machine.id,
+      'SUCCESS'
+    );
+  } catch (error) {
+    console.error('Error notificando creación de máquina:', error);
+  }
+
+  return machine;
 }
 
-/**
- * Lista todas las máquinas de todos los centros ordenadas por fecha de creación descendente.
- * Incluye información del centro al que pertenece cada máquina.
- */
 export async function listMachines() {
   return prisma.machine.findMany({
     orderBy: { createdAt: 'desc' },
     include: {
-      center: {
-        select: { id: true, name: true, city: true },
-      },
+      center: { select: { id: true, name: true, city: true } },
     },
   });
 }
 
-/**
- * Obtiene una máquina de gimnasio completa por su ID.
- * Incluye toda la información de la máquina y detalles del centro al que pertenece.
- */
 export async function getMachineById(id: string) {
   return prisma.machine.findUnique({
     where: { id },
     include: {
-      center: {
-        select: { id: true, name: true, city: true, country: true },
-      },
+      center: { select: { id: true, name: true, city: true, country: true } },
     },
   });
 }
 
 /**
- * Actualiza los datos de una máquina de gimnasio existente.
- * Permite modificar el nombre, tipo, estado y/o el centro al que pertenece.
+ * Actualiza una máquina y genera notificaciones precisas sobre los cambios.
  */
 export async function updateMachine(id: string, data: Partial<Parameters<typeof createMachine>[0]>) {
-  return prisma.machine.update({ where: { id }, data });
+  // 1. Obtener estado original ANTES de actualizar
+  const oldMachine = await prisma.machine.findUnique({ where: { id } });
+  if (!oldMachine) throw new Error('Máquina no encontrada');
+
+  // 2. Realizar la actualización
+  const updatedMachine = await prisma.machine.update({ where: { id }, data });
+
+  // 3. Calcular las diferencias (Deltas) para el mensaje
+  const changes: string[] = [];
+  if (data.name && data.name !== oldMachine.name) {
+    changes.push(`Nombre cambiado de "${oldMachine.name}" a "${data.name}"`);
+  }
+  if (data.type && data.type !== oldMachine.type) {
+    changes.push(`Tipo cambiado de "${oldMachine.type}" a "${data.type}"`);
+  }
+  if (data.status && data.status !== oldMachine.status) {
+    changes.push(`Estado cambiado de "${oldMachine.status}" a "${data.status}"`);
+  }
+  
+  // Lógica especial si se mueve de centro
+  let targetCenterId = oldMachine.centerId;
+  if (data.centerId && data.centerId !== oldMachine.centerId) {
+    // Necesitamos el nombre del centro nuevo para el mensaje
+    const newCenter = await prisma.center.findUnique({ where: { id: data.centerId }, select: { name: true } });
+    const oldCenter = await prisma.center.findUnique({ where: { id: oldMachine.centerId }, select: { name: true } });
+    
+    const oldName = oldCenter?.name || 'Desconocido';
+    const newName = newCenter?.name || 'Desconocido';
+
+    changes.push(`Movida del Centro "${oldName}" al "${newName}"`);
+    targetCenterId = data.centerId; // La notificación debe ir al nuevo centro
+  }
+
+  // 4. Si hubo cambios, notificar
+  if (changes.length > 0) {
+    const message = changes.join('. ') + '.';
+    
+    // Determinar severidad
+    let type: NotificationType = 'INFO';
+    if (data.status === 'en mantenimiento' || data.status === 'fuera de servicio') {
+      type = 'WARNING';
+    } else if (oldMachine.status !== 'operativa' && data.status === 'operativa') {
+      type = 'SUCCESS';
+    }
+
+    try {
+      await notifyMachineEvent(
+        targetCenterId,
+        'Máquina Actualizada 🛠️',
+        `${updatedMachine.name}: ${message}`,
+        updatedMachine.id,
+        type
+      );
+    } catch (error) {
+      console.error('Error notificando actualización de máquina:', error);
+    }
+  }
+
+  return updatedMachine;
 }
 
 /**
- * Elimina una máquina de gimnasio de la base de datos.
- * Esta operación es permanente y no afecta al centro al que pertenecía.
+ * Elimina una máquina y notifica el evento.
  */
 export async function deleteMachine(id: string) {
-  return prisma.machine.delete({ where: { id } });
+  // 1. Obtener datos antes de borrar para la notificación
+  const machineToDelete = await prisma.machine.findUnique({ where: { id } });
+  if (!machineToDelete) throw new Error('Máquina no encontrada para eliminar');
+
+  // 2. Borrar
+  await prisma.machine.delete({ where: { id } });
+
+  // 3. Notificar
+  try {
+    await notifyMachineEvent(
+      machineToDelete.centerId,
+      'Máquina Eliminada 🗑️',
+      `La máquina "${machineToDelete.name}" (${machineToDelete.type}) ha sido eliminada permanentemente del inventario.`,
+      undefined,
+      'ERROR'
+    );
+  } catch (error) {
+    console.error('Error notificando eliminación de máquina:', error);
+  }
+
+  return machineToDelete;
 }
 
-/**
- * Lista todas las máquinas de un centro específico.
- * Retorna las máquinas ordenadas por fecha de creación descendente.
- */
 export async function listMachinesByCenter(centerId: string) {
   return prisma.machine.findMany({
     where: { centerId },
     orderBy: { createdAt: 'desc' },
   });
 }
-
-
 --- END OF FILE: src\modules\machines\machines.service.ts ---
 
 
@@ -10843,6 +11795,7 @@ export async function markAllAsRead(userId: string) {
 
 --- START OF FILE: src\modules\users\user-center.routes.ts ---
 import { Router } from 'express';
+import type { Request, Response } from 'express';
 import { auth } from '../../middleware/auth.js';
 import { validate } from '../../middleware/validate.js';
 import { z } from 'zod';
@@ -10855,7 +11808,7 @@ const setMyCenterSchema = {
   body: z.object({ centerId: cuidSchema }),
 };
 
-router.patch('/me/center', auth, validate(setMyCenterSchema), async (req, res) => {
+router.patch('/me/center', auth, validate(setMyCenterSchema), async (req: Request, res: Response) => {
   try {
     if (!req.user) return res.status(401).json({ message: 'No autorizado' });
 
@@ -10883,6 +11836,7 @@ export default router;
 
 --- START OF FILE: src\modules\users\user-class.routes.ts ---
 import { Router } from 'express';
+import type { Request, Response } from 'express';
 import { auth } from '../../middleware/auth.js';
 import { validate } from '../../middleware/validate.js';
 import { z } from 'zod';
@@ -10913,7 +11867,7 @@ const leaveMyClassSchema = {
  *     tags: [Users, Classes]
  *     security: [ { bearerAuth: [] } ]
  */
-router.get('/me/classes', auth, validate(listMyClassesSchema), async (req, res) => {
+router.get('/me/classes', auth, validate(listMyClassesSchema), async (req: Request, res: Response) => {
   try {
     if (!req.user) return res.status(401).json({ message: 'No autorizado' });
 
@@ -10952,7 +11906,7 @@ router.get('/me/classes', auth, validate(listMyClassesSchema), async (req, res) 
  *               classId:
  *                 type: integer
  */
-router.post('/me/classes', auth, validate(joinMyClassSchema), async (req, res) => {
+router.post('/me/classes', auth, validate(joinMyClassSchema), async (req: Request, res: Response) => {
   try {
     if (!req.user) return res.status(401).json({ message: 'No autorizado' });
 
@@ -10986,11 +11940,12 @@ router.post('/me/classes', auth, validate(joinMyClassSchema), async (req, res) =
  *         schema: { type: integer }
  *         required: true
  */
-router.delete('/me/classes/:id', auth, validate(leaveMyClassSchema), async (req, res) => {
+router.delete('/me/classes/:id', auth, validate(leaveMyClassSchema), async (req: Request, res: Response) => {
   try {
     if (!req.user) return res.status(401).json({ message: 'No autorizado' });
 
     const classId = req.params.id;
+    if (!classId) return res.status(400).json({ message: 'ID de clase requerido' });
 
     const exists = await prisma.gymClass.findUnique({ where: { id: classId } });
     if (!exists) return res.status(404).json({ message: 'Clase no encontrada' });
@@ -11022,9 +11977,12 @@ import {
   updateProfile,
   changePassword,
   getMeWithCenter,
+  updateProfileImage,
+  deleteProfileImage,
 } from './users.service.js';
 import { Role } from '../../types/role.js';
 import { prisma } from '../../config/db.js';
+import { CloudinaryService } from '../../services/cloudinary.service.js';
 
 /**
  * Controlador para listar usuarios del sistema.
@@ -11064,7 +12022,7 @@ export async function getUserCtrl(req: Request, res: Response) {
     
     const user = await prisma.user.findUnique({
       where: { id },
-      select: { id: true, email: true, name: true, role: true, status: true, centerId: true, favoriteCenterId: true, createdAt: true }
+      select: { id: true, email: true, name: true, role: true, status: true, centerId: true, favoriteCenterId: true, profileImageUrl: true, createdAt: true }
     });
 
     if (!user) {
@@ -11270,6 +12228,92 @@ export async function changePasswordCtrl(req: Request, res: Response) {
   }
 }
 
+/**
+ * Controlador para subir una imagen de perfil.
+ * Sube la imagen a Cloudinary y actualiza la URL en la base de datos.
+ * Si el usuario ya tiene una imagen (y no es fauno.png), la elimina de Cloudinary antes de subir la nueva.
+ */
+export async function uploadProfileImageCtrl(req: Request, res: Response) {
+  try {
+    if (!req.user) {
+      return res.status(401).json({ message: 'No autorizado' });
+    }
+
+    const userId = req.user.sub;
+    if (!userId) {
+      return res.status(401).json({ message: 'Usuario no autenticado' });
+    }
+
+    if (!req.file) {
+      return res.status(400).json({ message: 'No se proporcionó ninguna imagen' });
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { profileImageUrl: true }
+    });
+
+    if (!user) {
+      return res.status(404).json({ message: 'Usuario no encontrado' });
+    }
+
+    // Eliminar imagen anterior si existe y no es fauno.png
+    if (user.profileImageUrl && !user.profileImageUrl.includes('fauno.png')) {
+      await CloudinaryService.deleteImage(user.profileImageUrl);
+    }
+
+    // Subir nueva imagen
+    const imageUrl = await CloudinaryService.uploadProfileImage(req.file.buffer, userId);
+    
+    // Actualizar en base de datos
+    const updatedUser = await updateProfileImage(userId, imageUrl);
+    
+    res.json(updatedUser);
+  } catch (error: any) {
+    console.error('Error subiendo imagen de perfil:', error);
+    res.status(500).json({ message: error.message || 'Error al subir la imagen' });
+  }
+}
+
+/**
+ * Controlador para eliminar la imagen de perfil del usuario autenticado.
+ * Elimina la imagen de Cloudinary y establece profileImageUrl a null en la base de datos.
+ */
+export async function deleteProfileImageCtrl(req: Request, res: Response) {
+  try {
+    if (!req.user) {
+      return res.status(401).json({ message: 'No autorizado' });
+    }
+
+    const userId = req.user.sub;
+    if (!userId) {
+      return res.status(401).json({ message: 'Usuario no autenticado' });
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { profileImageUrl: true }
+    });
+
+    if (!user) {
+      return res.status(404).json({ message: 'Usuario no encontrado' });
+    }
+
+    // Eliminar imagen de Cloudinary si existe y no es fauno.png
+    if (user.profileImageUrl && !user.profileImageUrl.includes('fauno.png')) {
+      await CloudinaryService.deleteImage(user.profileImageUrl);
+    }
+
+    // Actualizar en base de datos
+    const updatedUser = await deleteProfileImage(userId);
+    
+    res.json(updatedUser);
+  } catch (error: any) {
+    console.error('Error eliminando imagen de perfil:', error);
+    res.status(500).json({ message: error.message || 'Error al eliminar la imagen' });
+  }
+}
+
 --- END OF FILE: src\modules\users\users.controller.ts ---
 
 
@@ -11280,7 +12324,8 @@ import { validate } from '../../middleware/validate.js';
 import { updateUserSchema, updateProfileSchema, changePasswordSchema, userIdParamSchema } from './users.schema.js';
 import { hasRole } from '../../middleware/hasRole.js';
 import { Role } from '../../types/role.js';
-import { listUsersCtrl, getUserCtrl, meCtrl, updateUserCtrl, deleteUserCtrl, updateProfileCtrl, changePasswordCtrl } from './users.controller.js';
+import { listUsersCtrl, getUserCtrl, meCtrl, updateUserCtrl, deleteUserCtrl, updateProfileCtrl, changePasswordCtrl, uploadProfileImageCtrl, deleteProfileImageCtrl } from './users.controller.js';
+import { upload } from '../../middleware/upload.js';
 
 const router = Router();
 
@@ -11370,6 +12415,8 @@ router.get('/', auth, hasRole(Role.SUPERADMIN, Role.ADMIN_CENTER), listUsersCtrl
  */
 router.get('/me', auth, meCtrl);
 router.patch('/me', auth, validate(updateProfileSchema), updateProfileCtrl);
+router.post('/me/profile-image', auth, upload.single('image'), uploadProfileImageCtrl);
+router.delete('/me/profile-image', auth, deleteProfileImageCtrl);
 
 /**
  * @swagger
@@ -11556,12 +12603,10 @@ export const registerSchema = z.object({
   password: z.string().min(8, 'La contraseña debe tener al menos 8 caracteres'),
   role: roleEnum.optional(),
 });
-
 export const loginSchema = z.object({
   email: z.string().email('Email inválido'),
-  password: z.string().min(8, 'La contraseña debe tener al menos 8 caracteres')
+  password: z.string().min(1, 'La contraseña es requerida')
 });
-
 export const updateUserSchema = {
   params: z.object({ id: cuidSchema }),
   body: z.object({
@@ -11569,21 +12614,17 @@ export const updateUserSchema = {
     email: z.string().email('Email inválido').optional(),
     role: roleEnum.optional(),
     status: userStatusEnum.optional(),
-    favoriteCenterId: cuidSchema.optional().nullable(), // Centro favorito/asignado (se puede cambiar desde CRUD)
-    // centerId NO se puede cambiar desde CRUD, solo desde el escáner QR
+    favoriteCenterId: cuidSchema.optional().nullable(),
   }),
 };
-
 export const updateProfileSchema = z.object({
   name: z.string().min(2, 'El nombre debe tener al menos 2 caracteres').optional(),
   email: z.string().email('Email inválido').optional(),
 });
-
 export const changePasswordSchema = z.object({
   currentPassword: z.string().min(1, 'La contraseña actual es requerida'),
   newPassword: z.string().min(8, 'La nueva contraseña debe tener al menos 8 caracteres')
 });
-
 export const userIdParamSchema = {
   params: z.object({ id: cuidSchema }),
 };
@@ -11593,8 +12634,6 @@ export type LoginInput = z.infer<typeof loginSchema>;
 export type UpdateUserInput = z.infer<typeof updateUserSchema.body>;
 export type UpdateProfileInput = z.infer<typeof updateProfileSchema>;
 export type ChangePasswordInput = z.infer<typeof changePasswordSchema>;
-
-
 --- END OF FILE: src\modules\users\users.schema.ts ---
 
 
@@ -11603,17 +12642,10 @@ import { prisma } from '../../config/db.js';
 import bcrypt from 'bcrypt';
 import { env } from '../../config/env.js';
 import { Role } from '../../types/role.js';
+import { createNotification } from '../notifications/notifications.service.js';
 
 /**
- * Crea un nuevo usuario en el sistema con el email, nombre, hash de contraseña y rol proporcionados.
- * El usuario se crea con estado PENDING por defecto y requiere activación por un administrador.
- * Si no se especifica un rol, se asigna el rol USER por defecto.
- * 
- * @param email - Email único del usuario
- * @param name - Nombre completo del usuario
- * @param passwordHash - Hash de la contraseña (debe estar hasheada con bcrypt)
- * @param role - Rol opcional del usuario (por defecto USER)
- * @returns Usuario creado sin incluir el hash de contraseña
+ * Crea un nuevo usuario en el sistema.
  */
 export async function createUser(email: string, name: string, passwordHash: string, role?: Role | string) {
   return prisma.user.create({
@@ -11621,215 +12653,234 @@ export async function createUser(email: string, name: string, passwordHash: stri
       email, 
       name, 
       passwordHash,
-      role: (role as string) || Role.USER
+      role: (role as Role) || Role.USER
     },
     select: { id: true, email: true, name: true, role: true, status: true, createdAt: true }
   });
 }
 
-/**
- * Busca un usuario en la base de datos por su dirección de email.
- * Retorna el usuario completo incluyendo el hash de contraseña si existe.
- * Este método se usa principalmente para autenticación.
- * 
- * @param email - Email del usuario a buscar
- * @returns Usuario encontrado o null si no existe
- */
 export async function findUserByEmail(email: string) {
   return prisma.user.findUnique({ where: { email } });
 }
 
-/**
- * Busca un usuario en la base de datos por su ID.
- * Retorna información pública del usuario sin incluir el hash de contraseña.
- * 
- * @param id - ID único del usuario (CUID)
- * @returns Usuario encontrado o null si no existe
- */
 export async function findUserById(id: string) {
   return prisma.user.findUnique({
     where: { id },
     select: { 
-      id: true, 
-      email: true, 
-      name: true, 
-      role: true, 
-      status: true, 
-      centerId: true,
-      favoriteCenterId: true,
-      createdAt: true 
+      id: true, email: true, name: true, role: true, status: true, centerId: true, favoriteCenterId: true, profileImageUrl: true, createdAt: true 
     }
   });
 }
 
-/**
- * Lista todos los usuarios del sistema con filtrado opcional por centro actual.
- * 
- * Si se proporciona un centerId, filtra para mostrar solo los usuarios que están
- * físicamente en ese centro (centerId coincide). Esto es útil para ver quién está
- * actualmente presente en un centro específico.
- * 
- * Los usuarios se ordenan por fecha de creación ascendente.
- * Retorna tanto centerId (centro actual) como favoriteCenterId (centro asignado).
- * 
- * @param centerId - ID del centro actual para filtrar usuarios (opcional)
- * @returns Lista de usuarios con información pública incluyendo centerId y favoriteCenterId
- */
 export async function listUsers(centerId?: string | null) {
   const where = centerId ? { centerId } : {};
-  
   return prisma.user.findMany({
     where,
     select: { 
-      id: true, 
-      email: true, 
-      name: true, 
-      role: true, 
-      status: true, 
-      centerId: true, 
-      favoriteCenterId: true,
-      createdAt: true 
+      id: true, email: true, name: true, role: true, status: true, centerId: true, favoriteCenterId: true, profileImageUrl: true, createdAt: true 
     },
     orderBy: { createdAt: 'asc' }
   });
 }
 
 /**
- * Actualiza los datos de un usuario existente en la base de datos.
- * 
- * IMPORTANTE: Este método NO permite actualizar centerId (centro actual).
- * El centerId solo se puede modificar desde el módulo de acceso (QR scanner).
- * Si se intenta actualizar centerId, se ignora silenciosamente.
- * 
- * Permite actualizar:
- * - name: Nombre del usuario
- * - email: Email del usuario (debe ser único)
- * - role: Rol del usuario
- * - status: Estado del usuario (PENDING, ACTIVE, INACTIVE)
- * - favoriteCenterId: Centro favorito/asignado del usuario (puede ser null)
- * 
- * No valida permisos - esto debe hacerse en el controlador antes de llamar a este método.
- * 
- * @param id - ID único del usuario a actualizar
- * @param data - Objeto con los campos a actualizar (todos opcionales)
- * @returns Usuario actualizado sin incluir el hash de contraseña, incluyendo centerId y favoriteCenterId
+ * Actualiza los datos de un usuario.
+ * * LÓGICA DE NEGOCIO:
+ * Si el estado cambia a 'ACTIVE', notifica al usuario de que su cuenta ha sido activada.
  */
-export async function updateUser(id: string, data: { name?: string; email?: string; role?: Role | string; status?: string; favoriteCenterId?: string | null }) {
-  // Separar centerId si viene (no debería, pero por seguridad lo ignoramos)
+export async function updateUser(id: string, data: { name?: string; email?: string; role?: Role | string; status?: string; favoriteCenterId?: string | null; profileImageUrl?: string | null }) {
   const { centerId, ...updateData } = data as any;
   
-  return prisma.user.update({
+  const updatedUser = await prisma.user.update({
     where: { id },
     data: {
       ...updateData,
       role: updateData.role as string | undefined
     },
     select: { 
-      id: true, 
-      email: true, 
-      name: true, 
-      role: true, 
-      status: true, 
-      centerId: true, 
-      favoriteCenterId: true,
-      createdAt: true 
+      id: true, email: true, name: true, role: true, status: true, centerId: true, favoriteCenterId: true, profileImageUrl: true, createdAt: true 
     }
   });
+
+  // Notificar activación
+  if (data.status === 'ACTIVE') {
+    try {
+      await createNotification({
+        userId: id,
+        title: 'Cuenta Activada 🎉',
+        message: 'Tu cuenta ha sido validada. Ya puedes acceder a todas las funciones de Meta Force.',
+        type: 'SUCCESS',
+        link: '/dashboard'
+      });
+    } catch (error) {
+      console.error('Error notificando activación de usuario:', error);
+    }
+  }
+
+  return updatedUser;
 }
 
-/**
- * Elimina un usuario de la base de datos usando su ID.
- * Esta operación es permanente y eliminará todas las relaciones asociadas según la configuración de Prisma.
- * Las relaciones con centros se eliminan en cascada (onDelete: SetNull).
- * 
- * @param id - ID único del usuario a eliminar
- * @returns Usuario eliminado
- */
 export async function deleteUser(id: string) {
   return prisma.user.delete({ where: { id } });
 }
 
-/**
- * Actualiza el perfil de un usuario autenticado.
- * Solo permite modificar el nombre y el email, no permite cambiar el rol ni otros datos sensibles.
- * Este método está diseñado para que los usuarios actualicen su propia información.
- * 
- * @param userId - ID del usuario autenticado
- * @param data - Objeto con nombre y/o email a actualizar
- * @returns Usuario actualizado sin incluir el hash de contraseña
- */
-export async function updateProfile(userId: string, data: { name?: string; email?: string }) {
+export async function updateProfile(userId: string, data: { name?: string; email?: string; profileImageUrl?: string | null }) {
   return prisma.user.update({
     where: { id: userId },
     data,
-    select: { id: true, email: true, name: true, role: true, status: true, createdAt: true }
+    select: { id: true, email: true, name: true, role: true, status: true, profileImageUrl: true, createdAt: true }
   });
 }
 
 /**
- * Cambia la contraseña de un usuario verificando primero que la contraseña actual sea correcta.
- * Hashea la nueva contraseña con bcrypt antes de almacenarla en la base de datos.
- * 
- * @param userId - ID del usuario que quiere cambiar su contraseña
- * @param currentPassword - Contraseña actual en texto plano
- * @param newPassword - Nueva contraseña en texto plano (será hasheada)
- * @returns Objeto con mensaje de éxito
- * @throws Error si el usuario no existe o si la contraseña actual es incorrecta
+ * Actualiza la URL de la imagen de perfil del usuario.
+ * @param userId - ID del usuario
+ * @param imageUrl - URL de la imagen en Cloudinary
  */
+export async function updateProfileImage(userId: string, imageUrl: string) {
+  return prisma.user.update({
+    where: { id: userId },
+    data: { profileImageUrl: imageUrl },
+    select: { id: true, email: true, name: true, role: true, status: true, profileImageUrl: true, createdAt: true }
+  });
+}
+
+/**
+ * Elimina la imagen de perfil del usuario, estableciendo profileImageUrl a null.
+ * @param userId - ID del usuario
+ */
+export async function deleteProfileImage(userId: string) {
+  return prisma.user.update({
+    where: { id: userId },
+    data: { profileImageUrl: null },
+    select: { id: true, email: true, name: true, role: true, status: true, profileImageUrl: true, createdAt: true }
+  });
+}
+
 export async function changePassword(userId: string, currentPassword: string, newPassword: string) {
   const user = await prisma.user.findUnique({ where: { id: userId } });
-
-  if (!user) {
-    throw new Error('Usuario no encontrado');
-  }
+  if (!user) throw new Error('Usuario no encontrado');
 
   const isValid = await bcrypt.compare(currentPassword, user.passwordHash);
-
-  if (!isValid) {
-    throw new Error('Contraseña actual incorrecta');
-  }
+  if (!isValid) throw new Error('Contraseña actual incorrecta');
 
   const newHash = await bcrypt.hash(newPassword, env.BCRYPT_SALT_ROUNDS);
-
   await prisma.user.update({
     where: { id: userId },
     data: { passwordHash: newHash }
   });
-
   return { message: 'Contraseña actualizada correctamente' };
 }
 
-/**
- * Obtiene la información completa del usuario autenticado incluyendo los datos de sus centros.
- * 
- * Retorna información pública del usuario y datos básicos de:
- * - center: Centro actual donde está físicamente (centerId)
- * - favoriteCenter: Centro favorito/asignado (favoriteCenterId)
- * 
- * Este método se usa principalmente para el endpoint /me que devuelve el perfil del usuario autenticado.
- * 
- * @param id - ID único del usuario autenticado
- * @returns Usuario con información de ambos centros (actual y favorito) o null si no existe
- */
 export async function getMeWithCenter(id: string) {
   return prisma.user.findUnique({
     where: { id },
     select: {
-      id: true,
-      email: true,
-      name: true,
-      role: true,
-      status: true,
-      createdAt: true,
-      centerId: true,
-      favoriteCenterId: true,
+      id: true, email: true, name: true, role: true, status: true, profileImageUrl: true, createdAt: true, centerId: true, favoriteCenterId: true,
       center: { select: { id: true, name: true } },
       favoriteCenter: { select: { id: true, name: true } },
     },
   });
 }
-
 --- END OF FILE: src\modules\users\users.service.ts ---
+
+
+--- START OF FILE: src\services\cloudinary.service.ts ---
+import { cloudinary } from '../config/cloudinary.js';
+
+/**
+ * Servicio para gestionar operaciones con Cloudinary.
+ * Maneja la subida y eliminación de imágenes de perfil de usuario.
+ */
+export class CloudinaryService {
+  /**
+   * Sube una imagen a Cloudinary y retorna la URL pública.
+   * @param fileBuffer - Buffer de la imagen a subir
+   * @param userId - ID del usuario para nombrar la imagen
+   * @returns URL pública de la imagen subida
+   */
+  static async uploadProfileImage(fileBuffer: Buffer, userId: string): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const uploadStream = cloudinary.uploader.upload_stream(
+        {
+          folder: 'meta-force/profiles',
+          public_id: `profile_${userId}`,
+          overwrite: true,
+          resource_type: 'image',
+          transformation: [
+            { width: 400, height: 400, crop: 'fill', gravity: 'face' },
+            { quality: 'auto' },
+            { fetch_format: 'auto' }
+          ]
+        },
+        (error: any, result: any) => {
+          if (error) {
+            reject(new Error(`Error subiendo imagen a Cloudinary: ${error.message || 'Error desconocido'}`));
+          } else if (result && result.secure_url) {
+            resolve(result.secure_url);
+          } else {
+            reject(new Error('Error desconocido al subir imagen'));
+          }
+        }
+      );
+
+      // Escribir el buffer directamente en el stream usando el método end
+      if (uploadStream && typeof (uploadStream as any).end === 'function') {
+        (uploadStream as any).end(fileBuffer);
+      } else {
+        // Fallback: intentar escribir directamente
+        (uploadStream as any).write(fileBuffer);
+        (uploadStream as any).end();
+      }
+    });
+  }
+
+  /**
+   * Elimina una imagen de Cloudinary usando su URL pública.
+   * Extrae el public_id de la URL antes de eliminar.
+   * @param imageUrl - URL pública de la imagen a eliminar
+   * @returns true si se eliminó correctamente
+   */
+  static async deleteImage(imageUrl: string): Promise<boolean> {
+    try {
+      if (!imageUrl || imageUrl.includes('fauno.png')) {
+        return true;
+      }
+
+      const publicId = this.extractPublicId(imageUrl);
+      if (!publicId) {
+        return false;
+      }
+
+      const result = await cloudinary.uploader.destroy(publicId);
+      return result.result === 'ok';
+    } catch (error) {
+      console.error('Error eliminando imagen de Cloudinary:', error);
+      return false;
+    }
+  }
+
+  /**
+   * Extrae el public_id de una URL de Cloudinary.
+   * Las URLs de Cloudinary tienen el formato: https://res.cloudinary.com/{cloud_name}/image/upload/{version}/{public_id}.{format}
+   * @param url - URL de Cloudinary
+   * @returns public_id completo (incluyendo la carpeta) o null si no se puede extraer
+   */
+  private static extractPublicId(url: string): string | null {
+    try {
+      const match = url.match(/\/upload\/(?:v\d+\/)?(.+?)(?:\.[^.]+)?$/);
+      if (match && match[1]) {
+        return match[1];
+      }
+      return null;
+    } catch (error) {
+      console.error('Error extrayendo public_id:', error);
+      return null;
+    }
+  }
+}
+
+--- END OF FILE: src\services\cloudinary.service.ts ---
 
 
 --- START OF FILE: src\tests\auth.test.ts ---
@@ -12226,7 +13277,7 @@ export const optionalCuidSchema = z.string().regex(/^c[a-z0-9]{24}$/, {
     "outDir": "./dist",
     "module": "nodenext",
     "target": "esnext",
-    "types": [],
+    "types": ["node"],
     "sourceMap": true,
     "declaration": true,
     "declarationMap": true,

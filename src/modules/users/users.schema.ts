@@ -10,12 +10,10 @@ export const registerSchema = z.object({
   password: z.string().min(8, 'La contraseña debe tener al menos 8 caracteres'),
   role: roleEnum.optional(),
 });
-
 export const loginSchema = z.object({
   email: z.string().email('Email inválido'),
-  password: z.string().min(8, 'La contraseña debe tener al menos 8 caracteres')
+  password: z.string().min(1, 'La contraseña es requerida')
 });
-
 export const updateUserSchema = {
   params: z.object({ id: cuidSchema }),
   body: z.object({
@@ -23,21 +21,17 @@ export const updateUserSchema = {
     email: z.string().email('Email inválido').optional(),
     role: roleEnum.optional(),
     status: userStatusEnum.optional(),
-    favoriteCenterId: cuidSchema.optional().nullable(), // Centro favorito/asignado (se puede cambiar desde CRUD)
-    // centerId NO se puede cambiar desde CRUD, solo desde el escáner QR
+    favoriteCenterId: cuidSchema.optional().nullable(),
   }),
 };
-
 export const updateProfileSchema = z.object({
   name: z.string().min(2, 'El nombre debe tener al menos 2 caracteres').optional(),
   email: z.string().email('Email inválido').optional(),
 });
-
 export const changePasswordSchema = z.object({
   currentPassword: z.string().min(1, 'La contraseña actual es requerida'),
   newPassword: z.string().min(8, 'La nueva contraseña debe tener al menos 8 caracteres')
 });
-
 export const userIdParamSchema = {
   params: z.object({ id: cuidSchema }),
 };
@@ -47,4 +41,3 @@ export type LoginInput = z.infer<typeof loginSchema>;
 export type UpdateUserInput = z.infer<typeof updateUserSchema.body>;
 export type UpdateProfileInput = z.infer<typeof updateProfileSchema>;
 export type ChangePasswordInput = z.infer<typeof changePasswordSchema>;
-

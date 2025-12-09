@@ -38,7 +38,8 @@ export async function register(email: string, name: string, password: string, ro
       sub: user.id, 
       email: user.email,
       role: user.role,
-      centerId: userWithCenter?.centerId || null
+      centerId: userWithCenter?.centerId || null,
+      profileImageUrl: userWithCenter?.profileImageUrl || null
     }, 
     env.JWT_SECRET, 
     { expiresIn: '7d' }
@@ -47,7 +48,8 @@ export async function register(email: string, name: string, password: string, ro
   return { 
     user: {
       ...user,
-      centerId: userWithCenter?.centerId || null
+      centerId: userWithCenter?.centerId || null,
+      profileImageUrl: userWithCenter?.profileImageUrl || null 
     }, 
     token 
   };
@@ -80,7 +82,8 @@ export async function login(email: string, password: string) {
       sub: user.id, 
       email: user.email,
       role: user.role,
-      centerId: userWithCenter?.centerId || null
+      centerId: userWithCenter?.centerId || null,
+      profileImageUrl: userWithCenter?.profileImageUrl || null
     }, 
     env.JWT_SECRET, 
     { expiresIn: '7d' }
@@ -93,7 +96,8 @@ export async function login(email: string, password: string) {
       name: user.name,
       role: user.role,
       createdAt: user.createdAt,
-      centerId: userWithCenter?.centerId || null
+      centerId: userWithCenter?.centerId || null,
+      profileImageUrl: userWithCenter?.profileImageUrl || null
     }, 
     token 
   };

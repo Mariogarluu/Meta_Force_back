@@ -3,11 +3,10 @@ import { getDatabaseUrl } from './env.js';
 
 // Obtener la URL de la base de datos
 const databaseUrl = getDatabaseUrl();
-
 // Log de la URL (sin mostrar la contraseña completa)
-const maskedUrl = databaseUrl.replace(/:([^:@]+)@/, ':****@');
-console.log('🔗 Database URL configurada:', maskedUrl);
-console.log('🔗 Hostname extraído:', new URL(databaseUrl).hostname);
+// const maskedUrl = databaseUrl.replace(/:([^:@]+)@/, ':****@');
+// console.log('🔗 Database URL configurada:', maskedUrl);
+// console.log('🔗 Hostname extraído:', new URL(databaseUrl).hostname);
 
 /**
  * Inicializa el cliente de Prisma.

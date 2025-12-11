@@ -1,10 +1,11 @@
 import { Router } from 'express';
 import { auth } from '../../middleware/auth.js';
 import { validate } from '../../middleware/validate.js';
-import { createClassSchema, updateClassSchema, classIdParamSchema } from './classes.schema.js';
+import { createClassSchema, updateClassSchema, classIdParamSchema, addCenterToClassSchema, updateCenterInClassSchema } from './classes.schema.js';
 import {
   createClassCtrl, listClassesCtrl, getClassCtrl, updateClassCtrl, deleteClassCtrl,
-  listClassUsersCtrl, joinClassCtrl, leaveClassCtrl,
+  listClassUsersCtrl, joinClassCtrl, leaveClassCtrl, addCenterToClassCtrl,
+  removeCenterFromClassCtrl, updateCenterInClassCtrl,
 } from './classes.controller.js';
 
 const router = Router();
@@ -95,5 +96,35 @@ router.post('/:id/join', auth, validate(classIdParamSchema), joinClassCtrl);
  *     security: [ { bearerAuth: [] } ]
  */
 router.delete('/:id/join', auth, validate(classIdParamSchema), leaveClassCtrl);
+
+/**
+ * @swagger
+ * /api/classes/{id}/centers:
+ *   post:
+ *     summary: Agrega un centro a una clase con entrenadores y horarios
+ *     tags: [Classes]
+ *     security: [ { bearerAuth: [] } ]
+ */
+router.post('/:id/centers', auth, validate(addCenterToClassSchema), addCenterToClassCtrl);
+
+/**
+ * @swagger
+ * /api/classes/{id}/centers/{centerId}:
+ *   delete:
+ *     summary: Elimina un centro de una clase
+ *     tags: [Classes]
+ *     security: [ { bearerAuth: [] } ]
+ */
+router.delete('/:id/centers/:centerId', auth, validate(classIdParamSchema), removeCenterFromClassCtrl);
+
+/**
+ * @swagger
+ * /api/classes/{id}/centers/{centerId}:
+ *   patch:
+ *     summary: Actualiza un centro en una clase (entrenadores y horarios)
+ *     tags: [Classes]
+ *     security: [ { bearerAuth: [] } ]
+ */
+router.patch('/:id/centers/:centerId', auth, validate(updateCenterInClassSchema), updateCenterInClassCtrl);
 
 export default router;

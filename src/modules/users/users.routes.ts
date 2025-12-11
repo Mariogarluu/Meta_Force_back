@@ -4,7 +4,7 @@ import { validate } from '../../middleware/validate.js';
 import { updateUserSchema, updateProfileSchema, changePasswordSchema, userIdParamSchema } from './users.schema.js';
 import { hasRole } from '../../middleware/hasRole.js';
 import { Role } from '../../types/role.js';
-import { listUsersCtrl, getUserCtrl, meCtrl, updateUserCtrl, deleteUserCtrl, updateProfileCtrl, changePasswordCtrl, uploadProfileImageCtrl, deleteProfileImageCtrl } from './users.controller.js';
+import { listUsersCtrl, listTrainersCtrl, getUserCtrl, meCtrl, updateUserCtrl, deleteUserCtrl, updateProfileCtrl, changePasswordCtrl, uploadProfileImageCtrl, deleteProfileImageCtrl } from './users.controller.js';
 import { upload } from '../../middleware/upload.js';
 
 const router = Router();
@@ -34,6 +34,46 @@ const router = Router();
  *               $ref: '#/components/schemas/Error'
  */
 router.get('/', auth, hasRole(Role.SUPERADMIN, Role.ADMIN_CENTER), listUsersCtrl);
+
+/**
+ * @swagger
+ * /api/users/trainers:
+ *   get:
+ *     summary: Lista todos los entrenadores activos
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Lista de entrenadores activos
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: string
+ *                   name:
+ *                     type: string
+ *                   profileImageUrl:
+ *                     type: string
+ *                     nullable: true
+ *                   favoriteCenterId:
+ *                     type: string
+ *                     nullable: true
+ *                   favoriteCenter:
+ *                     type: object
+ *                     nullable: true
+ *       401:
+ *         description: No autorizado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
+router.get('/trainers', auth, listTrainersCtrl);
 
 /**
  * @swagger

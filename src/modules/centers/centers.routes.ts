@@ -5,7 +5,7 @@ import { createCenterSchema, updateCenterSchema, centerIdParamSchema } from './c
 import { hasRole } from '../../middleware/hasRole.js';
 import { Role } from '../../types/role.js';
 import {
-  createCenterCtrl, listCentersCtrl, getCenterCtrl, updateCenterCtrl, deleteCenterCtrl, listCenterUsersCtrl,
+  createCenterCtrl, listCentersCtrl, listCentersWithIdsCtrl, getCenterCtrl, updateCenterCtrl, deleteCenterCtrl, listCenterUsersCtrl,
 } from './centers.controller.js';
 
 const router = Router();
@@ -30,6 +30,20 @@ const router = Router();
  *         description: Lista de centros
  */
 router.get('/', auth, listCentersCtrl);
+
+/**
+ * @swagger
+ * /api/centers/with-ids:
+ *   get:
+ *     summary: Lista todos los centros con IDs (para selección)
+ *     tags: [Centers]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Lista de centros con IDs
+ */
+router.get('/with-ids', auth, listCentersWithIdsCtrl);
 
 /**
  * @swagger

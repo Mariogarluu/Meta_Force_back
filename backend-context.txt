@@ -10165,7 +10165,8 @@ export async function register(email: string, name: string, password: string, ro
       sub: user.id, 
       email: user.email,
       role: user.role,
-      centerId: userWithCenter?.centerId || null
+      centerId: userWithCenter?.centerId || null,
+      profileImageUrl: userWithCenter?.profileImageUrl || null
     }, 
     env.JWT_SECRET, 
     { expiresIn: '7d' }
@@ -10174,7 +10175,8 @@ export async function register(email: string, name: string, password: string, ro
   return { 
     user: {
       ...user,
-      centerId: userWithCenter?.centerId || null
+      centerId: userWithCenter?.centerId || null,
+      profileImageUrl: userWithCenter?.profileImageUrl || null 
     }, 
     token 
   };
@@ -10207,7 +10209,8 @@ export async function login(email: string, password: string) {
       sub: user.id, 
       email: user.email,
       role: user.role,
-      centerId: userWithCenter?.centerId || null
+      centerId: userWithCenter?.centerId || null,
+      profileImageUrl: userWithCenter?.profileImageUrl || null
     }, 
     env.JWT_SECRET, 
     { expiresIn: '7d' }
@@ -10220,7 +10223,8 @@ export async function login(email: string, password: string) {
       name: user.name,
       role: user.role,
       createdAt: user.createdAt,
-      centerId: userWithCenter?.centerId || null
+      centerId: userWithCenter?.centerId || null,
+      profileImageUrl: userWithCenter?.profileImageUrl || null
     }, 
     token 
   };
@@ -10280,6 +10284,24 @@ export async function listCentersCtrl(req: Request, res: Response) {
 
     const filterId = role === Role.SUPERADMIN ? null : centerId;
     const centers = await listCenters(filterId, true);
+    res.json(centers);
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+}
+
+/**
+ * Controlador para listar todos los centros con IDs.
+ * Accesible para todos los usuarios autenticados.
+ * Usado principalmente para la página de entrenadores donde los usuarios necesitan seleccionar un centro.
+ */
+export async function listCentersWithIdsCtrl(req: Request, res: Response) {
+  try {
+    if (!req.user) {
+      return res.status(401).json({ message: 'No autorizado' });
+    }
+
+    const centers = await listCenters(null, true);
     res.json(centers);
   } catch (error: any) {
     res.status(500).json({ message: error.message });
@@ -10410,7 +10432,7 @@ import { createCenterSchema, updateCenterSchema, centerIdParamSchema } from './c
 import { hasRole } from '../../middleware/hasRole.js';
 import { Role } from '../../types/role.js';
 import {
-  createCenterCtrl, listCentersCtrl, getCenterCtrl, updateCenterCtrl, deleteCenterCtrl, listCenterUsersCtrl,
+  createCenterCtrl, listCentersCtrl, listCentersWithIdsCtrl, getCenterCtrl, updateCenterCtrl, deleteCenterCtrl, listCenterUsersCtrl,
 } from './centers.controller.js';
 
 const router = Router();
@@ -10435,6 +10457,20 @@ const router = Router();
  *         description: Lista de centros
  */
 router.get('/', auth, listCentersCtrl);
+
+/**
+ * @swagger
+ * /api/centers/with-ids:
+ *   get:
+ *     summary: Lista todos los centros con IDs (para selección)
+ *     tags: [Centers]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Lista de centros con IDs
+ */
+router.get('/with-ids', auth, listCentersWithIdsCtrl);
 
 /**
  * @swagger
@@ -11971,6 +12007,7 @@ export default router;
 import type { Request, Response } from 'express';
 import {
   listUsers,
+  listTrainers,
   findUserById,
   updateUser,
   deleteUser,
@@ -11999,6 +12036,24 @@ export async function listUsersCtrl(req: Request, res: Response) {
     
     const users = await listUsers(centerId);
     res.json(users);
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+}
+
+/**
+ * Controlador para listar entrenadores activos.
+ * Accesible para todos los usuarios autenticados.
+ * Retorna solo entrenadores con estado ACTIVE.
+ */
+export async function listTrainersCtrl(req: Request, res: Response) {
+  try {
+    if (!req.user) {
+      return res.status(401).json({ message: 'No autorizado' });
+    }
+
+    const trainers = await listTrainers();
+    res.json(trainers);
   } catch (error: any) {
     res.status(500).json({ message: error.message });
   }
@@ -12324,7 +12379,7 @@ import { validate } from '../../middleware/validate.js';
 import { updateUserSchema, updateProfileSchema, changePasswordSchema, userIdParamSchema } from './users.schema.js';
 import { hasRole } from '../../middleware/hasRole.js';
 import { Role } from '../../types/role.js';
-import { listUsersCtrl, getUserCtrl, meCtrl, updateUserCtrl, deleteUserCtrl, updateProfileCtrl, changePasswordCtrl, uploadProfileImageCtrl, deleteProfileImageCtrl } from './users.controller.js';
+import { listUsersCtrl, listTrainersCtrl, getUserCtrl, meCtrl, updateUserCtrl, deleteUserCtrl, updateProfileCtrl, changePasswordCtrl, uploadProfileImageCtrl, deleteProfileImageCtrl } from './users.controller.js';
 import { upload } from '../../middleware/upload.js';
 
 const router = Router();
@@ -12354,6 +12409,46 @@ const router = Router();
  *               $ref: '#/components/schemas/Error'
  */
 router.get('/', auth, hasRole(Role.SUPERADMIN, Role.ADMIN_CENTER), listUsersCtrl);
+
+/**
+ * @swagger
+ * /api/users/trainers:
+ *   get:
+ *     summary: Lista todos los entrenadores activos
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Lista de entrenadores activos
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: string
+ *                   name:
+ *                     type: string
+ *                   profileImageUrl:
+ *                     type: string
+ *                     nullable: true
+ *                   favoriteCenterId:
+ *                     type: string
+ *                     nullable: true
+ *                   favoriteCenter:
+ *                     type: object
+ *                     nullable: true
+ *       401:
+ *         description: No autorizado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
+router.get('/trainers', auth, listTrainersCtrl);
 
 /**
  * @swagger
@@ -12680,6 +12775,40 @@ export async function listUsers(centerId?: string | null) {
       id: true, email: true, name: true, role: true, status: true, centerId: true, favoriteCenterId: true, profileImageUrl: true, createdAt: true 
     },
     orderBy: { createdAt: 'asc' }
+  });
+}
+
+/**
+ * Lista todos los entrenadores activos del sistema.
+ * Accesible para todos los usuarios autenticados.
+ * Incluye la información del centro favorito y el centro actual (centerId) de cada entrenador.
+ */
+export async function listTrainers() {
+  return prisma.user.findMany({
+    where: {
+      role: 'TRAINER',
+      status: 'ACTIVE'
+    },
+    select: {
+      id: true,
+      name: true,
+      profileImageUrl: true,
+      favoriteCenterId: true,
+      centerId: true, // Centro actual donde está físicamente
+      favoriteCenter: {
+        select: {
+          id: true,
+          name: true
+        }
+      },
+      center: {
+        select: {
+          id: true,
+          name: true
+        }
+      }
+    },
+    orderBy: { name: 'asc' }
   });
 }
 

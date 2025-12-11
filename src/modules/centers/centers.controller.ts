@@ -56,6 +56,24 @@ export async function listCentersCtrl(req: Request, res: Response) {
 }
 
 /**
+ * Controlador para listar todos los centros con IDs.
+ * Accesible para todos los usuarios autenticados.
+ * Usado principalmente para la página de entrenadores donde los usuarios necesitan seleccionar un centro.
+ */
+export async function listCentersWithIdsCtrl(req: Request, res: Response) {
+  try {
+    if (!req.user) {
+      return res.status(401).json({ message: 'No autorizado' });
+    }
+
+    const centers = await listCenters(null, true);
+    res.json(centers);
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+}
+
+/**
  * Controlador para obtener un centro específico por su ID.
  * USER, TRAINER y CLEANER no tienen permiso para ver detalles de centros.
  * ADMIN_CENTER solo puede ver su propio centro.

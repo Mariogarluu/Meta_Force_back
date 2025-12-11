@@ -41,7 +41,8 @@ model User {
   center           Center?        @relation("CurrentCenter", fields: [centerId], references: [id], onDelete: SetNull)
   favoriteCenterId String? // Centro favorito
   favoriteCenter   Center?        @relation("FavoriteCenter", fields: [favoriteCenterId], references: [id], onDelete: SetNull)
-  classes          GymClass[]
+  classes          GymClass[] // Clases a las que asiste como usuario
+  trainedClasses   ClassTrainer[] @relation("ClassTrainer") // Clases que enseña como entrenador
   notifications    Notification[]
 }
 
@@ -62,19 +63,20 @@ model Notification {
 }
 
 model Center {
-  id            String    @id @default(cuid())
-  name          String    @unique
-  description   String?
-  address       String?
-  city          String?
-  country       String?
-  phone         String?
-  email         String?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  currentUsers  User[]    @relation("CurrentCenter")
-  favoriteUsers User[]    @relation("FavoriteCenter")
-  machines      Machine[]
+  id             String                @id @default(cuid())
+  name           String                @unique
+  description    String?
+  address        String?
+  city           String?
+  country        String?
+  phone          String?
+  email          String?
+  createdAt      DateTime              @default(now())
+  updatedAt      DateTime              @updatedAt
+  currentUsers   User[]                @relation("CurrentCenter")
+  favoriteUsers  User[]                @relation("FavoriteCenter")
+  machines       Machine[]
+  classSchedules ClassCenterSchedule[] @relation("ClassSchedules")
 }
 
 model GymClass {
@@ -84,7 +86,47 @@ model GymClass {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
+  // Usuarios que asisten a la clase
   users User[]
+
+  // Entrenadores que enseñan la clase (mínimo 1)
+  trainers ClassTrainer[]
+
+  // Horarios de la clase en diferentes centros
+  schedules ClassCenterSchedule[]
+}
+
+// Relación entre clases y entrenadores (mínimo 1 entrenador por clase)
+model ClassTrainer {
+  id        String   @id @default(cuid())
+  classId   String
+  trainerId String
+  class     GymClass @relation(fields: [classId], references: [id], onDelete: Cascade)
+  trainer   User     @relation("ClassTrainer", fields: [trainerId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([classId, trainerId])
+  @@index([classId])
+  @@index([trainerId])
+}
+
+// Horarios de una clase en un centro específico
+// Una clase puede tener diferentes horarios en diferentes centros
+model ClassCenterSchedule {
+  id        String   @id @default(cuid())
+  classId   String
+  centerId  String
+  dayOfWeek Int // 0 = Domingo, 1 = Lunes, ..., 6 = Sábado
+  startTime String // Formato HH:mm (ej: "09:00")
+  endTime   String // Formato HH:mm (ej: "10:30")
+  class     GymClass @relation(fields: [classId], references: [id], onDelete: Cascade)
+  center    Center   @relation("ClassSchedules", fields: [centerId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([classId])
+  @@index([centerId])
+  @@index([classId, centerId])
 }
 
 model Machine {

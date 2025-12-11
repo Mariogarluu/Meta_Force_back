@@ -44,6 +44,48 @@ export async function listUsers(centerId?: string | null) {
 }
 
 /**
+ * Lista todos los entrenadores activos del sistema.
+ * Accesible para todos los usuarios autenticados.
+ * Incluye la información del centro favorito y el centro actual (centerId) de cada entrenador.
+ * Si se proporciona centerId, filtra por centro favorito.
+ */
+export async function listTrainers(centerId?: string | null) {
+  const where: any = {
+    role: 'TRAINER',
+    status: 'ACTIVE'
+  };
+
+  // Si se proporciona centerId, filtrar por centro favorito
+  if (centerId) {
+    where.favoriteCenterId = centerId;
+  }
+
+  return prisma.user.findMany({
+    where,
+    select: {
+      id: true,
+      name: true,
+      profileImageUrl: true,
+      favoriteCenterId: true,
+      centerId: true, // Centro actual donde está físicamente
+      favoriteCenter: {
+        select: {
+          id: true,
+          name: true
+        }
+      },
+      center: {
+        select: {
+          id: true,
+          name: true
+        }
+      }
+    },
+    orderBy: { name: 'asc' }
+  });
+}
+
+/**
  * Actualiza los datos de un usuario.
  * * LÓGICA DE NEGOCIO:
  * Si el estado cambia a 'ACTIVE', notifica al usuario de que su cuenta ha sido activada.

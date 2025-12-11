@@ -1,6 +1,7 @@
 import type { Request, Response } from 'express';
 import {
   listUsers,
+  listTrainers,
   findUserById,
   updateUser,
   deleteUser,
@@ -29,6 +30,26 @@ export async function listUsersCtrl(req: Request, res: Response) {
     
     const users = await listUsers(centerId);
     res.json(users);
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+}
+
+/**
+ * Controlador para listar entrenadores activos.
+ * Accesible para todos los usuarios autenticados.
+ * Retorna solo entrenadores con estado ACTIVE.
+ * Puede filtrar por centro si se proporciona centerId en query params.
+ */
+export async function listTrainersCtrl(req: Request, res: Response) {
+  try {
+    if (!req.user) {
+      return res.status(401).json({ message: 'No autorizado' });
+    }
+
+    const centerId = req.query.centerId as string | undefined;
+    const trainers = await listTrainers(centerId || null);
+    res.json(trainers);
   } catch (error: any) {
     res.status(500).json({ message: error.message });
   }

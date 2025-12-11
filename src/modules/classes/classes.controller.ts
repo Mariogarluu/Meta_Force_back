@@ -1,7 +1,8 @@
 import type { Request, Response } from 'express';
 import {
   createClass, listClasses, getClassById, updateClass, deleteClass,
-  listUsersInClass, joinClass, leaveClass,
+  listUsersInClass, joinClass, leaveClass, addCenterToClass,
+  removeCenterFromClass, updateCenterInClass,
 } from './classes.service.js';
 import { prisma } from '../../config/db.js';
 
@@ -23,10 +24,12 @@ export async function createClassCtrl(req: Request, res: Response) {
 /**
  * Controlador para listar todas las clases de gimnasio disponibles.
  * Retorna una lista ordenada por fecha de creación descendente.
+ * Puede filtrar por centro si se proporciona centerId en query params.
  */
-export async function listClassesCtrl(_req: Request, res: Response) {
+export async function listClassesCtrl(req: Request, res: Response) {
   try {
-    const list = await listClasses();
+    const centerId = req.query.centerId as string | undefined;
+    const list = await listClasses(centerId || null);
     res.json(list);
   } catch (error: any) {
     res.status(500).json({ message: error.message });
@@ -136,6 +139,54 @@ export async function leaveClassCtrl(req: Request, res: Response) {
 
     const user = await leaveClass(req.user.sub, classId);
     res.json({ message: 'Te has dado de baja de la clase', user });
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+}
+
+/**
+ * Controlador para agregar un centro a una clase existente.
+ * Incluye entrenadores y horarios para ese centro específico.
+ */
+export async function addCenterToClassCtrl(req: Request, res: Response) {
+  try {
+    const classId = req.params.id;
+    if (!classId) return res.status(400).json({ message: 'ID de clase requerido' });
+
+    const updated = await addCenterToClass(classId, req.body);
+    res.json(updated);
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+}
+
+/**
+ * Controlador para eliminar un centro de una clase.
+ */
+export async function removeCenterFromClassCtrl(req: Request, res: Response) {
+  try {
+    const classId = req.params.id;
+    const centerId = req.params.centerId;
+    if (!classId || !centerId) return res.status(400).json({ message: 'ID de clase y centro requeridos' });
+
+    const updated = await removeCenterFromClass(classId, centerId);
+    res.json(updated);
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+}
+
+/**
+ * Controlador para actualizar un centro en una clase (entrenadores y horarios).
+ */
+export async function updateCenterInClassCtrl(req: Request, res: Response) {
+  try {
+    const classId = req.params.id;
+    const centerId = req.params.centerId;
+    if (!classId || !centerId) return res.status(400).json({ message: 'ID de clase y centro requeridos' });
+
+    const updated = await updateCenterInClass(classId, centerId, req.body);
+    res.json(updated);
   } catch (error: any) {
     res.status(500).json({ message: error.message });
   }

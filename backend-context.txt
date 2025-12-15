@@ -10114,8 +10114,7 @@ const app = express();
  * Render usa 1 proxy, así que confiamos en el primer proxy.
  * Esto permite que express-rate-limit identifique correctamente las IPs reales
  * de los clientes a través del header X-Forwarded-For.
- * 
- * @see https://expressjs.com/en/guide/behind-proxies.html
+ * * @see https://expressjs.com/en/guide/behind-proxies.html
  */
 app.set('trust proxy', 1);
 
@@ -10163,8 +10162,6 @@ app.use('/api/notifications', notificationRoutes);
 app.use(errorHandler);
 
 export default app;
-
-
 --- END OF FILE: src\app.ts ---
 
 
@@ -15426,7 +15423,8 @@ export const optionalCuidSchema = z.string().regex(/^c[a-z0-9]{24}$/, {
     "noUncheckedSideEffectImports": true,
     "moduleDetection": "force",
     "skipLibCheck": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true
   },
   "include": [
     "src/**/*",

@@ -28,7 +28,8 @@ const app = express();
 app.set('trust proxy', 1);
 
 // Seguridad: Helmet
-app.use(helmet({
+// Se usa casting (as any) para evitar conflictos de tipos ESM/CJS en el build estricto de Vercel
+app.use((helmet as any)({
   contentSecurityPolicy: false,
 }));
 

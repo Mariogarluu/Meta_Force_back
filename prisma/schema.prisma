@@ -79,6 +79,35 @@ model Center {
   classSchedules ClassCenterSchedule[] @relation("ClassSchedules")
 }
 
+// Modelo de máquina (tipo/categoría): ej. "Cinta", "Pesas", etc.
+model MachineType {
+  id        String    @id @default(cuid())
+  name      String // Nombre del modelo: "Cinta", "Pesas", etc.
+  type      String // Categoría: "cardio", "fuerza", "peso libre", "funcional", "otro"
+  machines  Machine[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@unique([name, type]) // No puede haber dos tipos con mismo nombre y categoría
+}
+
+// Instancia de máquina en un centro específico
+model Machine {
+  id             String      @id @default(cuid())
+  machineTypeId  String // Referencia al modelo de máquina
+  machineType    MachineType @relation(fields: [machineTypeId], references: [id], onDelete: Cascade)
+  instanceNumber Int // Número de instancia: 1, 2, 3... (para generar "Cinta 1", "Cinta 2", etc.)
+  status         String // Estado: "operativa", "en mantenimiento", "fuera de servicio"
+  centerId       String
+  center         Center      @relation(fields: [centerId], references: [id], onDelete: Cascade)
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+
+  @@unique([machineTypeId, centerId, instanceNumber]) // No puede haber dos instancias con el mismo número en el mismo centro
+  @@index([centerId])
+  @@index([machineTypeId])
+}
+
 model GymClass {
   id          String   @id @default(cuid())
   name        String
@@ -127,15 +156,4 @@ model ClassCenterSchedule {
   @@index([classId])
   @@index([centerId])
   @@index([classId, centerId])
-}
-
-model Machine {
-  id        String   @id @default(cuid())
-  name      String
-  type      String
-  status    String
-  centerId  String
-  center    Center   @relation(fields: [centerId], references: [id], onDelete: Cascade)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
 }

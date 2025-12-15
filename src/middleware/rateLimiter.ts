@@ -1,14 +1,14 @@
 import rateLimit from 'express-rate-limit';
+import type { Request, Response } from 'express';
 import { logger } from '../utils/logger.js';
 
 /**
  * Limitador de tasa general para todas las rutas de la API.
  * Permite máximo 100 peticiones por IP en una ventana de 15 minutos.
  * Útil para prevenir abuso general de la API.
- * 
- * @see https://github.com/express-rate-limit/express-rate-limit
+ * * @see https://github.com/express-rate-limit/express-rate-limit
  */
-export const generalLimiter = rateLimit({
+export const generalLimiter = (rateLimit as any)({
   windowMs: 15 * 60 * 1000, // 15 minutos
   max: 100, // Máximo 100 peticiones por ventana
   message: { message: 'Demasiadas peticiones desde esta IP, intenta de nuevo en 15 minutos' },
@@ -23,7 +23,7 @@ export const generalLimiter = rateLimit({
    * @param req - Request de Express
    * @param res - Response de Express
    */
-  handler: (req, res) => {
+  handler: (req: Request, res: Response) => {
     logger.warn(`Rate limit exceeded for ${req.ip} on ${req.method} ${req.path}`);
     res.status(429).json({ message: 'Demasiadas peticiones desde esta IP, intenta de nuevo en 15 minutos' });
   },
@@ -34,10 +34,9 @@ export const generalLimiter = rateLimit({
  * Permite máximo 5 intentos por IP en una ventana de 15 minutos.
  * Solo cuenta los intentos fallidos, ignorando las peticiones exitosas.
  * Útil para prevenir ataques de fuerza bruta en autenticación.
- * 
- * @see https://github.com/express-rate-limit/express-rate-limit
+ * * @see https://github.com/express-rate-limit/express-rate-limit
  */
-export const authLimiter = rateLimit({
+export const authLimiter = (rateLimit as any)({
   windowMs: 15 * 60 * 1000, // 15 minutos
   max: 5, // Máximo 5 intentos por ventana
   message: { message: 'Demasiados intentos de autenticación, intenta de nuevo en 15 minutos' },
@@ -54,10 +53,9 @@ export const authLimiter = rateLimit({
    * @param req - Request de Express
    * @param res - Response de Express
    */
-  handler: (req, res) => {
+  handler: (req: Request, res: Response) => {
     logger.warn(`Auth rate limit exceeded for ${req.ip} on ${req.method} ${req.path}`);
-    logger.warn(`Request body: ${JSON.stringify(req.body)}`);
+    // No loguear body completo por seguridad si contiene passwords, solo loguear el evento
     res.status(429).json({ message: 'Demasiados intentos de autenticación, intenta de nuevo en 15 minutos' });
   },
 });
-

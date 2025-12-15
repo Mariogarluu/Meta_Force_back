@@ -10117,7 +10117,8 @@ const app = express();
 app.set('trust proxy', 1);
 
 // Seguridad: Helmet
-app.use(helmet({
+// Se usa casting (as any) para evitar conflictos de tipos ESM/CJS en el build estricto de Vercel
+app.use((helmet as any)({
   contentSecurityPolicy: false,
 }));
 
@@ -15425,7 +15426,9 @@ export const optionalCuidSchema = z.string().regex(/^c[a-z0-9]{24}$/, {
     "moduleResolution": "nodenext",
     "target": "esnext",
     "lib": ["esnext"],
-    "types": ["node", "jest"],
+    "types": [
+      "node"
+    ],
     "sourceMap": true,
     "declaration": true,
     "declarationMap": true,

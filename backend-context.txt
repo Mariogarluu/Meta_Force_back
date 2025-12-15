@@ -10786,16 +10786,16 @@ export function hasRole(...allowedRoles: Role[]) {
 
 --- START OF FILE: src\middleware\rateLimiter.ts ---
 import rateLimit from 'express-rate-limit';
+import type { Request, Response } from 'express';
 import { logger } from '../utils/logger.js';
 
 /**
  * Limitador de tasa general para todas las rutas de la API.
  * Permite máximo 100 peticiones por IP en una ventana de 15 minutos.
  * Útil para prevenir abuso general de la API.
- * 
- * @see https://github.com/express-rate-limit/express-rate-limit
+ * * @see https://github.com/express-rate-limit/express-rate-limit
  */
-export const generalLimiter = rateLimit({
+export const generalLimiter = (rateLimit as any)({
   windowMs: 15 * 60 * 1000, // 15 minutos
   max: 100, // Máximo 100 peticiones por ventana
   message: { message: 'Demasiadas peticiones desde esta IP, intenta de nuevo en 15 minutos' },
@@ -10810,7 +10810,7 @@ export const generalLimiter = rateLimit({
    * @param req - Request de Express
    * @param res - Response de Express
    */
-  handler: (req, res) => {
+  handler: (req: Request, res: Response) => {
     logger.warn(`Rate limit exceeded for ${req.ip} on ${req.method} ${req.path}`);
     res.status(429).json({ message: 'Demasiadas peticiones desde esta IP, intenta de nuevo en 15 minutos' });
   },
@@ -10821,10 +10821,9 @@ export const generalLimiter = rateLimit({
  * Permite máximo 5 intentos por IP en una ventana de 15 minutos.
  * Solo cuenta los intentos fallidos, ignorando las peticiones exitosas.
  * Útil para prevenir ataques de fuerza bruta en autenticación.
- * 
- * @see https://github.com/express-rate-limit/express-rate-limit
+ * * @see https://github.com/express-rate-limit/express-rate-limit
  */
-export const authLimiter = rateLimit({
+export const authLimiter = (rateLimit as any)({
   windowMs: 15 * 60 * 1000, // 15 minutos
   max: 5, // Máximo 5 intentos por ventana
   message: { message: 'Demasiados intentos de autenticación, intenta de nuevo en 15 minutos' },
@@ -10841,14 +10840,12 @@ export const authLimiter = rateLimit({
    * @param req - Request de Express
    * @param res - Response de Express
    */
-  handler: (req, res) => {
+  handler: (req: Request, res: Response) => {
     logger.warn(`Auth rate limit exceeded for ${req.ip} on ${req.method} ${req.path}`);
-    logger.warn(`Request body: ${JSON.stringify(req.body)}`);
+    // No loguear body completo por seguridad si contiene passwords, solo loguear el evento
     res.status(429).json({ message: 'Demasiados intentos de autenticación, intenta de nuevo en 15 minutos' });
   },
 });
-
-
 --- END OF FILE: src\middleware\rateLimiter.ts ---
 
 
@@ -15366,20 +15363,30 @@ const format = winston.format.combine(
   )
 );
 
-const transports = [
+// Definir los transportes (destinos de los logs)
+const transports: winston.transport[] = [
+  // La consola siempre está activa (Vercel captura esto automáticamente)
   new winston.transports.Console(),
-  new winston.transports.File({
-    filename: 'logs/error.log',
-    level: 'error',
-  }),
-  new winston.transports.File({ filename: 'logs/all.log' }),
 ];
+
+// Solo agregar escritura a archivos si estamos en desarrollo local.
+// En Vercel/Serverless el sistema de archivos es Read-Only y esto causaría un crash.
+if (env.NODE_ENV === 'development') {
+  transports.push(
+    new winston.transports.File({
+      filename: 'logs/error.log',
+      level: 'error',
+    })
+  );
+  transports.push(
+    new winston.transports.File({ filename: 'logs/all.log' })
+  );
+}
 
 /**
  * Instancia configurada del logger Winston para toda la aplicación.
- * Registra mensajes en consola y archivos según el entorno.
- * En desarrollo muestra todos los logs (debug), en producción solo warnings y errores.
- * Los errores se guardan en logs/error.log y todos los logs en logs/all.log.
+ * Registra mensajes en consola siempre.
+ * Solo registra en archivos cuando NODE_ENV es 'development'.
  */
 export const logger = winston.createLogger({
   level: env.NODE_ENV === 'development' ? 'debug' : 'warn',
@@ -15387,8 +15394,6 @@ export const logger = winston.createLogger({
   format,
   transports,
 });
-
-
 --- END OF FILE: src\utils\logger.ts ---
 
 

@@ -35,20 +35,30 @@ const format = winston.format.combine(
   )
 );
 
-const transports = [
+// Definir los transportes (destinos de los logs)
+const transports: winston.transport[] = [
+  // La consola siempre está activa (Vercel captura esto automáticamente)
   new winston.transports.Console(),
-  new winston.transports.File({
-    filename: 'logs/error.log',
-    level: 'error',
-  }),
-  new winston.transports.File({ filename: 'logs/all.log' }),
 ];
+
+// Solo agregar escritura a archivos si estamos en desarrollo local.
+// En Vercel/Serverless el sistema de archivos es Read-Only y esto causaría un crash.
+if (env.NODE_ENV === 'development') {
+  transports.push(
+    new winston.transports.File({
+      filename: 'logs/error.log',
+      level: 'error',
+    })
+  );
+  transports.push(
+    new winston.transports.File({ filename: 'logs/all.log' })
+  );
+}
 
 /**
  * Instancia configurada del logger Winston para toda la aplicación.
- * Registra mensajes en consola y archivos según el entorno.
- * En desarrollo muestra todos los logs (debug), en producción solo warnings y errores.
- * Los errores se guardan en logs/error.log y todos los logs en logs/all.log.
+ * Registra mensajes en consola siempre.
+ * Solo registra en archivos cuando NODE_ENV es 'development'.
  */
 export const logger = winston.createLogger({
   level: env.NODE_ENV === 'development' ? 'debug' : 'warn',
@@ -56,4 +66,3 @@ export const logger = winston.createLogger({
   format,
   transports,
 });
-

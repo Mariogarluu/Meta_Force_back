@@ -9939,6 +9939,34 @@ main()
 --- END OF FILE: scripts\create-gymprep-admin.ts ---
 
 
+--- START OF FILE: scripts\delete-machines.js ---
+// Script para borrar solo los datos de la tabla Machine
+// Esto NO afecta a otras tablas (User, Center, GymClass, etc.)
+
+import { PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient();
+
+async function deleteMachines() {
+  try {
+    console.log('Borrando datos de la tabla Machine...');
+    const result = await prisma.machine.deleteMany({});
+    console.log(`✅ Se borraron ${result.count} máquinas.`);
+    console.log('✅ Las demás tablas (User, Center, GymClass, etc.) NO fueron afectadas.');
+  } catch (error) {
+    console.error('❌ Error:', error.message);
+    process.exit(1);
+  } finally {
+    await prisma.$disconnect();
+  }
+}
+
+deleteMachines();
+
+
+--- END OF FILE: scripts\delete-machines.js ---
+
+
 --- START OF FILE: scripts\init-env.js ---
 /**
  * Script de inicialización que establece DATABASE_URL antes de cualquier operación de Prisma.
@@ -10262,6 +10290,7 @@ import userClassRouter from './modules/users/user-class.routes.js';
 import machineRoutes from './modules/machines/machines.routes.js';
 import accessRoutes from './modules/access/access.routes.js';
 import notificationRoutes from './modules/notifications/notifications.routes.js';
+import ticketRoutes from './modules/tickets/tickets.routes.js';
 import healthRoutes from './modules/health/health.routes.js';
 
 const app = express();
@@ -10317,6 +10346,7 @@ app.use('/api/users', userClassRouter);
 app.use('/api/machines', machineRoutes);
 app.use('/api/access', accessRoutes);
 app.use('/api/notifications', notificationRoutes);
+app.use('/api/tickets', ticketRoutes);
 app.use(errorHandler);
 
 export default app;
@@ -10712,8 +10742,7 @@ import app from './app.js';
 import { env } from './config/env.js';
 import { logger } from './utils/logger.js';
 
-
-if (process.env.NODE_ENV !== 'production' || !process.env.VERCEL) {npm 
+if (process.env.NODE_ENV !== 'production' || !process.env.VERCEL) {
   const port = process.env.PORT ? parseInt(process.env.PORT, 10) : env.PORT;
   const host = process.env.NODE_ENV === 'production' ? '0.0.0.0' : 'localhost';
 
@@ -11043,17 +11072,24 @@ import type { Request } from 'express';
 
 /**
  * Configuración de Multer para manejar la subida de archivos.
- * Solo acepta imágenes (jpeg, jpg, png, gif, webp) con un tamaño máximo de 5MB.
+ * Solo acepta imágenes (jpeg, jpg, png, gif, webp) y PDFs con un tamaño máximo de 2MB por archivo.
  */
 const storage = multer.memoryStorage();
 
 const fileFilter = (req: Request, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
-  const allowedMimes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+  const allowedMimes = [
+    'image/jpeg', 
+    'image/jpg', 
+    'image/png', 
+    'image/gif', 
+    'image/webp',
+    'application/pdf' // PDFs para tickets
+  ];
   
   if (allowedMimes.includes(file.mimetype)) {
     cb(null, true);
   } else {
-    cb(new Error('Tipo de archivo no permitido. Solo se aceptan imágenes (JPEG, PNG, GIF, WEBP)'));
+    cb(new Error('Tipo de archivo no permitido. Solo se aceptan imágenes (JPEG, PNG, GIF, WEBP) y PDFs'));
   }
 };
 
@@ -11061,7 +11097,7 @@ export const upload = multer({
   storage,
   fileFilter,
   limits: {
-    fileSize: 5 * 1024 * 1024 // 5MB máximo
+    fileSize: 2 * 1024 * 1024 // 2MB máximo por archivo
   }
 });
 
@@ -11853,15 +11889,11 @@ export async function listCentersCtrl(req: Request, res: Response) {
 
 /**
  * Controlador para listar todos los centros con IDs.
- * Accesible para todos los usuarios autenticados.
- * Usado principalmente para la página de entrenadores donde los usuarios necesitan seleccionar un centro.
+ * Accesible públicamente (sin autenticación).
+ * Usado principalmente para la página de contacto y otras páginas públicas donde los usuarios necesitan seleccionar un centro.
  */
 export async function listCentersWithIdsCtrl(req: Request, res: Response) {
   try {
-    if (!req.user) {
-      return res.status(401).json({ message: 'No autorizado' });
-    }
-
     const centers = await listCenters(null, true);
     res.json(centers);
   } catch (error: any) {
@@ -12023,15 +12055,13 @@ router.get('/', auth, listCentersCtrl);
  * @swagger
  * /api/centers/with-ids:
  *   get:
- *     summary: Lista todos los centros con IDs (para selección)
+ *     summary: Lista todos los centros con IDs (para selección) - Público
  *     tags: [Centers]
- *     security:
- *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: Lista de centros con IDs
  */
-router.get('/with-ids', auth, listCentersWithIdsCtrl);
+router.get('/with-ids', listCentersWithIdsCtrl);
 
 /**
  * @swagger
@@ -13309,32 +13339,171 @@ export default router;
 --- START OF FILE: src\modules\machines\machines.controller.ts ---
 import type { Request, Response } from 'express';
 import {
-  createMachine, listMachines, getMachineById, updateMachine, deleteMachine, listMachinesByCenter,
+  // MachineType functions
+  createMachineType,
+  listMachineTypes,
+  getMachineTypeById,
+  updateMachineType,
+  deleteMachineType,
+  // Machine instance functions
+  addMachineToCenter,
+  updateMachineInCenter,
+  removeMachineFromCenter,
+  listMachines,
+  getMachineById,
+  updateMachine,
+  deleteMachine,
+  listMachinesByCenter,
 } from './machines.service.js';
 
+// ========== MACHINE TYPE CONTROLLERS ==========
+
 /**
- * Controlador para crear una nueva máquina de gimnasio.
- * Valida que el centro especificado exista antes de crear la máquina.
- * Retorna la máquina creada con un status 201.
+ * Controlador para crear un nuevo tipo de máquina
  */
-export async function createMachineCtrl(req: Request, res: Response) {
+export async function createMachineTypeCtrl(req: Request, res: Response) {
   try {
-    const machine = await createMachine(req.body);
-    res.status(201).json(machine);
+    const machineType = await createMachineType(req.body);
+    res.status(201).json(machineType);
   } catch (error: any) {
-    if (error.code === 'P2003') return res.status(404).json({ message: 'Centro no encontrado' });
+    if (error.code === 'P2002') {
+      return res.status(409).json({ message: 'Ya existe un tipo de máquina con este nombre y categoría' });
+    }
     res.status(500).json({ message: error.message });
   }
 }
 
 /**
- * Controlador para listar todas las máquinas de todos los centros.
- * Incluye información del centro al que pertenece cada máquina.
- * Retorna las máquinas ordenadas por fecha de creación descendente.
+ * Controlador para listar todos los tipos de máquinas
  */
-export async function listMachinesCtrl(_req: Request, res: Response) {
+export async function listMachineTypesCtrl(req: Request, res: Response) {
   try {
-    const machines = await listMachines();
+    const centerId = req.query.centerId as string | undefined;
+    const machineTypes = await listMachineTypes(centerId || null);
+    res.json(machineTypes);
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+}
+
+/**
+ * Controlador para obtener un tipo de máquina por ID
+ */
+export async function getMachineTypeCtrl(req: Request, res: Response) {
+  try {
+    const id = req.params.id;
+    if (!id) return res.status(400).json({ message: 'ID requerido' });
+    const machineType = await getMachineTypeById(id);
+    if (!machineType) return res.status(404).json({ message: 'Tipo de máquina no encontrado' });
+    res.json(machineType);
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+}
+
+/**
+ * Controlador para actualizar un tipo de máquina
+ */
+export async function updateMachineTypeCtrl(req: Request, res: Response) {
+  try {
+    const id = req.params.id;
+    if (!id) return res.status(400).json({ message: 'ID requerido' });
+    const updated = await updateMachineType(id, req.body);
+    res.json(updated);
+  } catch (error: any) {
+    if (error.code === 'P2025') return res.status(404).json({ message: 'Tipo de máquina no encontrado' });
+    if (error.code === 'P2002') return res.status(409).json({ message: 'Ya existe un tipo con este nombre y categoría' });
+    res.status(500).json({ message: error.message });
+  }
+}
+
+/**
+ * Controlador para eliminar un tipo de máquina
+ */
+export async function deleteMachineTypeCtrl(req: Request, res: Response) {
+  try {
+    const id = req.params.id;
+    if (!id) return res.status(400).json({ message: 'ID requerido' });
+    await deleteMachineType(id);
+    res.status(204).send();
+  } catch (error: any) {
+    if (error.code === 'P2025') return res.status(404).json({ message: 'Tipo de máquina no encontrado' });
+    res.status(500).json({ message: error.message });
+  }
+}
+
+// ========== MACHINE INSTANCE CONTROLLERS ==========
+
+/**
+ * Controlador para agregar instancias de un tipo de máquina a un centro
+ */
+export async function addMachineToCenterCtrl(req: Request, res: Response) {
+  try {
+    const machineTypeId = req.params.id;
+    if (!machineTypeId) return res.status(400).json({ message: 'ID de tipo de máquina requerido' });
+    const instances = await addMachineToCenter(machineTypeId, req.body);
+    res.status(201).json(instances);
+  } catch (error: any) {
+    if (error.message === 'Tipo de máquina no encontrado' || error.message === 'Centro no encontrado') {
+      return res.status(404).json({ message: error.message });
+    }
+    res.status(500).json({ message: error.message });
+  }
+}
+
+/**
+ * Controlador para actualizar una instancia de máquina en un centro
+ */
+export async function updateMachineInCenterCtrl(req: Request, res: Response) {
+  try {
+    const { id: machineTypeId, centerId, instanceNumber } = req.params;
+    if (!machineTypeId || !centerId || !instanceNumber) {
+      return res.status(400).json({ message: 'Parámetros requeridos: id (machineTypeId), centerId, instanceNumber' });
+    }
+    const instanceNum = parseInt(instanceNumber, 10);
+    if (isNaN(instanceNum)) {
+      return res.status(400).json({ message: 'instanceNumber debe ser un número válido' });
+    }
+    const updated = await updateMachineInCenter(machineTypeId, centerId, instanceNum, req.body);
+    res.json(updated);
+  } catch (error: any) {
+    if (error.message === 'Instancia de máquina no encontrada') {
+      return res.status(404).json({ message: error.message });
+    }
+    res.status(500).json({ message: error.message });
+  }
+}
+
+/**
+ * Controlador para eliminar una instancia de máquina de un centro
+ */
+export async function removeMachineFromCenterCtrl(req: Request, res: Response) {
+  try {
+    const { id: machineTypeId, centerId, instanceNumber } = req.params;
+    if (!machineTypeId || !centerId || !instanceNumber) {
+      return res.status(400).json({ message: 'Parámetros requeridos: id (machineTypeId), centerId, instanceNumber' });
+    }
+    const instanceNum = parseInt(instanceNumber, 10);
+    if (isNaN(instanceNum)) {
+      return res.status(400).json({ message: 'instanceNumber debe ser un número válido' });
+    }
+    await removeMachineFromCenter(machineTypeId, centerId, instanceNum);
+    res.status(204).send();
+  } catch (error: any) {
+    if (error.message === 'Instancia de máquina no encontrada') {
+      return res.status(404).json({ message: error.message });
+    }
+    res.status(500).json({ message: error.message });
+  }
+}
+
+/**
+ * Controlador para listar todas las máquinas (instancias)
+ */
+export async function listMachinesCtrl(req: Request, res: Response) {
+  try {
+    const centerId = req.query.centerId as string | undefined;
+    const machines = await listMachines(centerId || null);
     res.json(machines);
   } catch (error: any) {
     res.status(500).json({ message: error.message });
@@ -13342,8 +13511,7 @@ export async function listMachinesCtrl(_req: Request, res: Response) {
 }
 
 /**
- * Controlador para obtener una máquina específica por su ID.
- * Retorna todos los datos de la máquina incluyendo información detallada del centro.
+ * Controlador para obtener una máquina por ID
  */
 export async function getMachineCtrl(req: Request, res: Response) {
   try {
@@ -13358,9 +13526,7 @@ export async function getMachineCtrl(req: Request, res: Response) {
 }
 
 /**
- * Controlador para actualizar los datos de una máquina existente.
- * Permite modificar el nombre, tipo, estado y/o el centro al que pertenece.
- * Valida que el nuevo centro exista si se modifica.
+ * Controlador para actualizar una máquina por ID
  */
 export async function updateMachineCtrl(req: Request, res: Response) {
   try {
@@ -13369,16 +13535,15 @@ export async function updateMachineCtrl(req: Request, res: Response) {
     const updated = await updateMachine(id, req.body);
     res.json(updated);
   } catch (error: any) {
-    if (error.code === 'P2025') return res.status(404).json({ message: 'Máquina no encontrada' });
-    if (error.code === 'P2003') return res.status(404).json({ message: 'Centro no encontrado' });
+    if (error.message === 'Máquina no encontrada') {
+      return res.status(404).json({ message: error.message });
+    }
     res.status(500).json({ message: error.message });
   }
 }
 
 /**
- * Controlador para eliminar una máquina de gimnasio.
- * Esta operación es permanente y no afecta al centro al que pertenecía.
- * Retorna un status 204 sin contenido en caso de éxito.
+ * Controlador para eliminar una máquina por ID
  */
 export async function deleteMachineCtrl(req: Request, res: Response) {
   try {
@@ -13387,15 +13552,15 @@ export async function deleteMachineCtrl(req: Request, res: Response) {
     await deleteMachine(id);
     res.status(204).send();
   } catch (error: any) {
-    if (error.code === 'P2025') return res.status(404).json({ message: 'Máquina no encontrada' });
+    if (error.message === 'Máquina no encontrada para eliminar') {
+      return res.status(404).json({ message: error.message });
+    }
     res.status(500).json({ message: error.message });
   }
 }
 
 /**
- * Controlador para listar todas las máquinas de un centro específico.
- * Retorna las máquinas ordenadas por fecha de creación descendente.
- * Útil para mostrar el inventario completo de un centro.
+ * Controlador para listar máquinas de un centro específico
  */
 export async function listMachinesByCenterCtrl(req: Request, res: Response) {
   try {
@@ -13408,7 +13573,6 @@ export async function listMachinesByCenterCtrl(req: Request, res: Response) {
   }
 }
 
-
 --- END OF FILE: src\modules\machines\machines.controller.ts ---
 
 
@@ -13416,9 +13580,33 @@ export async function listMachinesByCenterCtrl(req: Request, res: Response) {
 import { Router } from 'express';
 import { auth } from '../../middleware/auth.js';
 import { validate } from '../../middleware/validate.js';
-import { createMachineSchema, updateMachineSchema, machineIdParamSchema, centerIdParamSchema } from './machines.schema.js';
 import {
-  createMachineCtrl, listMachinesCtrl, getMachineCtrl, updateMachineCtrl, deleteMachineCtrl, listMachinesByCenterCtrl,
+  createMachineTypeSchema,
+  updateMachineTypeSchema,
+  machineTypeIdParamSchema,
+  addMachineToCenterSchema,
+  updateMachineInCenterSchema,
+  removeMachineFromCenterSchema,
+  updateMachineSchema,
+  machineIdParamSchema,
+  centerIdParamSchema,
+} from './machines.schema.js';
+import {
+  // MachineType controllers
+  createMachineTypeCtrl,
+  listMachineTypesCtrl,
+  getMachineTypeCtrl,
+  updateMachineTypeCtrl,
+  deleteMachineTypeCtrl,
+  // Machine instance controllers
+  addMachineToCenterCtrl,
+  updateMachineInCenterCtrl,
+  removeMachineFromCenterCtrl,
+  listMachinesCtrl,
+  getMachineCtrl,
+  updateMachineCtrl,
+  deleteMachineCtrl,
+  listMachinesByCenterCtrl,
 } from './machines.controller.js';
 
 const router = Router();
@@ -13426,49 +13614,270 @@ const router = Router();
 /**
  * @swagger
  * tags:
+ *   - name: MachineTypes
+ *     description: Gestión de tipos/modelos de máquinas
  *   - name: Machines
- *     description: Gestión de máquinas de gimnasio
+ *     description: Gestión de instancias de máquinas en centros
  */
+
+// ========== MACHINE TYPE ROUTES ==========
 
 /**
  * @swagger
- * /api/machines:
+ * /api/machines/types:
  *   get:
- *     summary: Lista todas las máquinas
- *     tags: [Machines]
+ *     summary: Lista todos los tipos de máquinas
+ *     tags: [MachineTypes]
  *     security: [ { bearerAuth: [] } ]
+ *     parameters:
+ *       - in: query
+ *         name: centerId
+ *         schema:
+ *           type: string
+ *         description: Filtrar por centro (opcional)
  *     responses:
  *       200:
- *         description: Lista de máquinas
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/Machine'
+ *         description: Lista de tipos de máquinas
  */
-router.get('/', auth, listMachinesCtrl);
+router.get('/types', auth, listMachineTypesCtrl);
 
 /**
  * @swagger
- * /api/machines:
+ * /api/machines/types:
  *   post:
- *     summary: Crea una máquina
- *     tags: [Machines]
+ *     summary: Crea un nuevo tipo de máquina
+ *     tags: [MachineTypes]
  *     security: [ { bearerAuth: [] } ]
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/CreateMachineInput'
+ *             type: object
+ *             required:
+ *               - name
+ *               - type
+ *             properties:
+ *               name:
+ *                 type: string
+ *               type:
+ *                 type: string
+ *                 enum: [cardio, fuerza, peso libre, funcional, otro]
  *     responses:
  *       201:
- *         description: Máquina creada
- *       404:
- *         description: Centro no encontrado
+ *         description: Tipo de máquina creado
+ *       409:
+ *         description: Ya existe un tipo con este nombre y categoría
  */
-router.post('/', auth, validate(createMachineSchema), createMachineCtrl);
+router.post('/types', auth, validate(createMachineTypeSchema), createMachineTypeCtrl);
+
+/**
+ * @swagger
+ * /api/machines/types/{id}:
+ *   get:
+ *     summary: Obtiene un tipo de máquina por ID
+ *     tags: [MachineTypes]
+ *     security: [ { bearerAuth: [] } ]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Tipo de máquina encontrado
+ *       404:
+ *         description: Tipo de máquina no encontrado
+ */
+router.get('/types/:id', auth, validate(machineTypeIdParamSchema), getMachineTypeCtrl);
+
+/**
+ * @swagger
+ * /api/machines/types/{id}:
+ *   patch:
+ *     summary: Actualiza un tipo de máquina
+ *     tags: [MachineTypes]
+ *     security: [ { bearerAuth: [] } ]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Tipo de máquina actualizado
+ *       404:
+ *         description: Tipo de máquina no encontrado
+ */
+router.patch('/types/:id', auth, validate(updateMachineTypeSchema), updateMachineTypeCtrl);
+
+/**
+ * @swagger
+ * /api/machines/types/{id}:
+ *   delete:
+ *     summary: Elimina un tipo de máquina
+ *     tags: [MachineTypes]
+ *     security: [ { bearerAuth: [] } ]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       204:
+ *         description: Tipo de máquina eliminado
+ *       404:
+ *         description: Tipo de máquina no encontrado
+ */
+router.delete('/types/:id', auth, validate(machineTypeIdParamSchema), deleteMachineTypeCtrl);
+
+/**
+ * @swagger
+ * /api/machines/types/{id}/centers:
+ *   post:
+ *     summary: Agrega instancias de un tipo de máquina a un centro
+ *     tags: [MachineTypes]
+ *     security: [ { bearerAuth: [] } ]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID del tipo de máquina
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - centerId
+ *               - quantity
+ *             properties:
+ *               centerId:
+ *                 type: string
+ *               quantity:
+ *                 type: integer
+ *                 minimum: 1
+ *               status:
+ *                 type: string
+ *                 enum: [operativa, en mantenimiento, fuera de servicio]
+ *                 default: operativa
+ *     responses:
+ *       201:
+ *         description: Instancias creadas
+ *       404:
+ *         description: Tipo de máquina o centro no encontrado
+ */
+router.post('/types/:id/centers', auth, validate(addMachineToCenterSchema), addMachineToCenterCtrl);
+
+/**
+ * @swagger
+ * /api/machines/types/{id}/centers/{centerId}/instances/{instanceNumber}:
+ *   patch:
+ *     summary: Actualiza una instancia específica de máquina en un centro
+ *     tags: [Machines]
+ *     security: [ { bearerAuth: [] } ]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID del tipo de máquina
+ *       - in: path
+ *         name: centerId
+ *         required: true
+ *         schema:
+ *           type: string
+ *       - in: path
+ *         name: instanceNumber
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               status:
+ *                 type: string
+ *                 enum: [operativa, en mantenimiento, fuera de servicio]
+ *     responses:
+ *       200:
+ *         description: Instancia actualizada
+ *       404:
+ *         description: Instancia no encontrada
+ */
+router.patch(
+  '/types/:id/centers/:centerId/instances/:instanceNumber',
+  auth,
+  validate(updateMachineInCenterSchema),
+  updateMachineInCenterCtrl
+);
+
+/**
+ * @swagger
+ * /api/machines/types/{id}/centers/{centerId}/instances/{instanceNumber}:
+ *   delete:
+ *     summary: Elimina una instancia específica de máquina de un centro
+ *     tags: [Machines]
+ *     security: [ { bearerAuth: [] } ]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID del tipo de máquina
+ *       - in: path
+ *         name: centerId
+ *         required: true
+ *         schema:
+ *           type: string
+ *       - in: path
+ *         name: instanceNumber
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       204:
+ *         description: Instancia eliminada
+ *       404:
+ *         description: Instancia no encontrada
+ */
+router.delete(
+  '/types/:id/centers/:centerId/instances/:instanceNumber',
+  auth,
+  validate(removeMachineFromCenterSchema),
+  removeMachineFromCenterCtrl
+);
+
+// ========== MACHINE INSTANCE ROUTES ==========
+
+/**
+ * @swagger
+ * /api/machines:
+ *   get:
+ *     summary: Lista todas las máquinas (instancias)
+ *     tags: [Machines]
+ *     security: [ { bearerAuth: [] } ]
+ *     parameters:
+ *       - in: query
+ *         name: centerId
+ *         schema:
+ *           type: string
+ *         description: Filtrar por centro (opcional)
+ *     responses:
+ *       200:
+ *         description: Lista de máquinas
+ */
+router.get('/', auth, listMachinesCtrl);
 
 /**
  * @swagger
@@ -13480,10 +13889,9 @@ router.post('/', auth, validate(createMachineSchema), createMachineCtrl);
  *     parameters:
  *       - in: path
  *         name: id
- *         schema:
- *           type: integer
  *         required: true
- *         description: ID de la máquina
+ *         schema:
+ *           type: string
  *     responses:
  *       200:
  *         description: Máquina encontrada
@@ -13496,27 +13904,29 @@ router.get('/:id', auth, validate(machineIdParamSchema), getMachineCtrl);
  * @swagger
  * /api/machines/{id}:
  *   patch:
- *     summary: Actualiza una máquina
+ *     summary: Actualiza una máquina por ID
  *     tags: [Machines]
  *     security: [ { bearerAuth: [] } ]
  *     parameters:
  *       - in: path
  *         name: id
- *         schema:
- *           type: integer
  *         required: true
- *         description: ID de la máquina
+ *         schema:
+ *           type: string
  *     requestBody:
- *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/UpdateMachineInput'
+ *             type: object
+ *             properties:
+ *               status:
+ *                 type: string
+ *                 enum: [operativa, en mantenimiento, fuera de servicio]
  *     responses:
  *       200:
  *         description: Máquina actualizada
  *       404:
- *         description: Máquina o centro no encontrado
+ *         description: Máquina no encontrada
  */
 router.patch('/:id', auth, validate(updateMachineSchema), updateMachineCtrl);
 
@@ -13530,10 +13940,9 @@ router.patch('/:id', auth, validate(updateMachineSchema), updateMachineCtrl);
  *     parameters:
  *       - in: path
  *         name: id
- *         schema:
- *           type: integer
  *         required: true
- *         description: ID de la máquina
+ *         schema:
+ *           type: string
  *     responses:
  *       204:
  *         description: Máquina eliminada
@@ -13552,10 +13961,9 @@ router.delete('/:id', auth, validate(machineIdParamSchema), deleteMachineCtrl);
  *     parameters:
  *       - in: path
  *         name: centerId
- *         schema:
- *           type: integer
  *         required: true
- *         description: ID del centro
+ *         schema:
+ *           type: string
  *     responses:
  *       200:
  *         description: Lista de máquinas del centro
@@ -13564,7 +13972,6 @@ router.get('/center/:centerId', auth, validate(centerIdParamSchema), listMachine
 
 export default router;
 
-
 --- END OF FILE: src\modules\machines\machines.routes.ts ---
 
 
@@ -13572,26 +13979,62 @@ export default router;
 import { z } from 'zod';
 import { cuidSchema } from '../../utils/validation.js';
 
-export const createMachineSchema = {
+export const createMachineTypeSchema = {
   body: z.object({
     name: z.string().min(1, 'name is required'),
     type: z.enum(['cardio', 'fuerza', 'peso libre', 'funcional', 'otro'], {
       message: 'type debe ser: cardio, fuerza, peso libre, funcional u otro',
     }),
-    status: z.enum(['operativa', 'en mantenimiento', 'fuera de servicio'], {
-      message: 'status debe ser: operativa, en mantenimiento o fuera de servicio',
-    }),
-    centerId: cuidSchema,
-  }),
+  }).strict(),
 };
 
-export const updateMachineSchema = {
+export const updateMachineTypeSchema = {
   params: z.object({ id: cuidSchema }),
   body: z.object({
     name: z.string().min(1).optional(),
     type: z.enum(['cardio', 'fuerza', 'peso libre', 'funcional', 'otro']).optional(),
+  }),
+};
+
+export const machineTypeIdParamSchema = {
+  params: z.object({ id: cuidSchema }),
+};
+
+export const addMachineToCenterSchema = {
+  params: z.object({ id: cuidSchema }), // id es el machineTypeId
+  body: z.object({
+    centerId: cuidSchema,
+    quantity: z.coerce.number().int().min(1, 'quantity must be at least 1'),
+    status: z.enum(['operativa', 'en mantenimiento', 'fuera de servicio'], {
+      message: 'status debe ser: operativa, en mantenimiento o fuera de servicio',
+    }).optional().default('operativa'),
+  }).strict(),
+};
+
+export const updateMachineInCenterSchema = {
+  params: z.object({
+    id: cuidSchema, // machineTypeId
+    centerId: cuidSchema,
+    instanceNumber: z.coerce.number().int().min(1),
+  }),
+  body: z.object({
     status: z.enum(['operativa', 'en mantenimiento', 'fuera de servicio']).optional(),
-    centerId: cuidSchema.optional(),
+  }),
+};
+
+export const removeMachineFromCenterSchema = {
+  params: z.object({
+    id: cuidSchema, // machineTypeId
+    centerId: cuidSchema,
+    instanceNumber: z.coerce.number().int().min(1),
+  }),
+};
+
+// Schemas para instancias de máquinas (por ID directo)
+export const updateMachineSchema = {
+  params: z.object({ id: cuidSchema }), // ID de la instancia de máquina
+  body: z.object({
+    status: z.enum(['operativa', 'en mantenimiento', 'fuera de servicio']).optional(),
   }),
 };
 
@@ -13602,8 +14045,6 @@ export const machineIdParamSchema = {
 export const centerIdParamSchema = {
   params: z.object({ centerId: cuidSchema }),
 };
-
-
 --- END OF FILE: src\modules\machines\machines.schema.ts ---
 
 
@@ -13640,112 +14081,225 @@ async function notifyMachineEvent(
   await notifyCenterAdmins(centerId, title, message, link, type);
 
   // 2. Notificar a los Superadmins (añadimos el NOMBRE del centro al mensaje)
-  // Cambio clave: Usamos centerName en lugar de centerId
   await notifySuperAdmins(title, `[Centro: ${centerName}] ${message}`, link, type);
 }
 // --------------------------------------------------
 
+// ========== MACHINE TYPE (Modelos de máquinas) ==========
 
 /**
- * Crea una nueva máquina de gimnasio y notifica el evento.
+ * Crea un nuevo tipo/modelo de máquina
  */
-export async function createMachine(data: {
+export async function createMachineType(data: {
   name: string;
   type: string;
-  status: string;
-  centerId: string;
 }) {
-  const machine = await prisma.machine.create({ data });
-
-  try {
-    await notifyMachineEvent(
-      machine.centerId,
-      'Nueva Máquina Añadida 🆕',
-      `Se ha añadido la máquina "${machine.name}" (${machine.type}) en estado "${machine.status}".`,
-      machine.id,
-      'SUCCESS'
-    );
-  } catch (error) {
-    console.error('Error notificando creación de máquina:', error);
-  }
-
-  return machine;
+  return prisma.machineType.create({ data });
 }
 
-export async function listMachines() {
-  return prisma.machine.findMany({
-    orderBy: { createdAt: 'desc' },
-    include: {
-      center: { select: { id: true, name: true, city: true } },
-    },
-  });
-}
+/**
+ * Lista todos los tipos de máquinas con información de instancias en centros
+ */
+export async function listMachineTypes(centerId?: string | null) {
+  const where = centerId ? {
+    machines: {
+      some: { centerId }
+    }
+  } : undefined;
 
-export async function getMachineById(id: string) {
-  return prisma.machine.findUnique({
-    where: { id },
+  return prisma.machineType.findMany({
+    where,
     include: {
-      center: { select: { id: true, name: true, city: true, country: true } },
+      machines: centerId ? {
+        where: { centerId },
+        include: {
+          center: { select: { id: true, name: true } }
+        }
+      } : {
+        include: {
+          center: { select: { id: true, name: true } }
+        }
+      },
+      _count: {
+        select: { machines: true }
+      }
     },
+    orderBy: { createdAt: 'desc' }
   });
 }
 
 /**
- * Actualiza una máquina y genera notificaciones precisas sobre los cambios.
+ * Obtiene un tipo de máquina por su ID
  */
-export async function updateMachine(id: string, data: Partial<Parameters<typeof createMachine>[0]>) {
-  // 1. Obtener estado original ANTES de actualizar
-  const oldMachine = await prisma.machine.findUnique({ where: { id } });
-  if (!oldMachine) throw new Error('Máquina no encontrada');
-
-  // 2. Realizar la actualización
-  const updatedMachine = await prisma.machine.update({ where: { id }, data });
-
-  // 3. Calcular las diferencias (Deltas) para el mensaje
-  const changes: string[] = [];
-  if (data.name && data.name !== oldMachine.name) {
-    changes.push(`Nombre cambiado de "${oldMachine.name}" a "${data.name}"`);
-  }
-  if (data.type && data.type !== oldMachine.type) {
-    changes.push(`Tipo cambiado de "${oldMachine.type}" a "${data.type}"`);
-  }
-  if (data.status && data.status !== oldMachine.status) {
-    changes.push(`Estado cambiado de "${oldMachine.status}" a "${data.status}"`);
-  }
-  
-  // Lógica especial si se mueve de centro
-  let targetCenterId = oldMachine.centerId;
-  if (data.centerId && data.centerId !== oldMachine.centerId) {
-    // Necesitamos el nombre del centro nuevo para el mensaje
-    const newCenter = await prisma.center.findUnique({ where: { id: data.centerId }, select: { name: true } });
-    const oldCenter = await prisma.center.findUnique({ where: { id: oldMachine.centerId }, select: { name: true } });
-    
-    const oldName = oldCenter?.name || 'Desconocido';
-    const newName = newCenter?.name || 'Desconocido';
-
-    changes.push(`Movida del Centro "${oldName}" al "${newName}"`);
-    targetCenterId = data.centerId; // La notificación debe ir al nuevo centro
-  }
-
-  // 4. Si hubo cambios, notificar
-  if (changes.length > 0) {
-    const message = changes.join('. ') + '.';
-    
-    // Determinar severidad
-    let type: NotificationType = 'INFO';
-    if (data.status === 'en mantenimiento' || data.status === 'fuera de servicio') {
-      type = 'WARNING';
-    } else if (oldMachine.status !== 'operativa' && data.status === 'operativa') {
-      type = 'SUCCESS';
+export async function getMachineTypeById(id: string) {
+  return prisma.machineType.findUnique({
+    where: { id },
+    include: {
+      machines: {
+        include: {
+          center: { select: { id: true, name: true, city: true } }
+        },
+        orderBy: [{ centerId: 'asc' }, { instanceNumber: 'asc' }]
+      }
     }
+  });
+}
 
+/**
+ * Actualiza un tipo de máquina
+ */
+export async function updateMachineType(id: string, data: {
+  name?: string;
+  type?: string;
+}) {
+  return prisma.machineType.update({
+    where: { id },
+    data
+  });
+}
+
+/**
+ * Elimina un tipo de máquina (esto eliminará todas sus instancias)
+ */
+export async function deleteMachineType(id: string) {
+  return prisma.machineType.delete({
+    where: { id }
+  });
+}
+
+// ========== MACHINE INSTANCES (Instancias de máquinas en centros) ==========
+
+/**
+ * Agrega instancias de un tipo de máquina a un centro
+ * Crea múltiples instancias numeradas (ej: "Cinta 1", "Cinta 2", etc.)
+ */
+export async function addMachineToCenter(
+  machineTypeId: string,
+  data: {
+    centerId: string;
+    quantity: number;
+    status?: string;
+  }
+) {
+  // Verificar que el tipo de máquina existe
+  const machineType = await prisma.machineType.findUnique({
+    where: { id: machineTypeId }
+  });
+  if (!machineType) {
+    throw new Error('Tipo de máquina no encontrado');
+  }
+
+  // Verificar que el centro existe
+  const center = await prisma.center.findUnique({
+    where: { id: data.centerId }
+  });
+  if (!center) {
+    throw new Error('Centro no encontrado');
+  }
+
+  // Obtener el último número de instancia para este tipo en este centro
+  const existingMachines = await prisma.machine.findMany({
+    where: {
+      machineTypeId,
+      centerId: data.centerId
+    },
+    orderBy: { instanceNumber: 'desc' },
+    take: 1
+  });
+
+  const startNumber = existingMachines.length > 0 
+    ? existingMachines[0].instanceNumber + 1 
+    : 1;
+
+  // Crear las instancias
+  const machines = [];
+  const defaultStatus = data.status || 'operativa';
+
+  for (let i = 0; i < data.quantity; i++) {
+    const instanceNumber = startNumber + i;
+    const machine = await prisma.machine.create({
+      data: {
+        machineTypeId,
+        centerId: data.centerId,
+        instanceNumber,
+        status: defaultStatus
+      },
+      include: {
+        machineType: true,
+        center: { select: { id: true, name: true } }
+      }
+    });
+    machines.push(machine);
+
+    // Notificar cada creación
     try {
       await notifyMachineEvent(
-        targetCenterId,
+        data.centerId,
+        'Nueva Máquina Añadida 🆕',
+        `Se ha añadido la máquina "${machineType.name} ${instanceNumber}" en estado "${defaultStatus}".`,
+        machine.id,
+        'SUCCESS'
+      );
+    } catch (error) {
+      console.error('Error notificando creación de máquina:', error);
+    }
+  }
+
+  return machines;
+}
+
+/**
+ * Actualiza una instancia de máquina específica
+ */
+export async function updateMachineInCenter(
+  machineTypeId: string,
+  centerId: string,
+  instanceNumber: number,
+  data: {
+    status?: string;
+  }
+) {
+  const machine = await prisma.machine.findFirst({
+    where: {
+      machineTypeId,
+      centerId,
+      instanceNumber
+    },
+    include: {
+      machineType: true
+    }
+  });
+
+  if (!machine) {
+    throw new Error('Instancia de máquina no encontrada');
+  }
+
+  const oldStatus = machine.status;
+  const updatedMachine = await prisma.machine.update({
+    where: { id: machine.id },
+    data,
+    include: {
+      machineType: true,
+      center: { select: { id: true, name: true } }
+    }
+  });
+
+  // Notificar si cambió el estado
+  if (data.status && data.status !== oldStatus) {
+    try {
+      let notificationType: NotificationType = 'INFO';
+      if (data.status === 'en mantenimiento' || data.status === 'fuera de servicio') {
+        notificationType = 'WARNING';
+      } else if (oldStatus !== 'operativa' && data.status === 'operativa') {
+        notificationType = 'SUCCESS';
+      }
+
+      await notifyMachineEvent(
+        centerId,
         'Máquina Actualizada 🛠️',
-        `${updatedMachine.name}: ${message}`,
+        `${updatedMachine.machineType.name} ${instanceNumber}: Estado cambiado de "${oldStatus}" a "${data.status}".`,
         updatedMachine.id,
-        type
+        notificationType
       );
     } catch (error) {
       console.error('Error notificando actualización de máquina:', error);
@@ -13756,22 +14310,153 @@ export async function updateMachine(id: string, data: Partial<Parameters<typeof 
 }
 
 /**
- * Elimina una máquina y notifica el evento.
+ * Elimina una instancia de máquina de un centro
+ */
+export async function removeMachineFromCenter(
+  machineTypeId: string,
+  centerId: string,
+  instanceNumber: number
+) {
+  const machine = await prisma.machine.findFirst({
+    where: {
+      machineTypeId,
+      centerId,
+      instanceNumber
+    },
+    include: {
+      machineType: true
+    }
+  });
+
+  if (!machine) {
+    throw new Error('Instancia de máquina no encontrada');
+  }
+
+  await prisma.machine.delete({
+    where: { id: machine.id }
+  });
+
+  // Notificar eliminación
+  try {
+    await notifyMachineEvent(
+      centerId,
+      'Máquina Eliminada 🗑️',
+      `La máquina "${machine.machineType.name} ${instanceNumber}" ha sido eliminada del inventario.`,
+      undefined,
+      'ERROR'
+    );
+  } catch (error) {
+    console.error('Error notificando eliminación de máquina:', error);
+  }
+
+  return machine;
+}
+
+/**
+ * Lista todas las máquinas (instancias)
+ */
+export async function listMachines(centerId?: string | null) {
+  const where = centerId ? { centerId } : undefined;
+  
+  return prisma.machine.findMany({
+    where,
+    include: {
+      machineType: true,
+      center: { select: { id: true, name: true, city: true } }
+    },
+    orderBy: [
+      { centerId: 'asc' },
+      { machineTypeId: 'asc' },
+      { instanceNumber: 'asc' }
+    ]
+  });
+}
+
+/**
+ * Obtiene una máquina por su ID
+ */
+export async function getMachineById(id: string) {
+  return prisma.machine.findUnique({
+    where: { id },
+    include: {
+      machineType: true,
+      center: { select: { id: true, name: true, city: true, country: true } }
+    }
+  });
+}
+
+/**
+ * Actualiza una máquina por su ID
+ */
+export async function updateMachine(id: string, data: {
+  status?: string;
+}) {
+  const oldMachine = await prisma.machine.findUnique({
+    where: { id },
+    include: { machineType: true }
+  });
+
+  if (!oldMachine) {
+    throw new Error('Máquina no encontrada');
+  }
+
+  const updatedMachine = await prisma.machine.update({
+    where: { id },
+    data,
+    include: {
+      machineType: true,
+      center: { select: { id: true, name: true } }
+    }
+  });
+
+  // Notificar si cambió el estado
+  if (data.status && data.status !== oldMachine.status) {
+    try {
+      let notificationType: NotificationType = 'INFO';
+      if (data.status === 'en mantenimiento' || data.status === 'fuera de servicio') {
+        notificationType = 'WARNING';
+      } else if (oldMachine.status !== 'operativa' && data.status === 'operativa') {
+        notificationType = 'SUCCESS';
+      }
+
+      await notifyMachineEvent(
+        oldMachine.centerId,
+        'Máquina Actualizada 🛠️',
+        `${updatedMachine.machineType.name} ${updatedMachine.instanceNumber}: Estado cambiado de "${oldMachine.status}" a "${data.status}".`,
+        updatedMachine.id,
+        notificationType
+      );
+    } catch (error) {
+      console.error('Error notificando actualización de máquina:', error);
+    }
+  }
+
+  return updatedMachine;
+}
+
+/**
+ * Elimina una máquina por su ID
  */
 export async function deleteMachine(id: string) {
-  // 1. Obtener datos antes de borrar para la notificación
-  const machineToDelete = await prisma.machine.findUnique({ where: { id } });
-  if (!machineToDelete) throw new Error('Máquina no encontrada para eliminar');
+  const machineToDelete = await prisma.machine.findUnique({
+    where: { id },
+    include: { machineType: true }
+  });
 
-  // 2. Borrar
-  await prisma.machine.delete({ where: { id } });
+  if (!machineToDelete) {
+    throw new Error('Máquina no encontrada para eliminar');
+  }
 
-  // 3. Notificar
+  await prisma.machine.delete({
+    where: { id }
+  });
+
+  // Notificar eliminación
   try {
     await notifyMachineEvent(
       machineToDelete.centerId,
       'Máquina Eliminada 🗑️',
-      `La máquina "${machineToDelete.name}" (${machineToDelete.type}) ha sido eliminada permanentemente del inventario.`,
+      `La máquina "${machineToDelete.machineType.name} ${machineToDelete.instanceNumber}" ha sido eliminada permanentemente del inventario.`,
       undefined,
       'ERROR'
     );
@@ -13782,12 +14467,22 @@ export async function deleteMachine(id: string) {
   return machineToDelete;
 }
 
+/**
+ * Lista máquinas por centro
+ */
 export async function listMachinesByCenter(centerId: string) {
   return prisma.machine.findMany({
     where: { centerId },
-    orderBy: { createdAt: 'desc' },
+    include: {
+      machineType: true
+    },
+    orderBy: [
+      { machineTypeId: 'asc' },
+      { instanceNumber: 'asc' }
+    ]
   });
 }
+
 --- END OF FILE: src\modules\machines\machines.service.ts ---
 
 
@@ -13980,6 +14675,445 @@ export async function markAllAsRead(userId: string) {
   });
 }
 --- END OF FILE: src\modules\notifications\notifications.service.ts ---
+
+
+--- START OF FILE: src\modules\tickets\tickets.controller.ts ---
+import type { Request, Response } from 'express';
+import {
+  createTicket,
+  listTickets,
+  getTicketById,
+  updateTicket,
+  deleteTicket
+} from './tickets.service.js';
+import { CloudinaryService } from '../../services/cloudinary.service.js';
+
+/**
+ * Controlador para crear un nuevo ticket de contacto (público, sin autenticación)
+ */
+export async function createTicketCtrl(req: Request, res: Response) {
+  try {
+    // Primero crear el ticket sin archivos
+    const ticket = await createTicket({
+      ...req.body,
+      attachments: [] // Inicialmente sin archivos
+    });
+
+    // Si hay archivos, subirlos y actualizar el ticket
+    const attachmentUrls: string[] = [];
+    if (req.files && Array.isArray(req.files)) {
+      for (const file of req.files) {
+        if (file.buffer) {
+          try {
+            const url = await CloudinaryService.uploadTicketAttachment(
+              file.buffer,
+              file.originalname,
+              ticket.id
+            );
+            attachmentUrls.push(url);
+          } catch (fileError: any) {
+            console.error(`Error subiendo archivo ${file.originalname}:`, fileError);
+            // Continuar con los demás archivos aunque uno falle
+          }
+        }
+      }
+
+      // Actualizar el ticket con las URLs de los archivos
+      if (attachmentUrls.length > 0) {
+        // Actualizar attachments manualmente
+        const { prisma } = await import('../../config/db.js');
+        const updatedTicket = await prisma.ticket.update({
+          where: { id: ticket.id },
+          data: { attachments: attachmentUrls },
+          include: {
+            center: {
+              select: { id: true, name: true, city: true, country: true }
+            }
+          }
+        });
+        return res.status(201).json(updatedTicket);
+      }
+    }
+
+    res.status(201).json(ticket);
+  } catch (error: any) {
+    if (error.code === 'P2003') {
+      return res.status(404).json({ message: 'Centro no encontrado' });
+    }
+    res.status(500).json({ message: error.message });
+  }
+}
+
+/**
+ * Controlador para listar tickets (requiere autenticación)
+ */
+export async function listTicketsCtrl(req: Request, res: Response) {
+  try {
+    const user = req.user!;
+    const tickets = await listTickets(user.role, user.centerId || null);
+    res.json(tickets);
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+}
+
+/**
+ * Controlador para obtener un ticket por ID
+ */
+export async function getTicketCtrl(req: Request, res: Response) {
+  try {
+    const { id } = req.params;
+    if (!id) {
+      return res.status(400).json({ message: 'ID de ticket requerido' });
+    }
+    const user = req.user!;
+    const ticket = await getTicketById(id, user.role, user.centerId || null);
+    res.json(ticket);
+  } catch (error: any) {
+    if (error.message === 'Ticket no encontrado' || error.message.includes('permiso')) {
+      return res.status(404).json({ message: error.message });
+    }
+    res.status(500).json({ message: error.message });
+  }
+}
+
+/**
+ * Controlador para actualizar un ticket
+ */
+export async function updateTicketCtrl(req: Request, res: Response) {
+  try {
+    const { id } = req.params;
+    if (!id) {
+      return res.status(400).json({ message: 'ID de ticket requerido' });
+    }
+    const user = req.user!;
+    const ticket = await updateTicket(id, req.body, user.role, user.centerId || null);
+    res.json(ticket);
+  } catch (error: any) {
+    if (error.message === 'Ticket no encontrado' || error.message.includes('permiso')) {
+      return res.status(404).json({ message: error.message });
+    }
+    res.status(500).json({ message: error.message });
+  }
+}
+
+/**
+ * Controlador para eliminar un ticket
+ */
+export async function deleteTicketCtrl(req: Request, res: Response) {
+  try {
+    const { id } = req.params;
+    if (!id) {
+      return res.status(400).json({ message: 'ID de ticket requerido' });
+    }
+    const user = req.user!;
+    await deleteTicket(id, user.role, user.centerId || null);
+    res.status(204).send();
+  } catch (error: any) {
+    if (error.message === 'Ticket no encontrado' || error.message.includes('permiso')) {
+      return res.status(404).json({ message: error.message });
+    }
+    res.status(500).json({ message: error.message });
+  }
+}
+
+
+--- END OF FILE: src\modules\tickets\tickets.controller.ts ---
+
+
+--- START OF FILE: src\modules\tickets\tickets.routes.ts ---
+import { Router } from 'express';
+import { auth } from '../../middleware/auth.js';
+import { validate } from '../../middleware/validate.js';
+import { upload } from '../../middleware/upload.js';
+import {
+  createTicketSchema,
+  ticketIdParamSchema,
+  updateTicketSchema
+} from './tickets.schema.js';
+import {
+  createTicketCtrl,
+  listTicketsCtrl,
+  getTicketCtrl,
+  updateTicketCtrl,
+  deleteTicketCtrl
+} from './tickets.controller.js';
+
+const router = Router();
+
+/**
+ * @swagger
+ * tags:
+ *   - name: Tickets
+ *     description: Gestión de tickets de contacto
+ */
+
+/**
+ * POST /api/tickets
+ * Crea un nuevo ticket de contacto (público, sin autenticación)
+ * Permite subir archivos adjuntos (imágenes y PDFs)
+ */
+router.post(
+  '/',
+  upload.array('attachments', 5), // Máximo 5 archivos
+  validate(createTicketSchema),
+  createTicketCtrl
+);
+
+/**
+ * GET /api/tickets
+ * Lista todos los tickets (requiere autenticación)
+ * - SUPERADMIN: ve todos los tickets
+ * - ADMIN_CENTER: solo ve tickets de su centro
+ */
+router.get('/', auth, listTicketsCtrl);
+
+/**
+ * GET /api/tickets/:id
+ * Obtiene un ticket por ID (requiere autenticación)
+ */
+router.get('/:id', auth, validate(ticketIdParamSchema), getTicketCtrl);
+
+/**
+ * PATCH /api/tickets/:id
+ * Actualiza un ticket (requiere autenticación)
+ */
+router.patch('/:id', auth, validate(updateTicketSchema), updateTicketCtrl);
+
+/**
+ * DELETE /api/tickets/:id
+ * Elimina un ticket (requiere autenticación)
+ */
+router.delete('/:id', auth, validate(ticketIdParamSchema), deleteTicketCtrl);
+
+export default router;
+
+
+--- END OF FILE: src\modules\tickets\tickets.routes.ts ---
+
+
+--- START OF FILE: src\modules\tickets\tickets.schema.ts ---
+import { z } from 'zod';
+import { cuidSchema } from '../../utils/validation.js';
+
+export const createTicketSchema = {
+  body: z.object({
+    name: z.string().min(1, 'name is required'),
+    email: z.string().email('email must be a valid email'),
+    phone: z.string().optional(),
+    centerId: cuidSchema,
+    subject: z.string().min(1, 'subject is required'),
+    description: z.string().min(1, 'description is required'),
+    attachments: z.array(z.string().url()).optional().default([])
+  }).strict()
+};
+
+export const ticketIdParamSchema = {
+  params: z.object({ id: cuidSchema })
+};
+
+export const updateTicketSchema = {
+  params: z.object({ id: cuidSchema }),
+  body: z.object({
+    status: z.enum(['pending', 'in_progress', 'completed']).optional()
+  })
+};
+
+
+--- END OF FILE: src\modules\tickets\tickets.schema.ts ---
+
+
+--- START OF FILE: src\modules\tickets\tickets.service.ts ---
+import { prisma } from '../../config/db.js';
+import { notifyCenterAdmins } from '../notifications/notifications.service.js';
+import type { NotificationType } from '../notifications/notifications.service.js';
+
+export type TicketStatus = 'pending' | 'in_progress' | 'completed';
+
+export interface CreateTicketInput {
+  name: string;
+  email: string;
+  phone?: string;
+  centerId: string;
+  subject: string;
+  description: string;
+  attachments?: string[];
+}
+
+export interface UpdateTicketInput {
+  status?: TicketStatus;
+}
+
+/**
+ * Crea un nuevo ticket de contacto
+ */
+export async function createTicket(data: CreateTicketInput) {
+  // Verificar que el centro existe
+  const center = await prisma.center.findUnique({
+    where: { id: data.centerId },
+    select: { id: true, name: true }
+  });
+
+  if (!center) {
+    throw new Error('Centro no encontrado');
+  }
+
+  const ticket = await prisma.ticket.create({
+    data: {
+      name: data.name,
+      email: data.email,
+      phone: data.phone || null,
+      centerId: data.centerId,
+      subject: data.subject,
+      description: data.description,
+      attachments: data.attachments || [],
+      status: 'pending'
+    },
+    include: {
+      center: {
+        select: { id: true, name: true }
+      }
+    }
+  });
+
+  // Notificar a los administradores del centro
+  try {
+    await notifyCenterAdmins(
+      data.centerId,
+      'Nuevo Ticket de Contacto 📧',
+      `Se ha recibido un nuevo ticket de contacto de ${data.name} (${data.email}). Asunto: ${data.subject}`,
+      `/tickets/${ticket.id}`,
+      'INFO'
+    );
+  } catch (error) {
+    console.error('Error notificando nuevo ticket:', error);
+  }
+
+  return ticket;
+}
+
+/**
+ * Lista todos los tickets (filtrados por rol)
+ */
+export async function listTickets(userRole: string, userCenterId?: string | null) {
+  const where: any = {};
+
+  // Si es ADMIN_CENTER, solo mostrar tickets de su centro
+  if (userRole === 'ADMIN_CENTER' && userCenterId) {
+    where.centerId = userCenterId;
+  }
+  // SUPERADMIN ve todos los tickets
+
+  return prisma.ticket.findMany({
+    where,
+    include: {
+      center: {
+        select: { id: true, name: true, city: true, country: true }
+      }
+    },
+    orderBy: { createdAt: 'desc' }
+  });
+}
+
+/**
+ * Obtiene un ticket por ID
+ */
+export async function getTicketById(id: string, userRole: string, userCenterId?: string | null) {
+  const ticket = await prisma.ticket.findUnique({
+    where: { id },
+    include: {
+      center: {
+        select: { id: true, name: true, city: true, country: true }
+      }
+    }
+  });
+
+  if (!ticket) {
+    throw new Error('Ticket no encontrado');
+  }
+
+  // Verificar permisos: ADMIN_CENTER solo puede ver tickets de su centro
+  if (userRole === 'ADMIN_CENTER' && ticket.centerId !== userCenterId) {
+    throw new Error('No tienes permiso para ver este ticket');
+  }
+
+  return ticket;
+}
+
+/**
+ * Actualiza un ticket (cambiar estado, etc.)
+ */
+export async function updateTicket(id: string, data: UpdateTicketInput, userRole: string, userCenterId?: string | null) {
+  const ticket = await prisma.ticket.findUnique({
+    where: { id },
+    include: {
+      center: {
+        select: { id: true, name: true }
+      }
+    }
+  });
+
+  if (!ticket) {
+    throw new Error('Ticket no encontrado');
+  }
+
+  // Verificar permisos
+  if (userRole === 'ADMIN_CENTER' && ticket.centerId !== userCenterId) {
+    throw new Error('No tienes permiso para actualizar este ticket');
+  }
+
+  const updateData: any = {};
+  if (data.status) {
+    updateData.status = data.status;
+    // Si se marca como completado, registrar la fecha
+    if (data.status === 'completed') {
+      updateData.completedAt = new Date();
+    } else if (ticket.completedAt) {
+      // Si se cambia de completado a otro estado (pending o in_progress), limpiar la fecha
+      updateData.completedAt = null;
+    }
+  }
+
+  return prisma.ticket.update({
+    where: { id },
+    data: updateData,
+    include: {
+      center: {
+        select: { id: true, name: true, city: true, country: true }
+      }
+    }
+  });
+}
+
+/**
+ * Elimina un ticket
+ */
+export async function deleteTicket(id: string, userRole: string, userCenterId?: string | null) {
+  const ticket = await prisma.ticket.findUnique({
+    where: { id }
+  });
+
+  if (!ticket) {
+    throw new Error('Ticket no encontrado');
+  }
+
+  // Verificar permisos
+  if (userRole === 'ADMIN_CENTER' && ticket.centerId !== userCenterId) {
+    throw new Error('No tienes permiso para eliminar este ticket');
+  }
+
+  // Eliminar archivos adjuntos de Cloudinary si existen
+  // TODO: Implementar eliminación de archivos si es necesario
+
+  await prisma.ticket.delete({
+    where: { id }
+  });
+
+  return ticket;
+}
+
+
+--- END OF FILE: src\modules\tickets\tickets.service.ts ---
 
 
 --- START OF FILE: src\modules\users\user-center.routes.ts ---
@@ -15150,6 +16284,54 @@ export class CloudinaryService {
       console.error('Error eliminando imagen de Cloudinary:', error);
       return false;
     }
+  }
+
+  /**
+   * Sube un archivo (imagen o PDF) a Cloudinary para tickets.
+   * @param fileBuffer - Buffer del archivo a subir
+   * @param fileName - Nombre del archivo original
+   * @param ticketId - ID del ticket para nombrar el archivo
+   * @returns URL pública del archivo subido
+   */
+  static async uploadTicketAttachment(fileBuffer: Buffer, fileName: string, ticketId: string): Promise<string> {
+    return new Promise((resolve, reject) => {
+      // Determinar el tipo de recurso basado en la extensión
+      const isPdf = fileName.toLowerCase().endsWith('.pdf');
+      const resourceType = isPdf ? 'raw' : 'image';
+      
+      // Generar un ID único para el archivo
+      const fileId = `${ticketId}_${Date.now()}_${fileName.replace(/[^a-zA-Z0-9.-]/g, '_')}`;
+      
+      const uploadStream = cloudinary.uploader.upload_stream(
+        {
+          folder: 'meta-force/tickets',
+          public_id: fileId,
+          resource_type: resourceType,
+          ...(resourceType === 'image' ? {
+            transformation: [
+              { quality: 'auto' },
+              { fetch_format: 'auto' }
+            ]
+          } : {})
+        },
+        (error: any, result: any) => {
+          if (error) {
+            reject(new Error(`Error subiendo archivo a Cloudinary: ${error.message || 'Error desconocido'}`));
+          } else if (result && result.secure_url) {
+            resolve(result.secure_url);
+          } else {
+            reject(new Error('Error desconocido al subir archivo'));
+          }
+        }
+      );
+
+      if (uploadStream && typeof (uploadStream as any).end === 'function') {
+        (uploadStream as any).end(fileBuffer);
+      } else {
+        (uploadStream as any).write(fileBuffer);
+        (uploadStream as any).end();
+      }
+    });
   }
 
   /**

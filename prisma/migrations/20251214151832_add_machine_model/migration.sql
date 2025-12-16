@@ -7,12 +7,31 @@
 
 */
 -- AlterTable
-ALTER TABLE "Machine" DROP COLUMN "name",
-DROP COLUMN "type",
-ADD COLUMN     "machineModelId" TEXT NOT NULL;
+-- Eliminar columnas name y type si existen (pueden no existir si la tabla se creó después)
+DO $$ 
+BEGIN
+  IF EXISTS (SELECT 1 FROM information_schema.columns 
+             WHERE table_name = 'Machine' AND column_name = 'name') THEN
+    ALTER TABLE "Machine" DROP COLUMN "name";
+  END IF;
+  IF EXISTS (SELECT 1 FROM information_schema.columns 
+             WHERE table_name = 'Machine' AND column_name = 'type') THEN
+    ALTER TABLE "Machine" DROP COLUMN "type";
+  END IF;
+END $$;
+-- Agregar machineModelId solo si no existe
+DO $$ 
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                 WHERE table_name = 'Machine' AND column_name = 'machineModelId') THEN
+    ALTER TABLE "Machine" ADD COLUMN "machineModelId" TEXT;
+    -- Hacer NOT NULL después de poblar datos si es necesario
+    -- Por ahora lo dejamos nullable y se actualizará después
+  END IF;
+END $$;
 
--- CreateTable
-CREATE TABLE "MachineModel" (
+-- CreateTable (solo si no existe)
+CREATE TABLE IF NOT EXISTS "MachineModel" (
     "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "type" TEXT NOT NULL,
@@ -23,17 +42,25 @@ CREATE TABLE "MachineModel" (
     CONSTRAINT "MachineModel_pkey" PRIMARY KEY ("id")
 );
 
--- CreateIndex
-CREATE INDEX "MachineModel_type_idx" ON "MachineModel"("type");
+-- CreateIndex (solo si no existe)
+CREATE INDEX IF NOT EXISTS "MachineModel_type_idx" ON "MachineModel"("type");
 
--- CreateIndex
-CREATE INDEX "Machine_machineModelId_idx" ON "Machine"("machineModelId");
+-- CreateIndex (solo si no existen)
+CREATE INDEX IF NOT EXISTS "Machine_machineModelId_idx" ON "Machine"("machineModelId");
 
--- CreateIndex
-CREATE INDEX "Machine_centerId_idx" ON "Machine"("centerId");
+-- CreateIndex (solo si no existe)
+CREATE INDEX IF NOT EXISTS "Machine_centerId_idx" ON "Machine"("centerId");
 
--- CreateIndex
-CREATE INDEX "Machine_machineModelId_centerId_idx" ON "Machine"("machineModelId", "centerId");
+-- CreateIndex (solo si no existe)
+CREATE INDEX IF NOT EXISTS "Machine_machineModelId_centerId_idx" ON "Machine"("machineModelId", "centerId");
 
--- AddForeignKey
-ALTER TABLE "Machine" ADD CONSTRAINT "Machine_machineModelId_fkey" FOREIGN KEY ("machineModelId") REFERENCES "MachineModel"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+-- AddForeignKey (solo si no existe)
+DO $$ 
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.table_constraints 
+                 WHERE constraint_name = 'Machine_machineModelId_fkey' 
+                 AND table_name = 'Machine') THEN
+    ALTER TABLE "Machine" ADD CONSTRAINT "Machine_machineModelId_fkey" 
+      FOREIGN KEY ("machineModelId") REFERENCES "MachineModel"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+  END IF;
+END $$;

@@ -57,15 +57,11 @@ export async function listCentersCtrl(req: Request, res: Response) {
 
 /**
  * Controlador para listar todos los centros con IDs.
- * Accesible para todos los usuarios autenticados.
- * Usado principalmente para la página de entrenadores donde los usuarios necesitan seleccionar un centro.
+ * Accesible públicamente (sin autenticación).
+ * Usado principalmente para la página de contacto y otras páginas públicas donde los usuarios necesitan seleccionar un centro.
  */
 export async function listCentersWithIdsCtrl(req: Request, res: Response) {
   try {
-    if (!req.user) {
-      return res.status(401).json({ message: 'No autorizado' });
-    }
-
     const centers = await listCenters(null, true);
     res.json(centers);
   } catch (error: any) {

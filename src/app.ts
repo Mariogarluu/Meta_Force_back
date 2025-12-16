@@ -16,6 +16,7 @@ import userClassRouter from './modules/users/user-class.routes.js';
 import machineRoutes from './modules/machines/machines.routes.js';
 import accessRoutes from './modules/access/access.routes.js';
 import notificationRoutes from './modules/notifications/notifications.routes.js';
+import ticketRoutes from './modules/tickets/tickets.routes.js';
 import healthRoutes from './modules/health/health.routes.js';
 
 const app = express();
@@ -71,6 +72,7 @@ app.use('/api/users', userClassRouter);
 app.use('/api/machines', machineRoutes);
 app.use('/api/access', accessRoutes);
 app.use('/api/notifications', notificationRoutes);
+app.use('/api/tickets', ticketRoutes);
 app.use(errorHandler);
 
 export default app;

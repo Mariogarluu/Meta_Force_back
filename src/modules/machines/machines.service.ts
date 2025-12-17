@@ -1,8 +1,10 @@
 import { prisma } from '../../config/db.js';
+import type { Prisma } from '@prisma/client';
 // 1. Importamos las funciones (Valores reales)
 import { notifyCenterAdmins, notifySuperAdmins } from '../notifications/notifications.service.js';
 // 2. Importamos el tipo por separado (Solo TypeScript)
 import type { NotificationType } from '../notifications/notifications.service.js';
+
 
 // --- HELPER INTERNO PARA NOTIFICACIONES DUALES ---
 /**
@@ -50,29 +52,33 @@ export async function createMachineType(data: {
  * Lista todos los tipos de máquinas con información de instancias en centros
  */
 export async function listMachineTypes(centerId?: string | null) {
-  const where = centerId ? {
-    machines: {
-      some: { centerId }
-    }
-  } : undefined;
+  // CORRECCIÓN ARQUITECTÓNICA: Tipado explícito para evitar conflictos con 'undefined'
+  const whereClause: Prisma.MachineTypeWhereInput = centerId 
+    ? { machines: { some: { centerId } } } 
+    : {};
+
+  // Construcción segura del include
+  const includeClause: Prisma.MachineTypeInclude = {
+    _count: {
+      select: { machines: true }
+    },
+    machines: centerId
+      ? {
+          where: { centerId },
+          include: {
+            center: { select: { id: true, name: true } }
+          }
+        }
+      : {
+          include: {
+            center: { select: { id: true, name: true } }
+          }
+        }
+  };
 
   return prisma.machineType.findMany({
-    where,
-    include: {
-      machines: centerId ? {
-        where: { centerId },
-        include: {
-          center: { select: { id: true, name: true } }
-        }
-      } : {
-        include: {
-          center: { select: { id: true, name: true } }
-        }
-      },
-      _count: {
-        select: { machines: true }
-      }
-    },
+    where: whereClause,
+    include: includeClause,
     orderBy: { createdAt: 'desc' }
   });
 }
@@ -147,18 +153,16 @@ export async function addMachineToCenter(
   }
 
   // Obtener el último número de instancia para este tipo en este centro
-  const existingMachines = await prisma.machine.findMany({
+  const aggregate = await prisma.machine.aggregate({
     where: {
       machineTypeId,
       centerId: data.centerId
     },
-    orderBy: { instanceNumber: 'desc' },
-    take: 1
+    _max: { instanceNumber: true }
   });
 
-  const startNumber = existingMachines.length > 0 
-    ? existingMachines[0].instanceNumber + 1 
-    : 1;
+  // Si no hay máquinas, devuelve null -> usamos 0 como base -> startNumber = 1
+  const startNumber = (aggregate._max.instanceNumber ?? 0) + 1;
 
   // Crear las instancias
   const machines = [];
@@ -305,10 +309,13 @@ export async function removeMachineFromCenter(
  * Lista todas las máquinas (instancias)
  */
 export async function listMachines(centerId?: string | null) {
-  const where = centerId ? { centerId } : undefined;
+  // CORRECCIÓN ARQUITECTÓNICA: Uso de objeto vacío en lugar de undefined
+  const whereClause: Prisma.MachineWhereInput = centerId 
+    ? { centerId } 
+    : {};
   
   return prisma.machine.findMany({
-    where,
+    where: whereClause,
     include: {
       machineType: true,
       center: { select: { id: true, name: true, city: true } }

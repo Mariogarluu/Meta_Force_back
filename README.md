@@ -307,9 +307,49 @@ npm run test:coverage
 
 ## 🚢 Despliegue
 
-El proyecto puede desplegarse en múltiples plataformas:
+### Vercel (Recomendado) ⭐
 
-### Docker
+El proyecto está configurado para despliegue serverless en Vercel:
+
+#### Características
+- 🚀 **Despliegue automático** desde GitHub
+- ⚡ **Serverless functions** con auto-escalado
+- 🌍 **CDN global** para baja latencia
+- 🔄 **Preview deployments** para cada PR
+- 📊 **Analytics** y monitoreo integrados
+
+#### Configuración
+
+1. **Conecta tu repositorio a Vercel**:
+   - Visita [vercel.com](https://vercel.com)
+   - Importa tu repositorio de GitHub
+   - Vercel detectará automáticamente la configuración
+
+2. **Variables de entorno** (en Vercel Dashboard):
+   ```
+   DATABASE_URL=postgresql://user:password@host:5432/database
+   JWT_SECRET=tu-secret-super-seguro-de-al-menos-32-caracteres
+   CLOUDINARY_CLOUD_NAME=tu-cloud-name
+   CLOUDINARY_API_KEY=tu-api-key
+   CLOUDINARY_API_SECRET=tu-api-secret
+   NODE_ENV=production
+   ```
+
+3. **Configuración de base de datos**:
+   - Usa una base de datos PostgreSQL externa (ej: Render, Supabase, Neon)
+   - Asegúrate de que la URL incluya `?sslmode=require`
+
+4. **Deploy**:
+   - Push a `main` para desplegar a producción
+   - Cada PR crea un preview deployment automático
+
+#### Archivos de configuración
+- `vercel.json` - Configuración de rutas y rewrites
+- `api/index.ts` - Adaptador serverless para Vercel
+
+### Alternativas de Despliegue
+
+#### Docker
 ```bash
 # Desarrollo
 docker-compose up -d
@@ -318,17 +358,11 @@ docker-compose up -d
 docker-compose -f docker-compose.prod.yml up -d
 ```
 
-### Render
+#### Render
 Consulta `DEPLOYMENT.md` y `RENDER_ENV_SETUP.md` para instrucciones detalladas sobre:
 - Configuración de variables de entorno
 - Conexión a PostgreSQL
 - Uso de Internal/External Database URL
-
-### Vercel
-El proyecto incluye configuración para Vercel Serverless:
-- Archivo `vercel.json` configurado
-- Adaptador en `api/index.ts`
-- Compatible con despliegue automático desde GitHub
 
 ### Prisma Studio en Producción
 ⚠️ **ADVERTENCIA DE SEGURIDAD**: Prisma Studio proporciona acceso directo a la base de datos. Solo úsalo desde redes seguras.
@@ -362,7 +396,7 @@ Consulta `PRISMA_STUDIO_PRODUCTION.md` para instrucciones sobre:
 - 📈 **Logging profesional** con Winston
 - 🛡️ **Rate limiting** y protección contra brute force
 - 🐳 **Docker** con multi-stage builds optimizados
-- ☁️ **Despliegue flexible** en Render, Vercel o Docker
+- ☁️ **Despliegue serverless en Vercel** con auto-escalado y CDN global
 
 ## 🤝 Contribuir
 

@@ -99,7 +99,7 @@ La API estará disponible en `http://localhost:3000/`
 - `npm run prisma:migrate` - Ejecuta las migraciones de Prisma
 - `npm run prisma:generate` - Genera el cliente de Prisma
 - `npm run prisma:studio` - Abre Prisma Studio para visualizar la base de datos
-- `npm run prisma:studio:prod` - Abre Prisma Studio para base de datos de producción
+- `npm run prisma:studio:prod` - Abre Prisma Studio para base de datos de producción (⚠️ requiere configuración segura)
 - `npm run prisma:status` - Verifica el estado de las migraciones
 - `npm run prisma:sync-url` - Sincroniza DATABASE_URL desde variables separadas
 
@@ -264,7 +264,10 @@ Meta_Force_back/
 - **bcrypt**: Hash de contraseñas con salt rounds configurables
 - **Helmet**: Protección de headers HTTP
 - **CORS**: Configuración de origen cruzado
-- **Rate Limiting**: Límite de peticiones por IP (100 req/15min general, 5 req/15min en auth)
+- **Rate Limiting**: Límite de peticiones por IP
+  - **General**: 100 requests por 15 minutos (aplica a toda la API)
+  - **Auth**: 5 requests por 15 minutos (solo endpoints de autenticación)
+  - Cuando se excede el límite, se retorna HTTP 429 (Too Many Requests)
 - **Validación**: Validación de entrada con Zod
 - **Roles**: Sistema de roles y permisos (SUPERADMIN, ADMIN_CENTER, TRAINER, CLEANER, USER)
 - **User Status**: Estados de usuario (PENDING, ACTIVE, INACTIVE)
@@ -328,7 +331,13 @@ El proyecto incluye configuración para Vercel Serverless:
 - Compatible con despliegue automático desde GitHub
 
 ### Prisma Studio en Producción
-Consulta `PRISMA_STUDIO_PRODUCTION.md` para acceder a la base de datos de producción de forma segura.
+⚠️ **ADVERTENCIA DE SEGURIDAD**: Prisma Studio proporciona acceso directo a la base de datos. Solo úsalo desde redes seguras.
+
+Consulta `PRISMA_STUDIO_PRODUCTION.md` para instrucciones sobre:
+- Configuración segura de conexión a producción
+- Uso de External Database URL
+- Mejores prácticas de seguridad
+- Acceso mediante túnel SSH (recomendado)
 
 ## 📖 Documentación Adicional
 

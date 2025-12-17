@@ -77,6 +77,37 @@ model Center {
   favoriteUsers  User[]                @relation("FavoriteCenter")
   machines       Machine[]
   classSchedules ClassCenterSchedule[] @relation("ClassSchedules")
+  tickets        Ticket[]              @relation("CenterTickets")
+}
+
+// Modelo de máquina (tipo/categoría): ej. "Cinta", "Pesas", etc.
+model MachineType {
+  id        String    @id @default(cuid())
+  name      String // Nombre del modelo: "Cinta", "Pesas", etc.
+  type      String // Categoría: "cardio", "fuerza", "peso libre", "funcional", "otro"
+  machines  Machine[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@unique([name, type]) // No puede haber dos tipos con mismo nombre y categoría
+}
+
+// Instancia de máquina en un centro específico
+model Machine {
+  id             String      @id @default(cuid())
+  machineTypeId  String // Referencia al modelo de máquina
+  machineType    MachineType @relation(fields: [machineTypeId], references: [id], onDelete: Cascade)
+  instanceNumber Int // Número de instancia: 1, 2, 3... (para generar "Cinta 1", "Cinta 2", etc.)
+  status         String // Estado: "operativa", "en mantenimiento", "fuera de servicio"
+  centerId       String
+  center         Center      @relation(fields: [centerId], references: [id], onDelete: Cascade)
+  maxUsers       Int? // Número máximo de usuarios que pueden usar esta instancia simultáneamente
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+
+  @@unique([machineTypeId, centerId, instanceNumber]) // No puede haber dos instancias con el mismo número en el mismo centro
+  @@index([centerId])
+  @@index([machineTypeId])
 }
 
 model GymClass {
@@ -129,13 +160,23 @@ model ClassCenterSchedule {
   @@index([classId, centerId])
 }
 
-model Machine {
-  id        String   @id @default(cuid())
-  name      String
-  type      String
-  status    String
-  centerId  String
-  center    Center   @relation(fields: [centerId], references: [id], onDelete: Cascade)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+// Tickets de contacto desde la página pública
+model Ticket {
+  id          String    @id @default(cuid())
+  name        String // Nombre del contacto
+  email       String // Email del contacto
+  phone       String? // Teléfono móvil (opcional)
+  centerId    String // Centro al que se dirige el ticket
+  center      Center    @relation("CenterTickets", fields: [centerId], references: [id], onDelete: Cascade)
+  subject     String // Asunto del ticket
+  description String // Descripción/mensaje
+  attachments String[] // URLs de archivos adjuntos (fotos y PDFs)
+  status      String    @default("pending") // pending, in_progress, completed
+  completedAt DateTime? // Fecha de completado
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([centerId])
+  @@index([status])
+  @@index([createdAt])
 }

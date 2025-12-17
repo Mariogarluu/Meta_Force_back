@@ -73,6 +73,54 @@ export class CloudinaryService {
   }
 
   /**
+   * Sube un archivo (imagen o PDF) a Cloudinary para tickets.
+   * @param fileBuffer - Buffer del archivo a subir
+   * @param fileName - Nombre del archivo original
+   * @param ticketId - ID del ticket para nombrar el archivo
+   * @returns URL pública del archivo subido
+   */
+  static async uploadTicketAttachment(fileBuffer: Buffer, fileName: string, ticketId: string): Promise<string> {
+    return new Promise((resolve, reject) => {
+      // Determinar el tipo de recurso basado en la extensión
+      const isPdf = fileName.toLowerCase().endsWith('.pdf');
+      const resourceType = isPdf ? 'raw' : 'image';
+      
+      // Generar un ID único para el archivo
+      const fileId = `${ticketId}_${Date.now()}_${fileName.replace(/[^a-zA-Z0-9.-]/g, '_')}`;
+      
+      const uploadStream = cloudinary.uploader.upload_stream(
+        {
+          folder: 'meta-force/tickets',
+          public_id: fileId,
+          resource_type: resourceType,
+          ...(resourceType === 'image' ? {
+            transformation: [
+              { quality: 'auto' },
+              { fetch_format: 'auto' }
+            ]
+          } : {})
+        },
+        (error: any, result: any) => {
+          if (error) {
+            reject(new Error(`Error subiendo archivo a Cloudinary: ${error.message || 'Error desconocido'}`));
+          } else if (result && result.secure_url) {
+            resolve(result.secure_url);
+          } else {
+            reject(new Error('Error desconocido al subir archivo'));
+          }
+        }
+      );
+
+      if (uploadStream && typeof (uploadStream as any).end === 'function') {
+        (uploadStream as any).end(fileBuffer);
+      } else {
+        (uploadStream as any).write(fileBuffer);
+        (uploadStream as any).end();
+      }
+    });
+  }
+
+  /**
    * Extrae el public_id de una URL de Cloudinary.
    * Las URLs de Cloudinary tienen el formato: https://res.cloudinary.com/{cloud_name}/image/upload/{version}/{public_id}.{format}
    * @param url - URL de Cloudinary

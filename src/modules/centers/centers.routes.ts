@@ -35,15 +35,13 @@ router.get('/', auth, listCentersCtrl);
  * @swagger
  * /api/centers/with-ids:
  *   get:
- *     summary: Lista todos los centros con IDs (para selección)
+ *     summary: Lista todos los centros con IDs (para selección) - Público
  *     tags: [Centers]
- *     security:
- *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: Lista de centros con IDs
  */
-router.get('/with-ids', auth, listCentersWithIdsCtrl);
+router.get('/with-ids', listCentersWithIdsCtrl);
 
 /**
  * @swagger

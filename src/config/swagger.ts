@@ -38,10 +38,10 @@ const swaggerDefinition = {
 const options: swaggerJSDoc.Options = {
   swaggerDefinition,
   apis: [
-    path.resolve(process.cwd(), 'src/modules/**/*.routes.ts'),
-    path.resolve(process.cwd(), 'src/modules/**/*.schema.ts'),
-    path.resolve(process.cwd(), 'dist/modules/**/*.routes.js'),
-    path.resolve(process.cwd(), 'dist/modules/**/*.schema.js'),
+    path.join(process.cwd(), 'src/modules/**/*.routes.{ts,js}'),
+    path.join(process.cwd(), 'dist/modules/**/*.routes.js'),
+    path.join(process.cwd(), 'src/modules/**/*.schema.{ts,js}'),
+    path.join(process.cwd(), 'dist/modules/**/*.schema.js'),
   ],
 };
 

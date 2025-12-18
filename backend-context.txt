@@ -10184,7 +10184,16 @@ app.get('/health', (_req: Request, res: Response) => {
 });
 
 // Documentación Swagger
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+// FIX VERCEL: Usar CDN para cargar los assets de Swagger UI en lugar de servirlos localmente
+const swaggerOptions = {
+  customCssUrl: 'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.0.0/swagger-ui.min.css',
+  customJs: [
+    'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.0.0/swagger-ui-bundle.min.js',
+    'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.0.0/swagger-ui-standalone-preset.min.js',
+  ],
+};
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, swaggerOptions));
 
 // Rutas de Autenticación (con limitador específico)
 if (env.NODE_ENV !== 'test') {
@@ -10203,7 +10212,6 @@ app.use('/api/machines', machineRoutes);
 app.use('/api/access', accessRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/tickets', ticketRoutes);
-// Manejo Global de Errores (SIEMPRE al final)
 app.use(errorHandler);
 
 export default app;
@@ -14696,8 +14704,8 @@ const router = Router();
 /**
  * @swagger
  * tags:
- *   - name: Tickets
- *     description: Gestión de tickets de contacto
+ * - name: Tickets
+ * description: Gestión de tickets de contacto
  */
 
 /**
@@ -14739,8 +14747,6 @@ router.patch('/:id', auth, validate(updateTicketSchema), updateTicketCtrl);
 router.delete('/:id', auth, validate(ticketIdParamSchema), deleteTicketCtrl);
 
 export default router;
-
-
 --- END OF FILE: src\modules\tickets\tickets.routes.ts ---
 
 
@@ -14748,30 +14754,33 @@ export default router;
 import { z } from 'zod';
 import { cuidSchema } from '../../utils/validation.js';
 
-export const createTicketSchema = {
-  body: z.object({
-    name: z.string().min(1, 'name is required'),
-    email: z.string().email('email must be a valid email'),
-    phone: z.string().optional(),
-    centerId: cuidSchema,
-    subject: z.string().min(1, 'subject is required'),
-    description: z.string().min(1, 'description is required'),
-    attachments: z.array(z.string().url()).optional().default([])
-  }).strict()
-};
-
-export const ticketIdParamSchema = {
-  params: z.object({ id: cuidSchema })
-};
-
-export const updateTicketSchema = {
-  params: z.object({ id: cuidSchema }),
-  body: z.object({
-    status: z.enum(['pending', 'in_progress', 'completed']).optional()
-  })
-};
+/**
+ * Esquema de validación Zod para la creación de un Ticket PÚBLICO.
+ * Valida los campos enviados desde el formulario de contacto (FormData).
+ * Todos los campos vienen como strings desde FormData, por lo que se valida directamente.
+ * Los campos opcionales pueden venir como strings vacíos desde FormData, por lo que se transforman a undefined.
+ */
+export const createTicketSchema = z.object({
+  name: z.string().min(2, 'El nombre es requerido.').max(100, 'El nombre es demasiado largo.'),
+  email: z.string().email('Debe ser un correo electrónico válido.').max(100, 'El correo es demasiado largo.'),
+  phone: z.preprocess(
+    (val) => (typeof val === 'string' && val.trim() === '') ? undefined : val,
+    z.string().max(20, 'El teléfono es demasiado largo.').optional()
+  ),
+  centerId: cuidSchema,
+  subject: z.string().min(5, 'El asunto es demasiado corto.').max(100, 'El asunto es demasiado largo.'),
+  description: z.string().min(10, 'La descripción es demasiado corta.').max(5000, 'La descripción es demasiado larga.'),
+});
 
 
+export const ticketIdParamSchema = z.object({
+  id: z.string(),
+});
+
+export const updateTicketSchema = z.object({
+  priority: z.enum(['LOW', 'MEDIUM', 'HIGH']).optional(),
+  status: z.enum(['OPEN', 'CLOSED', 'IN_PROGRESS']).optional(),
+});
 --- END OF FILE: src\modules\tickets\tickets.schema.ts ---
 
 

@@ -21,37 +21,21 @@ import healthRoutes from './modules/health/health.routes.js';
 
 const app = express();
 
-/**
- * Configuración de trust proxy.
- * Requerido para que express-rate-limit obtenga la IP real del cliente
- * cuando la API está desplegada detrás de un proxy (Vercel/Render).
- */
 app.set('trust proxy', 1);
 
-// Seguridad: Helmet
-// Se usa casting (as any) para evitar conflictos de tipos ESM/CJS en el build estricto de Vercel
 app.use((helmet as any)({
   contentSecurityPolicy: false,
 }));
 
-// CORS
 app.use(cors());
-
-// Parsing del body
 app.use(express.json({ limit: '10mb' }));
-
-// Logging de peticiones
 app.use(requestLogger);
-
-// Ruta de Healthcheck (Pública y prioritaria)
 app.use('/api/health', healthRoutes);
 
-// Rate Limiting General (excepto en test)
 if (env.NODE_ENV !== 'test') {
   app.use(generalLimiter);
 }
 
-// Ruta Raíz
 app.get('/', (_req: Request, res: Response) => {
   res.status(200).json({
     ok: true,
@@ -61,13 +45,10 @@ app.get('/', (_req: Request, res: Response) => {
   });
 });
 
-// Ruta health legacy (por compatibilidad)
 app.get('/health', (_req: Request, res: Response) => {
   res.json({ ok: true });
 });
 
-// Documentación Swagger
-// FIX VERCEL: Usar CDN para cargar los assets de Swagger UI en lugar de servirlos localmente
 const swaggerOptions = {
   customCssUrl: 'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.0.0/swagger-ui.min.css',
   customJs: [
@@ -78,14 +59,12 @@ const swaggerOptions = {
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, swaggerOptions));
 
-// Rutas de Autenticación (con limitador específico)
 if (env.NODE_ENV !== 'test') {
   app.use('/api/auth', authLimiter, authRoutes);
 } else {
   app.use('/api/auth', authRoutes);
 }
 
-// Rutas de la API
 app.use('/api/users', usersRoutes);
 app.use('/api/centers', centerRoutes);
 app.use('/api/users', userCenterRouter);
@@ -95,6 +74,7 @@ app.use('/api/machines', machineRoutes);
 app.use('/api/access', accessRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/tickets', ticketRoutes);
+
 app.use(errorHandler);
 
 export default app;

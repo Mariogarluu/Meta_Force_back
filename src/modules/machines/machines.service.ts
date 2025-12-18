@@ -1,5 +1,6 @@
 import { prisma } from '../../config/db.js';
 import type { Prisma } from '@prisma/client';
+import type { Prisma } from '@prisma/client';
 // 1. Importamos las funciones (Valores reales)
 import { notifyCenterAdmins, notifySuperAdmins } from '../notifications/notifications.service.js';
 // 2. Importamos el tipo por separado (Solo TypeScript)

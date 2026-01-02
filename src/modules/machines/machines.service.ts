@@ -1,8 +1,11 @@
 import { prisma } from '../../config/db.js';
+import type { Prisma } from '@prisma/client';
+
 // 1. Importamos las funciones (Valores reales)
 import { notifyCenterAdmins, notifySuperAdmins } from '../notifications/notifications.service.js';
 // 2. Importamos el tipo por separado (Solo TypeScript)
 import type { NotificationType } from '../notifications/notifications.service.js';
+
 
 // --- HELPER INTERNO PARA NOTIFICACIONES DUALES ---
 /**
@@ -24,12 +27,12 @@ async function notifyMachineEvent(
     select: { name: true }
   });
   
-  const centerName = center ? center.name : 'Centro desconocido';
+  const centerName = center?.name || 'Centro desconocido';
 
-  // 1. Notificar a los Admins del Centro (ellos ya saben su centro, mensaje directo)
+  // 1. Notificar a los Admins del Centro
   await notifyCenterAdmins(centerId, title, message, link, type);
 
-  // 2. Notificar a los Superadmins (añadimos el NOMBRE del centro al mensaje)
+  // 2. Notificar a los Superadmins
   await notifySuperAdmins(title, `[Centro: ${centerName}] ${message}`, link, type);
 }
 // --------------------------------------------------
@@ -50,29 +53,32 @@ export async function createMachineType(data: {
  * Lista todos los tipos de máquinas con información de instancias en centros
  */
 export async function listMachineTypes(centerId?: string | null) {
-  const where = centerId ? {
-    machines: {
-      some: { centerId }
-    }
-  } : undefined;
+  // CORRECCIÓN CRÍTICA: Usar {} en lugar de undefined para exactOptionalPropertyTypes
+  const whereClause: Prisma.MachineTypeWhereInput = centerId 
+    ? { machines: { some: { centerId } } } 
+    : {};
+
+  const includeClause: Prisma.MachineTypeInclude = {
+    _count: {
+      select: { machines: true }
+    },
+    machines: centerId
+      ? {
+          where: { centerId },
+          include: {
+            center: { select: { id: true, name: true } }
+          }
+        }
+      : {
+          include: {
+            center: { select: { id: true, name: true } }
+          }
+        }
+  };
 
   return prisma.machineType.findMany({
-    where,
-    include: {
-      machines: centerId ? {
-        where: { centerId },
-        include: {
-          center: { select: { id: true, name: true } }
-        }
-      } : {
-        include: {
-          center: { select: { id: true, name: true } }
-        }
-      },
-      _count: {
-        select: { machines: true }
-      }
-    },
+    where: whereClause,
+    include: includeClause,
     orderBy: { createdAt: 'desc' }
   });
 }
@@ -146,19 +152,17 @@ export async function addMachineToCenter(
     throw new Error('Centro no encontrado');
   }
 
-  // Obtener el último número de instancia para este tipo en este centro
-  const existingMachines = await prisma.machine.findMany({
+  // OPTIMIZACIÓN DE RENDIMIENTO: Usar aggregate en lugar de findMany + sort
+  const aggregate = await prisma.machine.aggregate({
     where: {
       machineTypeId,
       centerId: data.centerId
     },
-    orderBy: { instanceNumber: 'desc' },
-    take: 1
+    _max: { instanceNumber: true }
   });
 
-  const startNumber = existingMachines.length > 0 
-    ? existingMachines[0].instanceNumber + 1 
-    : 1;
+  const currentMax = aggregate._max.instanceNumber ?? 0;
+  const startNumber = currentMax + 1;
 
   // Crear las instancias
   const machines = [];
@@ -243,10 +247,13 @@ export async function updateMachineInCenter(
         notificationType = 'SUCCESS';
       }
 
+      // CORRECCIÓN DE SEGURIDAD: Uso de optional chaining por si acaso
+      const machineName = updatedMachine.machineType?.name || 'Máquina';
+
       await notifyMachineEvent(
         centerId,
         'Máquina Actualizada 🛠️',
-        `${updatedMachine.machineType.name} ${instanceNumber}: Estado cambiado de "${oldStatus}" a "${data.status}".`,
+        `${machineName} ${instanceNumber}: Estado cambiado de "${oldStatus}" a "${data.status}".`,
         updatedMachine.id,
         notificationType
       );
@@ -287,10 +294,11 @@ export async function removeMachineFromCenter(
 
   // Notificar eliminación
   try {
+    const machineName = machine.machineType?.name || 'Máquina desconocida';
     await notifyMachineEvent(
       centerId,
       'Máquina Eliminada 🗑️',
-      `La máquina "${machine.machineType.name} ${instanceNumber}" ha sido eliminada del inventario.`,
+      `La máquina "${machineName} ${instanceNumber}" ha sido eliminada del inventario.`,
       undefined,
       'ERROR'
     );
@@ -305,10 +313,13 @@ export async function removeMachineFromCenter(
  * Lista todas las máquinas (instancias)
  */
 export async function listMachines(centerId?: string | null) {
-  const where = centerId ? { centerId } : undefined;
+  // CORRECCIÓN CRÍTICA: Usar {} en lugar de undefined para exactOptionalPropertyTypes
+  const whereClause: Prisma.MachineWhereInput = centerId 
+    ? { centerId } 
+    : {};
   
   return prisma.machine.findMany({
-    where,
+    where: whereClause,
     include: {
       machineType: true,
       center: { select: { id: true, name: true, city: true } }
@@ -368,10 +379,12 @@ export async function updateMachine(id: string, data: {
         notificationType = 'SUCCESS';
       }
 
+      const machineName = updatedMachine.machineType?.name || 'Máquina';
+
       await notifyMachineEvent(
         oldMachine.centerId,
         'Máquina Actualizada 🛠️',
-        `${updatedMachine.machineType.name} ${updatedMachine.instanceNumber}: Estado cambiado de "${oldMachine.status}" a "${data.status}".`,
+        `${machineName} ${updatedMachine.instanceNumber}: Estado cambiado de "${oldMachine.status}" a "${data.status}".`,
         updatedMachine.id,
         notificationType
       );
@@ -402,10 +415,12 @@ export async function deleteMachine(id: string) {
 
   // Notificar eliminación
   try {
+    const machineName = machineToDelete.machineType?.name || 'Máquina desconocida';
+    
     await notifyMachineEvent(
       machineToDelete.centerId,
       'Máquina Eliminada 🗑️',
-      `La máquina "${machineToDelete.machineType.name} ${machineToDelete.instanceNumber}" ha sido eliminada permanentemente del inventario.`,
+      `La máquina "${machineName} ${machineToDelete.instanceNumber}" ha sido eliminada permanentemente del inventario.`,
       undefined,
       'ERROR'
     );

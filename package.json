@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "nodemon src/index.ts",
     "build": "tsc -p .",
-    "start": "node dist/index.js",
+    "start": "node dist/src/index.js",
     "start:prod": "node scripts/start-prod.js",
     "test": "NODE_ENV=test NODE_OPTIONS=--experimental-vm-modules jest",
     "test:watch": "NODE_ENV=test NODE_OPTIONS=--experimental-vm-modules jest --watch",
@@ -18,7 +18,8 @@
     "prisma:generate": "npm run prisma:sync-url && dotenv -e .env -- prisma generate",
     "prisma:studio": "npm run prisma:sync-url && dotenv -e .env -- prisma studio",
     "prisma:studio:prod": "dotenv -e .env.production.local -- prisma studio",
-    "prisma:status": "npm run prisma:sync-url && dotenv -e .env -- prisma migrate status"
+    "prisma:status": "npm run prisma:sync-url && dotenv -e .env -- prisma migrate status",
+    "vercel-reset": "npx prisma migrate reset --force && npm run build"
   },
   "keywords": [],
   "author": "",
@@ -35,6 +36,7 @@
     "@types/node": "^24.10.0",
     "@types/swagger-jsdoc": "^6.0.4",
     "@types/swagger-ui-express": "^4.1.8",
+    "@vercel/node": "^3.0.0",
     "bcrypt": "^6.0.0",
     "cloudinary": "^2.8.0",
     "cors": "^2.8.5",
@@ -53,7 +55,6 @@
   "devDependencies": {
     "@types/jest": "^30.0.0",
     "@types/supertest": "^6.0.3",
-    "@vercel/node": "^3.0.0",
     "dotenv-cli": "^11.0.0",
     "jest": "^30.2.0",
     "nodemon": "^3.1.10",

@@ -25,19 +25,12 @@ import dietRoutes from './modules/diets/diets.routes.js';
 
 const app = express();
 
-/**
- * Configuración de trust proxy para Render y otros servicios con proxy reverso.
- * Render usa 1 proxy, así que confiamos en el primer proxy.
- * Esto permite que express-rate-limit identifique correctamente las IPs reales
- * de los clientes a través del header X-Forwarded-For.
- * 
- * @see https://expressjs.com/en/guide/behind-proxies.html
- */
 app.set('trust proxy', 1);
 
-app.use(helmet({
+app.use((helmet as any)({
   contentSecurityPolicy: false,
 }));
+
 app.use(cors());
 app.use(express.json({ limit: '10mb' }));
 app.use(requestLogger);
@@ -55,12 +48,20 @@ app.get('/', (_req: Request, res: Response) => {
     docs: '/api-docs'
   });
 });
-// ----------------------------------------------------
 
+app.get('/health', (_req: Request, res: Response) => {
+  res.json({ ok: true });
+});
 
-app.get('/health', (_req: Request, res: Response) => res.json({ ok: true }));
+const swaggerOptions = {
+  customCssUrl: 'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.0.0/swagger-ui.min.css',
+  customJs: [
+    'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.0.0/swagger-ui-bundle.min.js',
+    'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.0.0/swagger-ui-standalone-preset.min.js',
+  ],
+};
 
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, swaggerOptions));
 
 if (env.NODE_ENV !== 'test') {
   app.use('/api/auth', authLimiter, authRoutes);
@@ -84,4 +85,3 @@ app.use('/api/diets', dietRoutes);
 app.use(errorHandler);
 
 export default app;
-

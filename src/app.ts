@@ -18,6 +18,10 @@ import accessRoutes from './modules/access/access.routes.js';
 import notificationRoutes from './modules/notifications/notifications.routes.js';
 import ticketRoutes from './modules/tickets/tickets.routes.js';
 import healthRoutes from './modules/health/health.routes.js';
+import exerciseRoutes from './modules/exercises/exercises.routes.js';
+import workoutRoutes from './modules/workouts/workouts.routes.js';
+import mealRoutes from './modules/meals/meals.routes.js';
+import dietRoutes from './modules/diets/diets.routes.js';
 
 const app = express();
 
@@ -73,6 +77,10 @@ app.use('/api/machines', machineRoutes);
 app.use('/api/access', accessRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/tickets', ticketRoutes);
+app.use('/api/exercises', exerciseRoutes);
+app.use('/api/workouts', workoutRoutes);
+app.use('/api/meals', mealRoutes);
+app.use('/api/diets', dietRoutes);
 app.use(errorHandler);
 
 export default app;

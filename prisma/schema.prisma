@@ -288,3 +288,17 @@ model DietMeal {
   @@index([mealId])
   @@index([dietId, dayOfWeek])
 }
+
+model MembershipPlan {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  price       Float    // Precio mensual
+  duration    Int      // Duración en meses (1 = mensual, 3 = trimestral, etc.)
+  features    String[] // Array de características/beneficios
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([isActive])
+}

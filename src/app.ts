@@ -17,6 +17,7 @@ import machineRoutes from './modules/machines/machines.routes.js';
 import accessRoutes from './modules/access/access.routes.js';
 import notificationRoutes from './modules/notifications/notifications.routes.js';
 import ticketRoutes from './modules/tickets/tickets.routes.js';
+import membershipRoutes from './modules/memberships/memberships.routes.js';
 import healthRoutes from './modules/health/health.routes.js';
 import exerciseRoutes from './modules/exercises/exercises.routes.js';
 import workoutRoutes from './modules/workouts/workouts.routes.js';
@@ -82,6 +83,7 @@ app.use('/api/exercises', exerciseRoutes);
 app.use('/api/workouts', workoutRoutes);
 app.use('/api/meals', mealRoutes);
 app.use('/api/diets', dietRoutes);
+app.use('/api/memberships', membershipRoutes);
 app.use(errorHandler);
 
 export default app;

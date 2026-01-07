@@ -30,8 +30,8 @@ export const exerciseIdParamSchema = {
 
 export const listExercisesQuerySchema = {
   query: z.object({
-    machineTypeId: z.string().optional(),
-  }).optional(),
+    machineTypeId: z.string().nullish(),
+  }).partial().passthrough(),
 };
 
 export const importExercisesSchema = {

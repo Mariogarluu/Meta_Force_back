@@ -100,7 +100,19 @@ export const validate = (schema: CompositeSchema | ZodObject<any>) => (
         req.params = p.data as any;
       }
       if (schema.query) {
-        const p = schema.query.safeParse(req.query);
+        // Limpiar query params: eliminar campos undefined, null y cadenas vacías
+        const cleanedQuery: any = {};
+        if (req.query && typeof req.query === 'object') {
+          Object.keys(req.query).forEach(key => {
+            const value = req.query[key];
+            // Solo incluir valores válidos (no undefined, null ni cadenas vacías)
+            if (value !== undefined && value !== '' && value !== null) {
+              cleanedQuery[key] = value;
+            }
+          });
+        }
+        
+        const p = schema.query.safeParse(cleanedQuery);
         if (!p.success) {
           const errors = p.error.issues.map((err: z.ZodIssue) => ({
             path: err.path.join('.'),
@@ -110,6 +122,9 @@ export const validate = (schema: CompositeSchema | ZodObject<any>) => (
           const errorMessage = firstError ? firstError.message : 'Error de validación en query';
           
           logger.warn(`Validation error on ${req.method} ${req.path} (query): ${errorMessage}`);
+          logger.warn(`Request query: ${JSON.stringify(req.query)}`);
+          logger.warn(`Cleaned query: ${JSON.stringify(cleanedQuery)}`);
+          logger.warn(`Validation errors: ${JSON.stringify(errors)}`);
           
           return res.status(400).json({ 
             message: errorMessage,

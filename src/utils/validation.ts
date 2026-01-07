@@ -11,10 +11,10 @@ export const cuidSchema = z.string().regex(/^c[a-z0-9]{24}$/, {
 
 /**
  * Schema de validación Zod para CUIDs opcionales.
- * Aplica la misma validación que cuidSchema pero permite valores undefined o null.
+ * Aplica la misma validación que cuidSchema pero permite valores undefined, null o cadenas vacías.
  * Útil para campos opcionales que cuando están presentes deben ser CUIDs válidos.
  */
 export const optionalCuidSchema = z.string().regex(/^c[a-z0-9]{24}$/, {
   message: 'ID inválido: debe ser un CUID válido'
-}).optional();
+}).nullish();
 

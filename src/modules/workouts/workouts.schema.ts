@@ -23,7 +23,7 @@ export const workoutIdParamSchema = {
 export const listWorkoutsQuerySchema = {
   query: z.object({
     userId: optionalCuidSchema,
-  }).optional(),
+  }).partial().passthrough(),
 };
 
 export const addExerciseToWorkoutSchema = {

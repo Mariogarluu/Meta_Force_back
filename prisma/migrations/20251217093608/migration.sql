@@ -7,7 +7,7 @@
 
 */
 -- DropIndex
-DROP INDEX "MachineModel_type_idx";
+DROP INDEX IF EXISTS "MachineModel_type_idx";
 
 -- AlterTable
 ALTER TABLE "Machine"

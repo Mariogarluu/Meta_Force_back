@@ -23,7 +23,7 @@ export const dietIdParamSchema = {
 export const listDietsQuerySchema = {
   query: z.object({
     userId: optionalCuidSchema,
-  }).optional(),
+  }).partial().passthrough(),
 };
 
 export const addMealToDietSchema = {

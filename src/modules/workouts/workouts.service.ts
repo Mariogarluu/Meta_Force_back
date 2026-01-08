@@ -179,6 +179,76 @@ export async function deleteWorkout(id: string) {
 }
 
 /**
+ * Duplica un entrenamiento completo (incluyendo sus ejercicios) para un usuario.
+ * - Copia name, description y todos los WorkoutExercise asociados.
+ * - Genera un nombre único añadiendo sufijos " (1)", " (2)", etc. basados en el nombre original.
+ */
+export async function duplicateWorkout(workoutId: string, userId: string) {
+  return prisma.$transaction(async (tx) => {
+    const original = await tx.workout.findUnique({
+      where: { id: workoutId },
+      include: {
+        exercises: true,
+      },
+    });
+
+    if (!original) {
+      throw new Error('Entrenamiento no encontrado');
+    }
+
+    // Calcular nombre único: "Nombre", "Nombre (1)", "Nombre (2)", ...
+    const baseName = original.name;
+
+    const existing = await tx.workout.findMany({
+      where: {
+        userId,
+        name: {
+          startsWith: baseName,
+        },
+      },
+      select: { name: true },
+    });
+
+    let suffix = 1;
+    let newName = `${baseName} (${suffix})`;
+
+    const existingNames = new Set(existing.map(w => w.name));
+    while (existingNames.has(newName)) {
+      suffix += 1;
+      newName = `${baseName} (${suffix})`;
+    }
+
+    const newWorkout = await tx.workout.create({
+      data: {
+        userId,
+        name: newName,
+        description: original.description,
+      },
+    });
+
+    if (original.exercises.length > 0) {
+      await tx.workoutExercise.createMany({
+        data: original.exercises.map(ex => ({
+          workoutId: newWorkout.id,
+          exerciseId: ex.exerciseId,
+          dayOfWeek: ex.dayOfWeek,
+          order: ex.order,
+          sets: ex.sets,
+          reps: ex.reps,
+          weight: ex.weight,
+          duration: ex.duration,
+          restSeconds: ex.restSeconds,
+          notes: ex.notes,
+        })),
+      });
+    }
+
+    // Devolver el nuevo entrenamiento con relaciones completas, reutilizando getWorkoutById
+    return getWorkoutById(newWorkout.id);
+  });
+}
+
+/**
  * Agrega un ejercicio a un entrenamiento en un día específico.
  */
 export async function addExerciseToWorkout(workoutId: string, data: {

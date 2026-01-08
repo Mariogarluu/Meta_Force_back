@@ -21,6 +21,7 @@ import {
   updateWorkoutExerciseCtrl,
   removeExerciseFromWorkoutCtrl,
   reorderWorkoutExercisesCtrl,
+  duplicateWorkoutCtrl,
 } from './workouts.controller.js';
 
 const router = Router();
@@ -40,7 +41,7 @@ const router = Router();
  *     tags: [Workouts]
  *     security: [ { bearerAuth: [] } ]
  */
-router.get('/', auth, validate(listWorkoutsQuerySchema), listWorkoutsCtrl);
+router.get('/', auth, listWorkoutsCtrl);
 
 /**
  * @swagger
@@ -81,6 +82,16 @@ router.patch('/:id', auth, validate(updateWorkoutSchema), updateWorkoutCtrl);
  *     security: [ { bearerAuth: [] } ]
  */
 router.delete('/:id', auth, validate(workoutIdParamSchema), deleteWorkoutCtrl);
+
+/**
+ * @swagger
+ * /api/workouts/{id}/duplicate:
+ *   post:
+ *     summary: Duplica un entrenamiento existente para el usuario autenticado
+ *     tags: [Workouts]
+ *     security: [ { bearerAuth: [] } ]
+ */
+router.post('/:id/duplicate', auth, validate(workoutIdParamSchema), duplicateWorkoutCtrl);
 
 /**
  * @swagger

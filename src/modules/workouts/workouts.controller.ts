@@ -10,6 +10,7 @@ import {
   updateWorkoutExercise,
   removeExerciseFromWorkout,
   reorderWorkoutExercises,
+  duplicateWorkout,
 } from './workouts.service.js';
 
 /**

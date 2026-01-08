@@ -29,9 +29,9 @@ export const exerciseIdParamSchema = {
 };
 
 export const listExercisesQuerySchema = {
-  query: z.object({
-    machineTypeId: z.string().nullish(),
-  }).partial().passthrough(),
+  // Acepta cualquier combinación de query params (o ninguno) para evitar errores 400
+  // El controlador se encarga de interpretar opcionalmente machineTypeId si viene.
+  query: z.any(),
 };
 
 export const importExercisesSchema = {

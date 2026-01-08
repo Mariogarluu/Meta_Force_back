@@ -21,9 +21,9 @@ export const workoutIdParamSchema = {
 };
 
 export const listWorkoutsQuerySchema = {
-  query: z.object({
-    userId: optionalCuidSchema,
-  }).partial().passthrough(),
+  // Acepta cualquier combinación de query params (o ninguno) para evitar errores 400
+  // El controlador se encarga de interpretar opcionalmente userId si viene.
+  query: z.any(),
 };
 
 export const addExerciseToWorkoutSchema = {

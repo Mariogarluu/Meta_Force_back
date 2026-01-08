@@ -40,7 +40,7 @@ const router = Router();
  *     tags: [Diets]
  *     security: [ { bearerAuth: [] } ]
  */
-router.get('/', auth, validate(listDietsQuerySchema), listDietsCtrl);
+router.get('/', auth, listDietsCtrl);
 
 /**
  * @swagger

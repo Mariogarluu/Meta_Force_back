@@ -114,6 +114,26 @@ export async function deleteWorkoutCtrl(req: Request, res: Response) {
 }
 
 /**
+ * Controlador para duplicar un entrenamiento existente.
+ * Crea una copia con el mismo contenido y un nombre con sufijo (1), (2), etc.
+ */
+export async function duplicateWorkoutCtrl(req: Request, res: Response) {
+  try {
+    if (!req.user) return res.status(401).json({ message: 'No autorizado' });
+    const id = req.params.id;
+    if (!id) return res.status(400).json({ message: 'ID requerido' });
+
+    const duplicated = await duplicateWorkout(id, req.user.sub);
+    res.status(201).json(duplicated);
+  } catch (error: any) {
+    if (error.code === 'P2025' || error.message === 'Entrenamiento no encontrado') {
+      return res.status(404).json({ message: 'Entrenamiento no encontrado' });
+    }
+    res.status(500).json({ message: error.message });
+  }
+}
+
+/**
  * Controlador para agregar un ejercicio a un entrenamiento.
  */
 export async function addExerciseToWorkoutCtrl(req: Request, res: Response) {

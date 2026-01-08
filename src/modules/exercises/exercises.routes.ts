@@ -36,7 +36,7 @@ const router = Router();
  *     tags: [Exercises]
  *     security: [ { bearerAuth: [] } ]
  */
-router.get('/', auth, validate(listExercisesQuerySchema), listExercisesCtrl);
+router.get('/', auth, listExercisesCtrl);
 
 /**
  * @swagger

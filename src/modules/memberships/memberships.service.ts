@@ -14,7 +14,7 @@ export async function createMembershipPlan(data: {
   return prisma.membershipPlan.create({
     data: {
       name: data.name,
-      description: data.description,
+      description: data.description ?? null,
       price: data.price,
       duration: data.duration,
       features: data.features || [],
@@ -54,7 +54,16 @@ export async function updateMembershipPlan(
   id: string,
   data: Partial<Parameters<typeof createMembershipPlan>[0]>
 ) {
-  return prisma.membershipPlan.update({ where: { id }, data });
+  const updateData: any = {};
+  
+  if (data.name !== undefined) updateData.name = data.name;
+  if (data.description !== undefined) updateData.description = data.description ?? null;
+  if (data.price !== undefined) updateData.price = data.price;
+  if (data.duration !== undefined) updateData.duration = data.duration;
+  if (data.features !== undefined) updateData.features = data.features;
+  if (data.isActive !== undefined) updateData.isActive = data.isActive;
+  
+  return prisma.membershipPlan.update({ where: { id }, data: updateData });
 }
 
 /**

@@ -85,5 +85,4 @@ app.use('/api/meals', mealRoutes);
 app.use('/api/diets', dietRoutes);
 app.use('/api/memberships', membershipRoutes);
 app.use(errorHandler);
-
 export default app;

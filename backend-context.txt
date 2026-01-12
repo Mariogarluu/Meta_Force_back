@@ -65,6 +65,7 @@ export default {
       "hasInstallScript": true,
       "license": "ISC",
       "dependencies": {
+        "@angular/cdk": "^21.0.5",
         "@prisma/client": "^6.18.0",
         "@types/bcrypt": "^6.0.0",
         "@types/cors": "^2.8.19",
@@ -103,6 +104,64 @@ export default {
         "ts-node": "^10.9.2",
         "tsx": "^4.20.6",
         "typescript": "^5.9.3"
+      }
+    },
+    "node_modules/@angular/cdk": {
+      "version": "21.0.5",
+      "resolved": "https://registry.npmjs.org/@angular/cdk/-/cdk-21.0.5.tgz",
+      "integrity": "sha512-yO/IRYEZ5wJkpwg3GT3b6RST4pqNFTAhuyPdEdLcE81cs283K3aKOsCYh2xUR3bR4WxBh2kBPSJ31AFZyJXbSA==",
+      "license": "MIT",
+      "dependencies": {
+        "parse5": "^8.0.0",
+        "tslib": "^2.3.0"
+      },
+      "peerDependencies": {
+        "@angular/common": "^21.0.0 || ^22.0.0",
+        "@angular/core": "^21.0.0 || ^22.0.0",
+        "rxjs": "^6.5.3 || ^7.4.0"
+      }
+    },
+    "node_modules/@angular/common": {
+      "version": "21.0.6",
+      "resolved": "https://registry.npmjs.org/@angular/common/-/common-21.0.6.tgz",
+      "integrity": "sha512-Yd8PF0dR37FAzqEcBHAyVCiSGMJOezSJe6rV/4BC6AVLfaZ7oZLl8CNVxKsod2UHd6rKxt1hzx05QdVcVvYNeA==",
+      "license": "MIT",
+      "peer": true,
+      "dependencies": {
+        "tslib": "^2.3.0"
+      },
+      "engines": {
+        "node": "^20.19.0 || ^22.12.0 || >=24.0.0"
+      },
+      "peerDependencies": {
+        "@angular/core": "21.0.6",
+        "rxjs": "^6.5.3 || ^7.4.0"
+      }
+    },
+    "node_modules/@angular/core": {
+      "version": "21.0.6",
+      "resolved": "https://registry.npmjs.org/@angular/core/-/core-21.0.6.tgz",
+      "integrity": "sha512-SvWbOkkrsqprYJSBmzQEWkWjfZB/jkRYyFp2ClMJBPqOLxP1a+i3Om2rolcNQjZPz87bs9FszwgRlXUy7sw5cQ==",
+      "license": "MIT",
+      "peer": true,
+      "dependencies": {
+        "tslib": "^2.3.0"
+      },
+      "engines": {
+        "node": "^20.19.0 || ^22.12.0 || >=24.0.0"
+      },
+      "peerDependencies": {
+        "@angular/compiler": "21.0.6",
+        "rxjs": "^6.5.3 || ^7.4.0",
+        "zone.js": "~0.15.0 || ~0.16.0"
+      },
+      "peerDependenciesMeta": {
+        "@angular/compiler": {
+          "optional": true
+        },
+        "zone.js": {
+          "optional": true
+        }
       }
     },
     "node_modules/@apidevtools/json-schema-ref-parser": {
@@ -4342,6 +4401,18 @@ export default {
         "node": ">= 0.8"
       }
     },
+    "node_modules/entities": {
+      "version": "6.0.1",
+      "resolved": "https://registry.npmjs.org/entities/-/entities-6.0.1.tgz",
+      "integrity": "sha512-aN97NXWF6AWBTahfVOIrB/NShkzi5H7F9r1s9mD3cDj4Ko5f2qhhVoYMibXF7GlLveb/D2ioWay8lxI97Ven3g==",
+      "license": "BSD-2-Clause",
+      "engines": {
+        "node": ">=0.12"
+      },
+      "funding": {
+        "url": "https://github.com/fb55/entities?sponsor=1"
+      }
+    },
     "node_modules/error-ex": {
       "version": "1.3.4",
       "resolved": "https://registry.npmjs.org/error-ex/-/error-ex-1.3.4.tgz",
@@ -7488,6 +7559,18 @@ export default {
         "node": ">=6"
       }
     },
+    "node_modules/parse5": {
+      "version": "8.0.0",
+      "resolved": "https://registry.npmjs.org/parse5/-/parse5-8.0.0.tgz",
+      "integrity": "sha512-9m4m5GSgXjL4AjumKzq1Fgfp3Z8rsvjRNbnkVwfu2ImRqE5D0LnY2QfDen18FSY9C573YU5XxSapdHZTZ2WolA==",
+      "license": "MIT",
+      "dependencies": {
+        "entities": "^6.0.0"
+      },
+      "funding": {
+        "url": "https://github.com/inikulin/parse5?sponsor=1"
+      }
+    },
     "node_modules/parseurl": {
       "version": "1.3.3",
       "resolved": "https://registry.npmjs.org/parseurl/-/parseurl-1.3.3.tgz",
@@ -8021,6 +8104,16 @@ export default {
       ],
       "dependencies": {
         "queue-microtask": "^1.2.2"
+      }
+    },
+    "node_modules/rxjs": {
+      "version": "7.8.2",
+      "resolved": "https://registry.npmjs.org/rxjs/-/rxjs-7.8.2.tgz",
+      "integrity": "sha512-dhKf903U/PQZY6boNNtAGdWbG85WAbjT/1xYoZIC7FAY0yWapOBQVsVrDl58W86//e1VpMNBtRV4MaXfdMySFA==",
+      "license": "Apache-2.0",
+      "peer": true,
+      "dependencies": {
+        "tslib": "^2.1.0"
       }
     },
     "node_modules/safe-buffer": {
@@ -8995,9 +9088,7 @@ export default {
       "version": "2.8.1",
       "resolved": "https://registry.npmjs.org/tslib/-/tslib-2.8.1.tgz",
       "integrity": "sha512-oJFu94HQb+KVduSUQL7wnpmqnfmLsOA/nAh6b6EH0wCEoK0/mPeXU6c3wKDV83MkOuHPRHtSXKKU99IBazS/2w==",
-      "dev": true,
-      "license": "0BSD",
-      "optional": true
+      "license": "0BSD"
     },
     "node_modules/tsx": {
       "version": "4.20.6",
@@ -9670,12 +9761,15 @@ export default {
     "prisma:generate": "npm run prisma:sync-url && dotenv -e .env -- prisma generate",
     "prisma:studio": "npm run prisma:sync-url && dotenv -e .env -- prisma studio",
     "prisma:studio:prod": "dotenv -e .env.production.local -- prisma studio",
-    "prisma:status": "npm run prisma:sync-url && dotenv -e .env -- prisma migrate status"
+    "prisma:status": "npm run prisma:sync-url && dotenv -e .env -- prisma migrate status",
+    "prisma:diagnose": "node scripts/diagnose-migrations.js",
+    "vercel-reset": "npx prisma migrate reset --force && npm run build"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@angular/cdk": "^21.0.5",
     "@prisma/client": "^6.18.0",
     "@types/bcrypt": "^6.0.0",
     "@types/cors": "^2.8.19",
@@ -9716,6 +9810,7 @@ export default {
     "typescript": "^5.9.3"
   }
 }
+
 --- END OF FILE: package.json ---
 
 
@@ -9808,6 +9903,202 @@ deleteMachines();
 
 
 --- END OF FILE: scripts\delete-machines.js ---
+
+
+--- START OF FILE: scripts\diagnose-migrations.js ---
+#!/usr/bin/env node
+
+/**
+ * Script de diagnóstico para problemas con migraciones de Prisma
+ * 
+ * Uso: node scripts/diagnose-migrations.js
+ */
+
+import { execSync } from 'child_process';
+import { readFileSync, existsSync } from 'fs';
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+const rootDir = join(__dirname, '..');
+
+console.log('🔍 Diagnóstico de Migraciones de Prisma\n');
+console.log('=' .repeat(50));
+
+// Colores para la salida
+const colors = {
+  reset: '\x1b[0m',
+  green: '\x1b[32m',
+  red: '\x1b[31m',
+  yellow: '\x1b[33m',
+  blue: '\x1b[34m',
+};
+
+function logSuccess(message) {
+  console.log(`${colors.green}✅ ${message}${colors.reset}`);
+}
+
+function logError(message) {
+  console.log(`${colors.red}❌ ${message}${colors.reset}`);
+}
+
+function logWarning(message) {
+  console.log(`${colors.yellow}⚠️  ${message}${colors.reset}`);
+}
+
+function logInfo(message) {
+  console.log(`${colors.blue}ℹ️  ${message}${colors.reset}`);
+}
+
+// 1. Verificar que existe schema.prisma
+console.log('\n1. Verificando archivos necesarios...');
+const schemaPath = join(rootDir, 'prisma', 'schema.prisma');
+if (existsSync(schemaPath)) {
+  logSuccess('schema.prisma encontrado');
+} else {
+  logError('schema.prisma NO encontrado');
+  process.exit(1);
+}
+
+// 2. Validar schema
+console.log('\n2. Validando schema.prisma...');
+try {
+  execSync('npx prisma validate', { 
+    cwd: rootDir, 
+    stdio: 'pipe',
+    encoding: 'utf-8'
+  });
+  logSuccess('Schema válido');
+} catch (error) {
+  logError('Schema inválido');
+  console.log(error.stdout || error.message);
+}
+
+// 3. Verificar estado de migraciones
+console.log('\n3. Verificando estado de migraciones...');
+try {
+  const status = execSync('npx prisma migrate status', { 
+    cwd: rootDir, 
+    stdio: 'pipe',
+    encoding: 'utf-8'
+  });
+  
+  if (status.includes('up to date')) {
+    logSuccess('Migraciones al día');
+  } else if (status.includes('following migration')) {
+    logWarning('Hay migraciones pendientes');
+    console.log(status);
+  } else if (status.includes('failed')) {
+    logError('Hay migraciones fallidas');
+    console.log(status);
+  } else {
+    logInfo('Estado de migraciones:');
+    console.log(status);
+  }
+} catch (error) {
+  logError('Error al verificar estado de migraciones');
+  console.log(error.stdout || error.message);
+}
+
+// 4. Verificar cliente de Prisma
+console.log('\n4. Verificando cliente de Prisma...');
+const clientPath = join(rootDir, 'node_modules', '@prisma', 'client');
+if (existsSync(clientPath)) {
+  logSuccess('Cliente de Prisma encontrado');
+} else {
+  logWarning('Cliente de Prisma NO encontrado. Ejecuta: npx prisma generate');
+}
+
+// 5. Verificar conexión a base de datos
+console.log('\n5. Verificando conexión a base de datos...');
+try {
+  execSync('npx prisma db pull --print', { 
+    cwd: rootDir, 
+    stdio: 'pipe',
+    encoding: 'utf-8',
+    timeout: 5000
+  });
+  logSuccess('Conexión a base de datos exitosa');
+} catch (error) {
+  logError('No se pudo conectar a la base de datos');
+  logInfo('Verifica que:');
+  logInfo('  - La base de datos esté corriendo');
+  logInfo('  - DATABASE_URL esté correctamente configurada en .env');
+  logInfo('  - Las credenciales sean correctas');
+}
+
+// 6. Verificar diferencias entre schema y BD
+console.log('\n6. Verificando diferencias entre schema y base de datos...');
+try {
+  const diff = execSync('npx prisma migrate diff --from-schema-datamodel prisma/schema.prisma --to-schema-datasource prisma/schema.prisma', { 
+    cwd: rootDir, 
+    stdio: 'pipe',
+    encoding: 'utf-8'
+  });
+  
+  if (diff.trim() === '') {
+    logSuccess('Schema y base de datos están sincronizados');
+  } else {
+    logWarning('Hay diferencias entre schema y base de datos:');
+    console.log(diff);
+  }
+} catch (error) {
+  logInfo('No se pudo verificar diferencias (esto es normal si hay problemas de conexión)');
+}
+
+// 7. Verificar migraciones recientes
+console.log('\n7. Migraciones encontradas:');
+try {
+  const { readdirSync } = await import('fs');
+  const migrationsDir = join(rootDir, 'prisma', 'migrations');
+  if (existsSync(migrationsDir)) {
+    const migrations = readdirSync(migrationsDir)
+      .filter(item => !item.includes('lock') && !item.includes('.'))
+      .sort()
+      .slice(-5); // Últimas 5 migraciones
+    
+    if (migrations.length > 0) {
+      migrations.forEach(migration => {
+        console.log(`   - ${migration}`);
+      });
+      logInfo(`Total: ${readdirSync(migrationsDir).filter(item => !item.includes('lock') && !item.includes('.')).length} migraciones`);
+    } else {
+      logWarning('No se encontraron migraciones');
+    }
+  }
+} catch (error) {
+  logError('Error al leer migraciones');
+}
+
+// Resumen y recomendaciones
+console.log('\n' + '='.repeat(50));
+console.log('\n📋 Resumen y Recomendaciones:\n');
+
+console.log('Si hay problemas, sigue estos pasos:\n');
+
+console.log('1. Si el schema es inválido:');
+console.log('   → Corrige los errores en schema.prisma');
+console.log('   → Ejecuta: npx prisma validate\n');
+
+console.log('2. Si hay migraciones pendientes:');
+console.log('   → Ejecuta: npm run prisma:migrate -- --name nombre_migracion\n');
+
+console.log('3. Si hay migraciones fallidas:');
+console.log('   → Revisa: npm run prisma:status');
+console.log('   → Marca como resuelta: npx prisma migrate resolve --applied nombre_migracion\n');
+
+console.log('4. Si schema y BD están desincronizados:');
+console.log('   → Desarrollo: npx prisma db push');
+console.log('   → Producción: npx prisma migrate deploy\n');
+
+console.log('5. Si el cliente no está generado:');
+console.log('   → Ejecuta: npm run prisma:generate\n');
+
+console.log('📖 Para más información, consulta:');
+console.log('   → back/docs/GUIA_MIGRACIONES_PRISMA.md\n');
+
+--- END OF FILE: scripts\diagnose-migrations.js ---
 
 
 --- START OF FILE: scripts\init-env.js ---
@@ -10134,41 +10425,30 @@ import machineRoutes from './modules/machines/machines.routes.js';
 import accessRoutes from './modules/access/access.routes.js';
 import notificationRoutes from './modules/notifications/notifications.routes.js';
 import ticketRoutes from './modules/tickets/tickets.routes.js';
+import membershipRoutes from './modules/memberships/memberships.routes.js';
 import healthRoutes from './modules/health/health.routes.js';
+import exerciseRoutes from './modules/exercises/exercises.routes.js';
+import workoutRoutes from './modules/workouts/workouts.routes.js';
+import mealRoutes from './modules/meals/meals.routes.js';
+import dietRoutes from './modules/diets/diets.routes.js';
 
 const app = express();
 
-/**
- * Configuración de trust proxy.
- * Requerido para que express-rate-limit obtenga la IP real del cliente
- * cuando la API está desplegada detrás de un proxy (Vercel/Render).
- */
 app.set('trust proxy', 1);
 
-// Seguridad: Helmet
-// Se usa casting (as any) para evitar conflictos de tipos ESM/CJS en el build estricto de Vercel
 app.use((helmet as any)({
   contentSecurityPolicy: false,
 }));
 
-// CORS
 app.use(cors());
-
-// Parsing del body
 app.use(express.json({ limit: '10mb' }));
-
-// Logging de peticiones
 app.use(requestLogger);
-
-// Ruta de Healthcheck (Pública y prioritaria)
 app.use('/api/health', healthRoutes);
 
-// Rate Limiting General (excepto en test)
 if (env.NODE_ENV !== 'test') {
   app.use(generalLimiter);
 }
 
-// Ruta Raíz
 app.get('/', (_req: Request, res: Response) => {
   res.status(200).json({
     ok: true,
@@ -10178,13 +10458,10 @@ app.get('/', (_req: Request, res: Response) => {
   });
 });
 
-// Ruta health legacy (por compatibilidad)
 app.get('/health', (_req: Request, res: Response) => {
   res.json({ ok: true });
 });
 
-// Documentación Swagger
-// FIX VERCEL: Usar CDN para cargar los assets de Swagger UI en lugar de servirlos localmente
 const swaggerOptions = {
   customCssUrl: 'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.0.0/swagger-ui.min.css',
   customJs: [
@@ -10195,14 +10472,12 @@ const swaggerOptions = {
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, swaggerOptions));
 
-// Rutas de Autenticación (con limitador específico)
 if (env.NODE_ENV !== 'test') {
   app.use('/api/auth', authLimiter, authRoutes);
 } else {
   app.use('/api/auth', authRoutes);
 }
 
-// Rutas de la API
 app.use('/api/users', usersRoutes);
 app.use('/api/centers', centerRoutes);
 app.use('/api/users', userCenterRouter);
@@ -10212,8 +10487,13 @@ app.use('/api/machines', machineRoutes);
 app.use('/api/access', accessRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/tickets', ticketRoutes);
+app.use('/api/exercises', exerciseRoutes);
+app.use('/api/workouts', workoutRoutes);
+app.use('/api/meals', mealRoutes);
+app.use('/api/diets', dietRoutes);
+app.use('/api/memberships', membershipRoutes);
 app.use(errorHandler);
-
+app.use('/api/notifications', notificationRoutes);
 export default app;
 --- END OF FILE: src\app.ts ---
 
@@ -10406,197 +10686,53 @@ if (!process.env.DATABASE_URL) {
 
 --- START OF FILE: src\config\swagger.ts ---
 import swaggerJSDoc from 'swagger-jsdoc';
+import { env } from './env.js';
+import path from 'path';
 
-/**
- * Configuración principal de Swagger para la documentación de la API.
- * Define la estructura OpenAPI 3.0.3 con todos los schemas y endpoints disponibles.
- */
-const definition = {
-  openapi: '3.0.3',
+const isProduction = env.NODE_ENV === 'production';
+
+const swaggerDefinition = {
+  openapi: '3.0.0',
   info: {
     title: 'Meta-Force API',
     version: '1.0.0',
-    description:
-      'API de ejemplo con Auth, Users, Centers y Classes. Protegida con JWT, validada con Zod.',
+    description: 'Documentación oficial de la API de Meta-Force Gym Management System',
   },
-  servers: [
-    { url: 'http://localhost:3000', description: 'Local' },
-  ],
+  servers: isProduction
+    ? [
+        {
+          url: 'https://meta-force-back.vercel.app',
+          description: 'Servidor de Producción',
+        },
+      ]
+    : [
+        {
+          url: `http://localhost:${env.PORT || 3000}`,
+          description: 'Servidor de Desarrollo Local',
+        },
+      ],
   components: {
     securitySchemes: {
-      bearerAuth: { type: 'http', scheme: 'bearer', bearerFormat: 'JWT' },
-    },
-    schemas: {
-      User: {
-        type: 'object',
-        properties: {
-          id: { type: 'integer' },
-          email: { type: 'string' },
-          name: { type: 'string' },
-          createdAt: { type: 'string', format: 'date-time' },
-          centerId: { type: 'integer', nullable: true },
-        },
-      },
-      RegisterInput: {
-        type: 'object',
-        required: ['email', 'name', 'password'],
-        properties: {
-          email: { type: 'string', format: 'email' },
-          name: { type: 'string' },
-          password: { type: 'string', minLength: 8 },
-        },
-      },
-      LoginInput: {
-        type: 'object',
-        required: ['email', 'password'],
-        properties: {
-          email: { type: 'string', format: 'email' },
-          password: { type: 'string', minLength: 8 },
-        },
-      },
-      AuthResponse: {
-        type: 'object',
-        properties: {
-          user: { $ref: '#/components/schemas/User' },
-          token: { type: 'string' },
-        },
-      },
-      UpdateProfileInput: {
-        type: 'object',
-        properties: {
-          name: { type: 'string' },
-          email: { type: 'string', format: 'email' },
-        },
-      },
-      ChangePasswordInput: {
-        type: 'object',
-        required: ['currentPassword', 'newPassword'],
-        properties: {
-          currentPassword: { type: 'string' },
-          newPassword: { type: 'string', minLength: 8 },
-        },
-      },
-      Error: {
-        type: 'object',
-        properties: {
-          message: { type: 'string' },
-          errors: { type: 'object' },
-        },
-      },
-
-      CreateCenterInput: {
-        type: 'object',
-        required: ['name'],
-        properties: {
-          name: { type: 'string' },
-          description: { type: 'string' },
-          address: { type: 'string' },
-          city: { type: 'string' },
-          country: { type: 'string' },
-          phone: { type: 'string' },
-          email: { type: 'string', format: 'email' },
-        },
-      },
-      UpdateCenterInput: {
-        type: 'object',
-        properties: {
-          name: { type: 'string' },
-          description: { type: 'string' },
-          address: { type: 'string' },
-          city: { type: 'string' },
-          country: { type: 'string' },
-          phone: { type: 'string' },
-          email: { type: 'string', format: 'email' },
-        },
-      },
-
-      CreateClassInput: {
-        type: 'object',
-        required: ['name'],
-        properties: {
-          name: { type: 'string' },
-          description: { type: 'string' },
-        },
-      },
-      UpdateClassInput: {
-        type: 'object',
-        properties: {
-          name: { type: 'string' },
-          description: { type: 'string' },
-        },
-      },
-
-      Machine: {
-        type: 'object',
-        properties: {
-          id: { type: 'integer' },
-          name: { type: 'string' },
-          type: { type: 'string', enum: ['cardio', 'fuerza', 'peso libre', 'funcional', 'otro'] },
-          status: { type: 'string', enum: ['operativa', 'en mantenimiento', 'fuera de servicio'] },
-          centerId: { type: 'integer' },
-          createdAt: { type: 'string', format: 'date-time' },
-          updatedAt: { type: 'string', format: 'date-time' },
-          center: {
-            type: 'object',
-            properties: {
-              id: { type: 'integer' },
-              name: { type: 'string' },
-              city: { type: 'string' },
-            },
-          },
-        },
-      },
-      CreateMachineInput: {
-        type: 'object',
-        required: ['name', 'type', 'status', 'centerId'],
-        properties: {
-          name: { type: 'string' },
-          type: { type: 'string', enum: ['cardio', 'fuerza', 'peso libre', 'funcional', 'otro'] },
-          status: { type: 'string', enum: ['operativa', 'en mantenimiento', 'fuera de servicio'] },
-          centerId: { type: 'integer' },
-        },
-      },
-      UpdateMachineInput: {
-        type: 'object',
-        properties: {
-          name: { type: 'string' },
-          type: { type: 'string', enum: ['cardio', 'fuerza', 'peso libre', 'funcional', 'otro'] },
-          status: { type: 'string', enum: ['operativa', 'en mantenimiento', 'fuera de servicio'] },
-          centerId: { type: 'integer' },
-        },
+      bearerAuth: {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
       },
     },
   },
-  tags: [
-    { name: 'Auth', description: 'Endpoints de autenticación' },
-    { name: 'Users', description: 'Gestión de usuarios' },
-    { name: 'Centers', description: 'Gestión de centros (gimnasios)' },
-    { name: 'Classes', description: 'Gestión de clases' },
-    { name: 'Machines', description: 'Gestión de máquinas de gimnasio' },
-  ],
-  security: [{ bearerAuth: [] }],
 };
 
-/**
- * Especifica las rutas donde Swagger buscará los comentarios de documentación JSDoc.
- * Incluye archivos TypeScript y JavaScript para soportar diferentes entornos de ejecución.
- */
-const apis = [
-  'src/modules/**/*.routes.ts',
-  'src/modules/**/*.controller.ts',
-  'src/modules/**/*.schema.ts',
-  'src/modules/**/*.routes.js',
-];
+const options: swaggerJSDoc.Options = {
+  swaggerDefinition,
+  apis: [
+    path.join(process.cwd(), 'src/modules/**/*.routes.{ts,js}'),
+    path.join(process.cwd(), 'dist/modules/**/*.routes.js'),
+    path.join(process.cwd(), 'src/modules/**/*.schema.{ts,js}'),
+    path.join(process.cwd(), 'dist/modules/**/*.schema.js'),
+  ],
+};
 
-/**
- * Especificación completa de Swagger generada a partir de la definición y los archivos de rutas.
- * Exporta la configuración de Swagger para ser utilizada por el middleware de Swagger UI.
- */
-export const swaggerSpec = swaggerJSDoc({
-  definition,
-  apis,
-});
-
+export const swaggerSpec = swaggerJSDoc(options);
 --- END OF FILE: src\config\swagger.ts ---
 
 
@@ -11068,7 +11204,19 @@ export const validate = (schema: CompositeSchema | ZodObject<any>) => (
         req.params = p.data as any;
       }
       if (schema.query) {
-        const p = schema.query.safeParse(req.query);
+        // Limpiar query params: eliminar campos undefined, null y cadenas vacías
+        const cleanedQuery: any = {};
+        if (req.query && typeof req.query === 'object') {
+          Object.keys(req.query).forEach(key => {
+            const value = req.query[key];
+            // Solo incluir valores válidos (no undefined, null ni cadenas vacías)
+            if (value !== undefined && value !== '' && value !== null) {
+              cleanedQuery[key] = value;
+            }
+          });
+        }
+        
+        const p = schema.query.safeParse(cleanedQuery);
         if (!p.success) {
           const errors = p.error.issues.map((err: z.ZodIssue) => ({
             path: err.path.join('.'),
@@ -11078,6 +11226,9 @@ export const validate = (schema: CompositeSchema | ZodObject<any>) => (
           const errorMessage = firstError ? firstError.message : 'Error de validación en query';
           
           logger.warn(`Validation error on ${req.method} ${req.path} (query): ${errorMessage}`);
+          logger.warn(`Request query: ${JSON.stringify(req.query)}`);
+          logger.warn(`Cleaned query: ${JSON.stringify(cleanedQuery)}`);
+          logger.warn(`Validation errors: ${JSON.stringify(errors)}`);
           
           return res.status(400).json({ 
             message: errorMessage,
@@ -13142,6 +13293,1157 @@ export async function leaveClass(userId: string, classId: string) {
 --- END OF FILE: src\modules\classes\classes.service.ts ---
 
 
+--- START OF FILE: src\modules\diets\diets.controller.ts ---
+import type { Request, Response } from 'express';
+import { prisma } from '../../config/db.js';
+import {
+  createDiet,
+  listDiets,
+  getDietById,
+  updateDiet,
+  deleteDiet,
+  addMealToDiet,
+  updateDietMeal,
+  removeMealFromDiet,
+  reorderDietMeals,
+} from './diets.service.js';
+
+/**
+ * Controlador para crear una nueva dieta.
+ * La dieta se crea para el usuario autenticado.
+ */
+export async function createDietCtrl(req: Request, res: Response) {
+  try {
+    if (!req.user) return res.status(401).json({ message: 'No autorizado' });
+    const diet = await createDiet(req.user.sub, req.body);
+    res.status(201).json(diet);
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+}
+
+/**
+ * Controlador para listar dietas.
+ * Puede filtrar por usuario si se proporciona userId en query params.
+ * Los entrenadores pueden ver dietas de otros usuarios.
+ */
+export async function listDietsCtrl(req: Request, res: Response) {
+  try {
+    const userId = req.query.userId as string | undefined;
+    const diets = await listDiets(userId || null);
+    res.json(diets);
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+}
+
+/**
+ * Controlador para obtener una dieta específica por su ID.
+ */
+export async function getDietCtrl(req: Request, res: Response) {
+  try {
+    const id = req.params.id;
+    if (!id) return res.status(400).json({ message: 'ID requerido' });
+    const diet = await getDietById(id);
+    if (!diet) return res.status(404).json({ message: 'Dieta no encontrada' });
+    res.json(diet);
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+}
+
+/**
+ * Controlador para actualizar una dieta existente.
+ * Los usuarios solo pueden actualizar sus propias dietas.
+ * Los entrenadores pueden actualizar dietas de usuarios.
+ */
+export async function updateDietCtrl(req: Request, res: Response) {
+  try {
+    if (!req.user) return res.status(401).json({ message: 'No autorizado' });
+    const id = req.params.id;
+    if (!id) return res.status(400).json({ message: 'ID requerido' });
+
+    // Verificar que la dieta existe y que el usuario tiene permiso
+    const diet = await getDietById(id);
+    if (!diet) return res.status(404).json({ message: 'Dieta no encontrada' });
+
+    // Si no es el dueño y no es entrenador/admin, denegar
+    const isOwner = diet.userId === req.user.sub;
+    const isTrainer = req.user.role === 'TRAINER' || req.user.role === 'ADMIN_CENTER' || req.user.role === 'SUPERADMIN';
+    if (!isOwner && !isTrainer) {
+      return res.status(403).json({ message: 'No tienes permiso para editar esta dieta' });
+    }
+
+    const updated = await updateDiet(id, req.body);
+    res.json(updated);
+  } catch (error: any) {
+    if (error.code === 'P2025') return res.status(404).json({ message: 'Dieta no encontrada' });
+    res.status(500).json({ message: error.message });
+  }
+}
+
+/**
+ * Controlador para eliminar una dieta.
+ */
+export async function deleteDietCtrl(req: Request, res: Response) {
+  try {
+    if (!req.user) return res.status(401).json({ message: 'No autorizado' });
+    const id = req.params.id;
+    if (!id) return res.status(400).json({ message: 'ID requerido' });
+
+    // Verificar que la dieta existe y que el usuario tiene permiso
+    const diet = await getDietById(id);
+    if (!diet) return res.status(404).json({ message: 'Dieta no encontrada' });
+
+    const isOwner = diet.userId === req.user.sub;
+    const isTrainer = req.user.role === 'TRAINER' || req.user.role === 'ADMIN_CENTER' || req.user.role === 'SUPERADMIN';
+    if (!isOwner && !isTrainer) {
+      return res.status(403).json({ message: 'No tienes permiso para eliminar esta dieta' });
+    }
+
+    await deleteDiet(id);
+    res.status(204).send();
+  } catch (error: any) {
+    if (error.code === 'P2025') return res.status(404).json({ message: 'Dieta no encontrada' });
+    res.status(500).json({ message: error.message });
+  }
+}
+
+/**
+ * Controlador para agregar una comida a una dieta.
+ */
+export async function addMealToDietCtrl(req: Request, res: Response) {
+  try {
+    if (!req.user) return res.status(401).json({ message: 'No autorizado' });
+    const dietId = req.params.id;
+    if (!dietId) return res.status(400).json({ message: 'ID de dieta requerido' });
+
+    // Verificar permisos
+    const diet = await getDietById(dietId);
+    if (!diet) return res.status(404).json({ message: 'Dieta no encontrada' });
+
+    const isOwner = diet.userId === req.user.sub;
+    const isTrainer = req.user.role === 'TRAINER' || req.user.role === 'ADMIN_CENTER' || req.user.role === 'SUPERADMIN';
+    if (!isOwner && !isTrainer) {
+      return res.status(403).json({ message: 'No tienes permiso para editar esta dieta' });
+    }
+
+    const dietMeal = await addMealToDiet(dietId, req.body);
+    res.status(201).json(dietMeal);
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+}
+
+/**
+ * Controlador para actualizar una comida en una dieta.
+ */
+export async function updateDietMealCtrl(req: Request, res: Response) {
+  try {
+    if (!req.user) return res.status(401).json({ message: 'No autorizado' });
+    const mealId = req.params.mealId;
+    if (!mealId) return res.status(400).json({ message: 'ID de comida requerido' });
+
+    // Verificar que la comida de la dieta existe y obtener la dieta
+    const dietMeal = await prisma.dietMeal.findUnique({
+      where: { id: mealId },
+      include: { diet: true },
+    });
+
+    if (!dietMeal) return res.status(404).json({ message: 'Comida no encontrada en la dieta' });
+
+    // Verificar permisos
+    const isOwner = dietMeal.diet.userId === req.user.sub;
+    const isTrainer = req.user.role === 'TRAINER' || req.user.role === 'ADMIN_CENTER' || req.user.role === 'SUPERADMIN';
+    if (!isOwner && !isTrainer) {
+      return res.status(403).json({ message: 'No tienes permiso para editar esta dieta' });
+    }
+
+    const updated = await updateDietMeal(mealId, req.body);
+    res.json(updated);
+  } catch (error: any) {
+    if (error.code === 'P2025') return res.status(404).json({ message: 'Comida no encontrada' });
+    res.status(500).json({ message: error.message });
+  }
+}
+
+/**
+ * Controlador para eliminar una comida de una dieta.
+ */
+export async function removeMealFromDietCtrl(req: Request, res: Response) {
+  try {
+    if (!req.user) return res.status(401).json({ message: 'No autorizado' });
+    const mealId = req.params.mealId;
+    if (!mealId) return res.status(400).json({ message: 'ID de comida requerido' });
+
+    // Verificar que la comida de la dieta existe y obtener la dieta
+    const dietMeal = await prisma.dietMeal.findUnique({
+      where: { id: mealId },
+      include: { diet: true },
+    });
+
+    if (!dietMeal) return res.status(404).json({ message: 'Comida no encontrada en la dieta' });
+
+    // Verificar permisos
+    const isOwner = dietMeal.diet.userId === req.user.sub;
+    const isTrainer = req.user.role === 'TRAINER' || req.user.role === 'ADMIN_CENTER' || req.user.role === 'SUPERADMIN';
+    if (!isOwner && !isTrainer) {
+      return res.status(403).json({ message: 'No tienes permiso para editar esta dieta' });
+    }
+
+    await removeMealFromDiet(mealId);
+    res.status(204).send();
+  } catch (error: any) {
+    if (error.code === 'P2025') return res.status(404).json({ message: 'Comida no encontrada' });
+    res.status(500).json({ message: error.message });
+  }
+}
+
+/**
+ * Controlador para reordenar comidas (arrastrar y soltar).
+ */
+export async function reorderDietMealsCtrl(req: Request, res: Response) {
+  try {
+    if (!req.user) return res.status(401).json({ message: 'No autorizado' });
+    const dietId = req.params.id;
+    if (!dietId) return res.status(400).json({ message: 'ID de dieta requerido' });
+
+    // Verificar permisos
+    const diet = await getDietById(dietId);
+    if (!diet) return res.status(404).json({ message: 'Dieta no encontrada' });
+
+    const isOwner = diet.userId === req.user.sub;
+    const isTrainer = req.user.role === 'TRAINER' || req.user.role === 'ADMIN_CENTER' || req.user.role === 'SUPERADMIN';
+    if (!isOwner && !isTrainer) {
+      return res.status(403).json({ message: 'No tienes permiso para editar esta dieta' });
+    }
+
+    const updated = await reorderDietMeals(dietId, req.body.meals);
+    res.json(updated);
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+}
+
+
+--- END OF FILE: src\modules\diets\diets.controller.ts ---
+
+
+--- START OF FILE: src\modules\diets\diets.routes.ts ---
+import { Router } from 'express';
+import { auth } from '../../middleware/auth.js';
+import { validate } from '../../middleware/validate.js';
+import {
+  createDietSchema,
+  updateDietSchema,
+  dietIdParamSchema,
+  listDietsQuerySchema,
+  addMealToDietSchema,
+  updateDietMealSchema,
+  removeMealFromDietSchema,
+  reorderDietMealsSchema,
+} from './diets.schema.js';
+import {
+  createDietCtrl,
+  listDietsCtrl,
+  getDietCtrl,
+  updateDietCtrl,
+  deleteDietCtrl,
+  addMealToDietCtrl,
+  updateDietMealCtrl,
+  removeMealFromDietCtrl,
+  reorderDietMealsCtrl,
+} from './diets.controller.js';
+
+const router = Router();
+
+/**
+ * @swagger
+ * tags:
+ *   - name: Diets
+ *     description: Gestión de dietas de usuarios
+ */
+
+/**
+ * @swagger
+ * /api/diets:
+ *   get:
+ *     summary: Lista todas las dietas
+ *     tags: [Diets]
+ *     security: [ { bearerAuth: [] } ]
+ */
+router.get('/', auth, listDietsCtrl);
+
+/**
+ * @swagger
+ * /api/diets:
+ *   post:
+ *     summary: Crea una nueva dieta para el usuario autenticado
+ *     tags: [Diets]
+ *     security: [ { bearerAuth: [] } ]
+ */
+router.post('/', auth, validate(createDietSchema), createDietCtrl);
+
+/**
+ * @swagger
+ * /api/diets/{id}:
+ *   get:
+ *     summary: Obtiene una dieta por ID
+ *     tags: [Diets]
+ *     security: [ { bearerAuth: [] } ]
+ */
+router.get('/:id', auth, validate(dietIdParamSchema), getDietCtrl);
+
+/**
+ * @swagger
+ * /api/diets/{id}:
+ *   patch:
+ *     summary: Actualiza una dieta
+ *     tags: [Diets]
+ *     security: [ { bearerAuth: [] } ]
+ */
+router.patch('/:id', auth, validate(updateDietSchema), updateDietCtrl);
+
+/**
+ * @swagger
+ * /api/diets/{id}:
+ *   delete:
+ *     summary: Elimina una dieta
+ *     tags: [Diets]
+ *     security: [ { bearerAuth: [] } ]
+ */
+router.delete('/:id', auth, validate(dietIdParamSchema), deleteDietCtrl);
+
+/**
+ * @swagger
+ * /api/diets/{id}/meals:
+ *   post:
+ *     summary: Agrega una comida a una dieta en un día y tipo de comida específicos
+ *     tags: [Diets]
+ *     security: [ { bearerAuth: [] } ]
+ */
+router.post('/:id/meals', auth, validate(addMealToDietSchema), addMealToDietCtrl);
+
+/**
+ * @swagger
+ * /api/diets/{id}/reorder:
+ *   post:
+ *     summary: Reordena comidas en una dieta (arrastrar y soltar)
+ *     tags: [Diets]
+ *     security: [ { bearerAuth: [] } ]
+ */
+router.post('/:id/reorder', auth, validate(reorderDietMealsSchema), reorderDietMealsCtrl);
+
+/**
+ * @swagger
+ * /api/diets/meals/{mealId}:
+ *   patch:
+ *     summary: Actualiza una comida en una dieta
+ *     tags: [Diets]
+ *     security: [ { bearerAuth: [] } ]
+ */
+router.patch('/meals/:mealId', auth, validate(updateDietMealSchema), updateDietMealCtrl);
+
+/**
+ * @swagger
+ * /api/diets/meals/{mealId}:
+ *   delete:
+ *     summary: Elimina una comida de una dieta
+ *     tags: [Diets]
+ *     security: [ { bearerAuth: [] } ]
+ */
+router.delete('/meals/:mealId', auth, validate(removeMealFromDietSchema), removeMealFromDietCtrl);
+
+export default router;
+
+
+--- END OF FILE: src\modules\diets\diets.routes.ts ---
+
+
+--- START OF FILE: src\modules\diets\diets.schema.ts ---
+import { z } from 'zod';
+import { cuidSchema, optionalCuidSchema } from '../../utils/validation.js';
+
+export const createDietSchema = {
+  body: z.object({
+    name: z.string().min(1, 'name is required'),
+    description: z.string().optional(),
+  }).strict(),
+};
+
+export const updateDietSchema = {
+  params: z.object({ id: cuidSchema }),
+  body: z.object({
+    name: z.string().min(1).optional(),
+    description: z.string().optional(),
+  }).strict(),
+};
+
+export const dietIdParamSchema = {
+  params: z.object({ id: cuidSchema }),
+};
+
+export const listDietsQuerySchema = {
+  query: z.object({
+    userId: optionalCuidSchema,
+  }).partial().passthrough(),
+};
+
+export const addMealToDietSchema = {
+  params: z.object({ id: cuidSchema }),
+  body: z.object({
+    mealId: cuidSchema,
+    dayOfWeek: z.number().int().min(0).max(6), // 0 = Domingo, 1 = Lunes, ..., 6 = Sábado
+    mealType: z.enum(['desayuno', 'almuerzo', 'comida', 'merienda', 'cena']),
+    order: z.number().int().min(0),
+    quantity: z.number().positive().optional(),
+    notes: z.string().optional(),
+  }).strict(),
+};
+
+export const updateDietMealSchema = {
+  params: z.object({ mealId: cuidSchema }),
+  body: z.object({
+    dayOfWeek: z.number().int().min(0).max(6).optional(),
+    mealType: z.enum(['desayuno', 'almuerzo', 'comida', 'merienda', 'cena']).optional(),
+    order: z.number().int().min(0).optional(),
+    quantity: z.number().positive().nullable().optional(),
+    notes: z.string().nullable().optional(),
+  }).strict(),
+};
+
+export const removeMealFromDietSchema = {
+  params: z.object({ mealId: cuidSchema }),
+};
+
+export const reorderDietMealsSchema = {
+  params: z.object({ id: cuidSchema }),
+  body: z.object({
+    meals: z.array(z.object({
+      id: cuidSchema,
+      dayOfWeek: z.number().int().min(0).max(6),
+      mealType: z.enum(['desayuno', 'almuerzo', 'comida', 'merienda', 'cena']),
+      order: z.number().int().min(0),
+    })).min(1),
+  }).strict(),
+};
+
+
+--- END OF FILE: src\modules\diets\diets.schema.ts ---
+
+
+--- START OF FILE: src\modules\diets\diets.service.ts ---
+import { prisma } from '../../config/db.js';
+
+/**
+ * Crea una nueva dieta para un usuario.
+ */
+export async function createDiet(userId: string, data: {
+  name: string;
+  description?: string;
+}) {
+  return prisma.diet.create({
+    data: {
+      userId,
+      name: data.name,
+      description: data.description || null,
+    },
+    include: {
+      meals: {
+        include: {
+          meal: true,
+        },
+        orderBy: [
+          { dayOfWeek: 'asc' },
+          { order: 'asc' },
+        ],
+      },
+      user: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+        },
+      },
+    },
+  });
+}
+
+/**
+ * Lista todas las dietas.
+ * Si se proporciona userId, lista solo las dietas de ese usuario.
+ */
+export async function listDiets(userId?: string | null) {
+  const where = userId
+    ? { userId }
+    : {};
+
+  return prisma.diet.findMany({
+    where,
+    include: {
+      meals: {
+        include: {
+          meal: true,
+        },
+        orderBy: [
+          { dayOfWeek: 'asc' },
+          { order: 'asc' },
+        ],
+      },
+      user: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+        },
+      },
+    },
+    orderBy: { createdAt: 'desc' },
+  });
+}
+
+/**
+ * Obtiene una dieta por su ID.
+ */
+export async function getDietById(id: string) {
+  return prisma.diet.findUnique({
+    where: { id },
+    include: {
+      meals: {
+        include: {
+          meal: true,
+        },
+        orderBy: [
+          { dayOfWeek: 'asc' },
+          { order: 'asc' },
+        ],
+      },
+      user: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+        },
+      },
+    },
+  });
+}
+
+/**
+ * Actualiza una dieta existente.
+ */
+export async function updateDiet(id: string, data: {
+  name?: string;
+  description?: string;
+}) {
+  const updateData: any = {};
+  if (data.name !== undefined) updateData.name = data.name;
+  if (data.description !== undefined) updateData.description = data.description || null;
+
+  return prisma.diet.update({
+    where: { id },
+    data: updateData,
+    include: {
+      meals: {
+        include: {
+          meal: true,
+        },
+        orderBy: [
+          { dayOfWeek: 'asc' },
+          { order: 'asc' },
+        ],
+      },
+      user: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+        },
+      },
+    },
+  });
+}
+
+/**
+ * Elimina una dieta y todas sus comidas asociadas.
+ */
+export async function deleteDiet(id: string) {
+  return prisma.diet.delete({
+    where: { id },
+  });
+}
+
+/**
+ * Agrega una comida a una dieta en un día y tipo de comida específicos.
+ */
+export async function addMealToDiet(dietId: string, data: {
+  mealId: string;
+  dayOfWeek: number; // 0 = Domingo, 1 = Lunes, ..., 6 = Sábado
+  mealType: string; // "desayuno", "almuerzo", "comida", "merienda", "cena"
+  order: number; // Orden en el día y tipo de comida (para arrastrar y soltar)
+  quantity?: number;
+  notes?: string;
+}) {
+  // Verificar que la dieta existe
+  const diet = await prisma.diet.findUnique({ where: { id: dietId } });
+  if (!diet) {
+    throw new Error('Dieta no encontrada');
+  }
+
+  // Verificar que la comida existe
+  const meal = await prisma.meal.findUnique({ where: { id: data.mealId } });
+  if (!meal) {
+    throw new Error('Comida no encontrada');
+  }
+
+  // Validar dayOfWeek (0-6)
+  if (data.dayOfWeek < 0 || data.dayOfWeek > 6) {
+    throw new Error('dayOfWeek debe estar entre 0 (Domingo) y 6 (Sábado)');
+  }
+
+  // Validar mealType
+  const validMealTypes = ['desayuno', 'almuerzo', 'comida', 'merienda', 'cena'];
+  if (!validMealTypes.includes(data.mealType.toLowerCase())) {
+    throw new Error(`mealType debe ser uno de: ${validMealTypes.join(', ')}`);
+  }
+
+  return prisma.dietMeal.create({
+    data: {
+      dietId,
+      mealId: data.mealId,
+      dayOfWeek: data.dayOfWeek,
+      mealType: data.mealType.toLowerCase(),
+      order: data.order,
+      quantity: data.quantity || null,
+      notes: data.notes || null,
+    },
+    include: {
+      meal: true,
+    },
+  });
+}
+
+/**
+ * Actualiza una comida en una dieta.
+ */
+export async function updateDietMeal(id: string, data: {
+  dayOfWeek?: number;
+  mealType?: string;
+  order?: number;
+  quantity?: number | null;
+  notes?: string | null;
+}) {
+  const updateData: any = {};
+  if (data.dayOfWeek !== undefined) {
+    if (data.dayOfWeek < 0 || data.dayOfWeek > 6) {
+      throw new Error('dayOfWeek debe estar entre 0 (Domingo) y 6 (Sábado)');
+    }
+    updateData.dayOfWeek = data.dayOfWeek;
+  }
+  if (data.mealType !== undefined) {
+    const validMealTypes = ['desayuno', 'almuerzo', 'comida', 'merienda', 'cena'];
+    if (!validMealTypes.includes(data.mealType.toLowerCase())) {
+      throw new Error(`mealType debe ser uno de: ${validMealTypes.join(', ')}`);
+    }
+    updateData.mealType = data.mealType.toLowerCase();
+  }
+  if (data.order !== undefined) updateData.order = data.order;
+  if (data.quantity !== undefined) updateData.quantity = data.quantity;
+  if (data.notes !== undefined) updateData.notes = data.notes;
+
+  return prisma.dietMeal.update({
+    where: { id },
+    data: updateData,
+    include: {
+      meal: true,
+    },
+  });
+}
+
+/**
+ * Elimina una comida de una dieta.
+ */
+export async function removeMealFromDiet(id: string) {
+  return prisma.dietMeal.delete({
+    where: { id },
+  });
+}
+
+/**
+ * Actualiza el orden de múltiples comidas (para arrastrar y soltar).
+ */
+export async function reorderDietMeals(dietId: string, meals: Array<{
+  id: string;
+  dayOfWeek: number;
+  mealType: string;
+  order: number;
+}>) {
+  // Verificar que la dieta existe
+  const diet = await prisma.diet.findUnique({ where: { id: dietId } });
+  if (!diet) {
+    throw new Error('Dieta no encontrada');
+  }
+
+  // Actualizar cada comida
+  const updates = meals.map(m => 
+    prisma.dietMeal.update({
+      where: { id: m.id },
+      data: {
+        dayOfWeek: m.dayOfWeek,
+        mealType: m.mealType.toLowerCase(),
+        order: m.order,
+      },
+    })
+  );
+
+  await Promise.all(updates);
+
+  // Retornar la dieta actualizada
+  return getDietById(dietId);
+}
+
+
+--- END OF FILE: src\modules\diets\diets.service.ts ---
+
+
+--- START OF FILE: src\modules\exercises\exercises.controller.ts ---
+import type { Request, Response } from 'express';
+import {
+  createExercise,
+  listExercises,
+  getExerciseById,
+  updateExercise,
+  deleteExercise,
+  importExercises,
+} from './exercises.service.js';
+
+/**
+ * Controlador para crear un nuevo ejercicio en el banco.
+ */
+export async function createExerciseCtrl(req: Request, res: Response) {
+  try {
+    const exercise = await createExercise(req.body);
+    res.status(201).json(exercise);
+  } catch (error: any) {
+    if (error.code === 'P2002') return res.status(409).json({ message: 'Ejercicio ya existe' });
+    res.status(500).json({ message: error.message });
+  }
+}
+
+/**
+ * Controlador para listar todos los ejercicios.
+ * Puede filtrar por tipo de máquina si se proporciona machineTypeId en query params.
+ */
+export async function listExercisesCtrl(req: Request, res: Response) {
+  try {
+    const machineTypeId = req.query.machineTypeId as string | undefined;
+    const exercises = await listExercises(machineTypeId || null);
+    res.json(exercises);
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+}
+
+/**
+ * Controlador para obtener un ejercicio específico por su ID.
+ */
+export async function getExerciseCtrl(req: Request, res: Response) {
+  try {
+    const id = req.params.id;
+    if (!id) return res.status(400).json({ message: 'ID requerido' });
+    const exercise = await getExerciseById(id);
+    if (!exercise) return res.status(404).json({ message: 'Ejercicio no encontrado' });
+    res.json(exercise);
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+}
+
+/**
+ * Controlador para actualizar un ejercicio existente.
+ */
+export async function updateExerciseCtrl(req: Request, res: Response) {
+  try {
+    const id = req.params.id;
+    if (!id) return res.status(400).json({ message: 'ID requerido' });
+    const updated = await updateExercise(id, req.body);
+    res.json(updated);
+  } catch (error: any) {
+    if (error.code === 'P2025') return res.status(404).json({ message: 'Ejercicio no encontrado' });
+    res.status(500).json({ message: error.message });
+  }
+}
+
+/**
+ * Controlador para eliminar un ejercicio del banco.
+ */
+export async function deleteExerciseCtrl(req: Request, res: Response) {
+  try {
+    const id = req.params.id;
+    if (!id) return res.status(400).json({ message: 'ID requerido' });
+    await deleteExercise(id);
+    res.status(204).send();
+  } catch (error: any) {
+    if (error.code === 'P2025') return res.status(404).json({ message: 'Ejercicio no encontrado' });
+    res.status(500).json({ message: error.message });
+  }
+}
+
+/**
+ * Controlador para importar múltiples ejercicios desde JSON.
+ */
+export async function importExercisesCtrl(req: Request, res: Response) {
+  try {
+    const { exercises } = req.body;
+    
+    if (!Array.isArray(exercises)) {
+      return res.status(400).json({ message: 'Se requiere un array de ejercicios' });
+    }
+
+    if (exercises.length === 0) {
+      return res.status(400).json({ message: 'El array de ejercicios no puede estar vacío' });
+    }
+
+    const results = await importExercises(exercises);
+    res.status(200).json(results);
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+}
+
+
+--- END OF FILE: src\modules\exercises\exercises.controller.ts ---
+
+
+--- START OF FILE: src\modules\exercises\exercises.routes.ts ---
+import { Router } from 'express';
+import { auth } from '../../middleware/auth.js';
+import { validate } from '../../middleware/validate.js';
+import { hasRole } from '../../middleware/hasRole.js';
+import { Role } from '../../types/role.js';
+import {
+  createExerciseSchema,
+  updateExerciseSchema,
+  exerciseIdParamSchema,
+  listExercisesQuerySchema,
+  importExercisesSchema,
+} from './exercises.schema.js';
+import {
+  createExerciseCtrl,
+  listExercisesCtrl,
+  getExerciseCtrl,
+  updateExerciseCtrl,
+  deleteExerciseCtrl,
+  importExercisesCtrl,
+} from './exercises.controller.js';
+
+const router = Router();
+
+/**
+ * @swagger
+ * tags:
+ *   - name: Exercises
+ *     description: Gestión del banco de ejercicios
+ */
+
+/**
+ * @swagger
+ * /api/exercises:
+ *   get:
+ *     summary: Lista todos los ejercicios del banco
+ *     tags: [Exercises]
+ *     security: [ { bearerAuth: [] } ]
+ */
+router.get('/', auth, listExercisesCtrl);
+
+/**
+ * @swagger
+ * /api/exercises:
+ *   post:
+ *     summary: Crea un nuevo ejercicio en el banco
+ *     tags: [Exercises]
+ *     security: [ { bearerAuth: [] } ]
+ */
+router.post('/', auth, validate(createExerciseSchema), createExerciseCtrl);
+
+/**
+ * @swagger
+ * /api/exercises/{id}:
+ *   get:
+ *     summary: Obtiene un ejercicio por ID
+ *     tags: [Exercises]
+ *     security: [ { bearerAuth: [] } ]
+ */
+router.get('/:id', auth, validate(exerciseIdParamSchema), getExerciseCtrl);
+
+/**
+ * @swagger
+ * /api/exercises/{id}:
+ *   patch:
+ *     summary: Actualiza un ejercicio
+ *     tags: [Exercises]
+ *     security: [ { bearerAuth: [] } ]
+ */
+router.patch('/:id', auth, validate(updateExerciseSchema), updateExerciseCtrl);
+
+/**
+ * @swagger
+ * /api/exercises/{id}:
+ *   delete:
+ *     summary: Elimina un ejercicio del banco
+ *     tags: [Exercises]
+ *     security: [ { bearerAuth: [] } ]
+ */
+router.delete('/:id', auth, validate(exerciseIdParamSchema), deleteExerciseCtrl);
+
+/**
+ * @swagger
+ * /api/exercises/import:
+ *   post:
+ *     summary: Importa múltiples ejercicios desde JSON (solo administradores)
+ *     tags: [Exercises]
+ *     security: [ { bearerAuth: [] } ]
+ */
+router.post('/import', auth, hasRole(Role.SUPERADMIN, Role.ADMIN_CENTER), validate(importExercisesSchema), importExercisesCtrl);
+
+export default router;
+
+
+--- END OF FILE: src\modules\exercises\exercises.routes.ts ---
+
+
+--- START OF FILE: src\modules\exercises\exercises.schema.ts ---
+import { z } from 'zod';
+import { cuidSchema, optionalCuidSchema } from '../../utils/validation.js';
+
+export const createExerciseSchema = {
+  body: z.object({
+    name: z.string().min(1, 'name is required'),
+    description: z.string().optional(),
+    instructions: z.string().optional(),
+    imageUrl: z.string().url().optional().or(z.literal('')),
+    videoUrl: z.string().url().optional().or(z.literal('')),
+    machineTypeId: optionalCuidSchema,
+  }).strict(),
+};
+
+export const updateExerciseSchema = {
+  params: z.object({ id: cuidSchema }),
+  body: z.object({
+    name: z.string().min(1).optional(),
+    description: z.string().optional(),
+    instructions: z.string().optional(),
+    imageUrl: z.string().url().optional().or(z.literal('')),
+    videoUrl: z.string().url().optional().or(z.literal('')),
+    machineTypeId: optionalCuidSchema,
+  }).strict(),
+};
+
+export const exerciseIdParamSchema = {
+  params: z.object({ id: cuidSchema }),
+};
+
+export const listExercisesQuerySchema = {
+  // Acepta cualquier combinación de query params (o ninguno) para evitar errores 400
+  // El controlador se encarga de interpretar opcionalmente machineTypeId si viene.
+  query: z.any(),
+};
+
+export const importExercisesSchema = {
+  body: z.object({
+    exercises: z.array(z.object({
+      name: z.string().min(1, 'name is required'),
+      description: z.string().optional(),
+      instructions: z.string().optional(),
+      imageUrl: z.string().url().optional().or(z.literal('')),
+      videoUrl: z.string().url().optional().or(z.literal('')),
+      machineTypeId: optionalCuidSchema,
+    })).min(1, 'El array de ejercicios no puede estar vacío'),
+  }).strict(),
+};
+
+
+--- END OF FILE: src\modules\exercises\exercises.schema.ts ---
+
+
+--- START OF FILE: src\modules\exercises\exercises.service.ts ---
+import { prisma } from '../../config/db.js';
+
+/**
+ * Crea un nuevo ejercicio en el banco de ejercicios.
+ */
+export async function createExercise(data: {
+  name: string;
+  description?: string;
+  instructions?: string;
+  imageUrl?: string;
+  videoUrl?: string;
+  machineTypeId?: string;
+}) {
+  return prisma.exercise.create({
+    data: {
+      name: data.name,
+      description: data.description || null,
+      instructions: data.instructions || null,
+      imageUrl: data.imageUrl || null,
+      videoUrl: data.videoUrl || null,
+      machineTypeId: data.machineTypeId || null,
+    },
+    include: {
+      machineType: {
+        select: {
+          id: true,
+          name: true,
+          type: true,
+        },
+      },
+    },
+  });
+}
+
+/**
+ * Lista todos los ejercicios del banco.
+ * Puede filtrar por tipo de máquina si se proporciona machineTypeId.
+ */
+export async function listExercises(machineTypeId?: string | null) {
+  const where = machineTypeId
+    ? { machineTypeId }
+    : {};
+
+  return prisma.exercise.findMany({
+    where,
+    include: {
+      machineType: {
+        select: {
+          id: true,
+          name: true,
+          type: true,
+        },
+      },
+    },
+    orderBy: { createdAt: 'desc' },
+  });
+}
+
+/**
+ * Obtiene un ejercicio por su ID.
+ */
+export async function getExerciseById(id: string) {
+  return prisma.exercise.findUnique({
+    where: { id },
+    include: {
+      machineType: {
+        select: {
+          id: true,
+          name: true,
+          type: true,
+        },
+      },
+    },
+  });
+}
+
+/**
+ * Actualiza un ejercicio existente.
+ */
+export async function updateExercise(id: string, data: {
+  name?: string;
+  description?: string;
+  instructions?: string;
+  imageUrl?: string;
+  videoUrl?: string;
+  machineTypeId?: string | null;
+}) {
+  const updateData: any = {};
+  if (data.name !== undefined) updateData.name = data.name;
+  if (data.description !== undefined) updateData.description = data.description || null;
+  if (data.instructions !== undefined) updateData.instructions = data.instructions || null;
+  if (data.imageUrl !== undefined) updateData.imageUrl = data.imageUrl || null;
+  if (data.videoUrl !== undefined) updateData.videoUrl = data.videoUrl || null;
+  if (data.machineTypeId !== undefined) updateData.machineTypeId = data.machineTypeId || null;
+
+  return prisma.exercise.update({
+    where: { id },
+    data: updateData,
+    include: {
+      machineType: {
+        select: {
+          id: true,
+          name: true,
+          type: true,
+        },
+      },
+    },
+  });
+}
+
+/**
+ * Elimina un ejercicio del banco.
+ * Esta operación no afecta los entrenamientos existentes que usan este ejercicio.
+ */
+export async function deleteExercise(id: string) {
+  return prisma.exercise.delete({
+    where: { id },
+  });
+}
+
+/**
+ * Importa múltiples ejercicios desde un array JSON.
+ * Crea los ejercicios y devuelve información sobre cuántos se crearon exitosamente.
+ */
+export async function importExercises(exercises: Array<{
+  name: string;
+  description?: string;
+  instructions?: string;
+  imageUrl?: string;
+  videoUrl?: string;
+  machineTypeId?: string;
+}>) {
+  const results = {
+    created: 0,
+    skipped: 0,
+    errors: [] as Array<{ exercise: string; error: string }>,
+  };
+
+  for (const exerciseData of exercises) {
+    try {
+      // Verificar si ya existe un ejercicio con el mismo nombre
+      const existing = await prisma.exercise.findFirst({
+        where: { name: exerciseData.name },
+      });
+
+      if (existing) {
+        results.skipped++;
+        continue;
+      }
+
+      await prisma.exercise.create({
+        data: {
+          name: exerciseData.name,
+          description: exerciseData.description || null,
+          instructions: exerciseData.instructions || null,
+          imageUrl: exerciseData.imageUrl || null,
+          videoUrl: exerciseData.videoUrl || null,
+          machineTypeId: exerciseData.machineTypeId || null,
+        },
+      });
+
+      results.created++;
+    } catch (error: any) {
+      results.errors.push({
+        exercise: exerciseData.name,
+        error: error.message || 'Error desconocido',
+      });
+    }
+  }
+
+  return results;
+}
+
+
+--- END OF FILE: src\modules\exercises\exercises.service.ts ---
+
+
 --- START OF FILE: src\modules\health\health.controller.ts ---
 import type { Request, Response } from 'express';
 import { prisma } from '../../config/db.js';
@@ -13910,10 +15212,13 @@ export const centerIdParamSchema = {
 
 --- START OF FILE: src\modules\machines\machines.service.ts ---
 import { prisma } from '../../config/db.js';
+import type { Prisma } from '@prisma/client';
+
 // 1. Importamos las funciones (Valores reales)
 import { notifyCenterAdmins, notifySuperAdmins } from '../notifications/notifications.service.js';
 // 2. Importamos el tipo por separado (Solo TypeScript)
 import type { NotificationType } from '../notifications/notifications.service.js';
+
 
 // --- HELPER INTERNO PARA NOTIFICACIONES DUALES ---
 /**
@@ -13935,12 +15240,12 @@ async function notifyMachineEvent(
     select: { name: true }
   });
   
-  const centerName = center ? center.name : 'Centro desconocido';
+  const centerName = center?.name || 'Centro desconocido';
 
-  // 1. Notificar a los Admins del Centro (ellos ya saben su centro, mensaje directo)
+  // 1. Notificar a los Admins del Centro
   await notifyCenterAdmins(centerId, title, message, link, type);
 
-  // 2. Notificar a los Superadmins (añadimos el NOMBRE del centro al mensaje)
+  // 2. Notificar a los Superadmins
   await notifySuperAdmins(title, `[Centro: ${centerName}] ${message}`, link, type);
 }
 // --------------------------------------------------
@@ -13961,29 +15266,32 @@ export async function createMachineType(data: {
  * Lista todos los tipos de máquinas con información de instancias en centros
  */
 export async function listMachineTypes(centerId?: string | null) {
-  const where = centerId ? {
-    machines: {
-      some: { centerId }
-    }
-  } : undefined;
+  // CORRECCIÓN CRÍTICA: Usar {} en lugar de undefined para exactOptionalPropertyTypes
+  const whereClause: Prisma.MachineTypeWhereInput = centerId 
+    ? { machines: { some: { centerId } } } 
+    : {};
+
+  const includeClause: Prisma.MachineTypeInclude = {
+    _count: {
+      select: { machines: true }
+    },
+    machines: centerId
+      ? {
+          where: { centerId },
+          include: {
+            center: { select: { id: true, name: true } }
+          }
+        }
+      : {
+          include: {
+            center: { select: { id: true, name: true } }
+          }
+        }
+  };
 
   return prisma.machineType.findMany({
-    where,
-    include: {
-      machines: centerId ? {
-        where: { centerId },
-        include: {
-          center: { select: { id: true, name: true } }
-        }
-      } : {
-        include: {
-          center: { select: { id: true, name: true } }
-        }
-      },
-      _count: {
-        select: { machines: true }
-      }
-    },
+    where: whereClause,
+    include: includeClause,
     orderBy: { createdAt: 'desc' }
   });
 }
@@ -14057,19 +15365,17 @@ export async function addMachineToCenter(
     throw new Error('Centro no encontrado');
   }
 
-  // Obtener el último número de instancia para este tipo en este centro
-  const existingMachines = await prisma.machine.findMany({
+  // OPTIMIZACIÓN DE RENDIMIENTO: Usar aggregate en lugar de findMany + sort
+  const aggregate = await prisma.machine.aggregate({
     where: {
       machineTypeId,
       centerId: data.centerId
     },
-    orderBy: { instanceNumber: 'desc' },
-    take: 1
+    _max: { instanceNumber: true }
   });
 
-  const startNumber = existingMachines.length > 0 
-    ? existingMachines[0].instanceNumber + 1 
-    : 1;
+  const currentMax = aggregate._max.instanceNumber ?? 0;
+  const startNumber = currentMax + 1;
 
   // Crear las instancias
   const machines = [];
@@ -14154,10 +15460,13 @@ export async function updateMachineInCenter(
         notificationType = 'SUCCESS';
       }
 
+      // CORRECCIÓN DE SEGURIDAD: Uso de optional chaining por si acaso
+      const machineName = updatedMachine.machineType?.name || 'Máquina';
+
       await notifyMachineEvent(
         centerId,
         'Máquina Actualizada 🛠️',
-        `${updatedMachine.machineType.name} ${instanceNumber}: Estado cambiado de "${oldStatus}" a "${data.status}".`,
+        `${machineName} ${instanceNumber}: Estado cambiado de "${oldStatus}" a "${data.status}".`,
         updatedMachine.id,
         notificationType
       );
@@ -14198,10 +15507,11 @@ export async function removeMachineFromCenter(
 
   // Notificar eliminación
   try {
+    const machineName = machine.machineType?.name || 'Máquina desconocida';
     await notifyMachineEvent(
       centerId,
       'Máquina Eliminada 🗑️',
-      `La máquina "${machine.machineType.name} ${instanceNumber}" ha sido eliminada del inventario.`,
+      `La máquina "${machineName} ${instanceNumber}" ha sido eliminada del inventario.`,
       undefined,
       'ERROR'
     );
@@ -14216,10 +15526,13 @@ export async function removeMachineFromCenter(
  * Lista todas las máquinas (instancias)
  */
 export async function listMachines(centerId?: string | null) {
-  const where = centerId ? { centerId } : undefined;
+  // CORRECCIÓN CRÍTICA: Usar {} en lugar de undefined para exactOptionalPropertyTypes
+  const whereClause: Prisma.MachineWhereInput = centerId 
+    ? { centerId } 
+    : {};
   
   return prisma.machine.findMany({
-    where,
+    where: whereClause,
     include: {
       machineType: true,
       center: { select: { id: true, name: true, city: true } }
@@ -14279,10 +15592,12 @@ export async function updateMachine(id: string, data: {
         notificationType = 'SUCCESS';
       }
 
+      const machineName = updatedMachine.machineType?.name || 'Máquina';
+
       await notifyMachineEvent(
         oldMachine.centerId,
         'Máquina Actualizada 🛠️',
-        `${updatedMachine.machineType.name} ${updatedMachine.instanceNumber}: Estado cambiado de "${oldMachine.status}" a "${data.status}".`,
+        `${machineName} ${updatedMachine.instanceNumber}: Estado cambiado de "${oldMachine.status}" a "${data.status}".`,
         updatedMachine.id,
         notificationType
       );
@@ -14313,10 +15628,12 @@ export async function deleteMachine(id: string) {
 
   // Notificar eliminación
   try {
+    const machineName = machineToDelete.machineType?.name || 'Máquina desconocida';
+    
     await notifyMachineEvent(
       machineToDelete.centerId,
       'Máquina Eliminada 🗑️',
-      `La máquina "${machineToDelete.machineType.name} ${machineToDelete.instanceNumber}" ha sido eliminada permanentemente del inventario.`,
+      `La máquina "${machineName} ${machineToDelete.instanceNumber}" ha sido eliminada permanentemente del inventario.`,
       undefined,
       'ERROR'
     );
@@ -14342,8 +15659,763 @@ export async function listMachinesByCenter(centerId: string) {
     ]
   });
 }
-
 --- END OF FILE: src\modules\machines\machines.service.ts ---
+
+
+--- START OF FILE: src\modules\meals\meals.controller.ts ---
+import type { Request, Response } from 'express';
+import {
+  createMeal,
+  listMeals,
+  getMealById,
+  updateMeal,
+  deleteMeal,
+  importMeals,
+} from './meals.service.js';
+
+/**
+ * Controlador para crear una nueva comida en el banco.
+ */
+export async function createMealCtrl(req: Request, res: Response) {
+  try {
+    const meal = await createMeal(req.body);
+    res.status(201).json(meal);
+  } catch (error: any) {
+    if (error.code === 'P2002') return res.status(409).json({ message: 'Comida ya existe' });
+    res.status(500).json({ message: error.message });
+  }
+}
+
+/**
+ * Controlador para listar todas las comidas.
+ */
+export async function listMealsCtrl(req: Request, res: Response) {
+  try {
+    const meals = await listMeals();
+    res.json(meals);
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+}
+
+/**
+ * Controlador para obtener una comida específica por su ID.
+ */
+export async function getMealCtrl(req: Request, res: Response) {
+  try {
+    const id = req.params.id;
+    if (!id) return res.status(400).json({ message: 'ID requerido' });
+    const meal = await getMealById(id);
+    if (!meal) return res.status(404).json({ message: 'Comida no encontrada' });
+    res.json(meal);
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+}
+
+/**
+ * Controlador para actualizar una comida existente.
+ */
+export async function updateMealCtrl(req: Request, res: Response) {
+  try {
+    const id = req.params.id;
+    if (!id) return res.status(400).json({ message: 'ID requerido' });
+    const updated = await updateMeal(id, req.body);
+    res.json(updated);
+  } catch (error: any) {
+    if (error.code === 'P2025') return res.status(404).json({ message: 'Comida no encontrada' });
+    if (error.code === 'P2002') return res.status(409).json({ message: 'Nombre de comida ya existe' });
+    res.status(500).json({ message: error.message });
+  }
+}
+
+/**
+ * Controlador para eliminar una comida del banco.
+ */
+export async function deleteMealCtrl(req: Request, res: Response) {
+  try {
+    const id = req.params.id;
+    if (!id) return res.status(400).json({ message: 'ID requerido' });
+    await deleteMeal(id);
+    res.status(204).send();
+  } catch (error: any) {
+    if (error.code === 'P2025') return res.status(404).json({ message: 'Comida no encontrada' });
+    res.status(500).json({ message: error.message });
+  }
+}
+
+/**
+ * Controlador para importar múltiples comidas desde JSON.
+ */
+export async function importMealsCtrl(req: Request, res: Response) {
+  try {
+    const { meals } = req.body;
+    
+    if (!Array.isArray(meals)) {
+      return res.status(400).json({ message: 'Se requiere un array de comidas' });
+    }
+
+    if (meals.length === 0) {
+      return res.status(400).json({ message: 'El array de comidas no puede estar vacío' });
+    }
+
+    const results = await importMeals(meals);
+    res.status(200).json(results);
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+}
+
+
+--- END OF FILE: src\modules\meals\meals.controller.ts ---
+
+
+--- START OF FILE: src\modules\meals\meals.routes.ts ---
+import { Router } from 'express';
+import { auth } from '../../middleware/auth.js';
+import { validate } from '../../middleware/validate.js';
+import { hasRole } from '../../middleware/hasRole.js';
+import { Role } from '../../types/role.js';
+import {
+  createMealSchema,
+  updateMealSchema,
+  mealIdParamSchema,
+  importMealsSchema,
+} from './meals.schema.js';
+import {
+  createMealCtrl,
+  listMealsCtrl,
+  getMealCtrl,
+  updateMealCtrl,
+  deleteMealCtrl,
+  importMealsCtrl,
+} from './meals.controller.js';
+
+const router = Router();
+
+/**
+ * @swagger
+ * tags:
+ *   - name: Meals
+ *     description: Gestión del banco de comidas/recetas
+ */
+
+/**
+ * @swagger
+ * /api/meals:
+ *   get:
+ *     summary: Lista todas las comidas del banco
+ *     tags: [Meals]
+ *     security: [ { bearerAuth: [] } ]
+ */
+router.get('/', auth, listMealsCtrl);
+
+/**
+ * @swagger
+ * /api/meals:
+ *   post:
+ *     summary: Crea una nueva comida en el banco
+ *     tags: [Meals]
+ *     security: [ { bearerAuth: [] } ]
+ */
+router.post('/', auth, validate(createMealSchema), createMealCtrl);
+
+/**
+ * @swagger
+ * /api/meals/{id}:
+ *   get:
+ *     summary: Obtiene una comida por ID
+ *     tags: [Meals]
+ *     security: [ { bearerAuth: [] } ]
+ */
+router.get('/:id', auth, validate(mealIdParamSchema), getMealCtrl);
+
+/**
+ * @swagger
+ * /api/meals/{id}:
+ *   patch:
+ *     summary: Actualiza una comida
+ *     tags: [Meals]
+ *     security: [ { bearerAuth: [] } ]
+ */
+router.patch('/:id', auth, validate(updateMealSchema), updateMealCtrl);
+
+/**
+ * @swagger
+ * /api/meals/{id}:
+ *   delete:
+ *     summary: Elimina una comida del banco
+ *     tags: [Meals]
+ *     security: [ { bearerAuth: [] } ]
+ */
+router.delete('/:id', auth, validate(mealIdParamSchema), deleteMealCtrl);
+
+/**
+ * @swagger
+ * /api/meals/import:
+ *   post:
+ *     summary: Importa múltiples comidas desde JSON (solo administradores)
+ *     tags: [Meals]
+ *     security: [ { bearerAuth: [] } ]
+ */
+router.post('/import', auth, hasRole(Role.SUPERADMIN, Role.ADMIN_CENTER), validate(importMealsSchema), importMealsCtrl);
+
+export default router;
+
+
+--- END OF FILE: src\modules\meals\meals.routes.ts ---
+
+
+--- START OF FILE: src\modules\meals\meals.schema.ts ---
+import { z } from 'zod';
+import { cuidSchema } from '../../utils/validation.js';
+
+export const createMealSchema = {
+  body: z.object({
+    name: z.string().min(1, 'name is required'),
+    description: z.string().optional(),
+    instructions: z.string().optional(),
+    imageUrl: z.string().url().optional().or(z.literal('')),
+    calories: z.number().nonnegative().optional(),
+    protein: z.number().nonnegative().optional(),
+    carbs: z.number().nonnegative().optional(),
+    fats: z.number().nonnegative().optional(),
+    fiber: z.number().nonnegative().optional(),
+  }).strict(),
+};
+
+export const updateMealSchema = {
+  params: z.object({ id: cuidSchema }),
+  body: z.object({
+    name: z.string().min(1).optional(),
+    description: z.string().optional(),
+    instructions: z.string().optional(),
+    imageUrl: z.string().url().optional().or(z.literal('')),
+    calories: z.number().nonnegative().nullable().optional(),
+    protein: z.number().nonnegative().nullable().optional(),
+    carbs: z.number().nonnegative().nullable().optional(),
+    fats: z.number().nonnegative().nullable().optional(),
+    fiber: z.number().nonnegative().nullable().optional(),
+  }).strict(),
+};
+
+export const mealIdParamSchema = {
+  params: z.object({ id: cuidSchema }),
+};
+
+export const importMealsSchema = {
+  body: z.object({
+    meals: z.array(z.object({
+      name: z.string().min(1, 'name is required'),
+      description: z.string().optional(),
+      instructions: z.string().optional(),
+      imageUrl: z.string().url().optional().or(z.literal('')),
+      calories: z.number().nonnegative().optional(),
+      protein: z.number().nonnegative().optional(),
+      carbs: z.number().nonnegative().optional(),
+      fats: z.number().nonnegative().optional(),
+      fiber: z.number().nonnegative().optional(),
+    })).min(1, 'El array de comidas no puede estar vacío'),
+  }).strict(),
+};
+
+
+--- END OF FILE: src\modules\meals\meals.schema.ts ---
+
+
+--- START OF FILE: src\modules\meals\meals.service.ts ---
+import { prisma } from '../../config/db.js';
+
+/**
+ * Crea una nueva comida/receta en el banco de comidas.
+ */
+export async function createMeal(data: {
+  name: string;
+  description?: string;
+  instructions?: string;
+  imageUrl?: string;
+  calories?: number;
+  protein?: number;
+  carbs?: number;
+  fats?: number;
+  fiber?: number;
+}) {
+  return prisma.meal.create({
+    data: {
+      name: data.name,
+      description: data.description || null,
+      instructions: data.instructions || null,
+      imageUrl: data.imageUrl || null,
+      calories: data.calories || null,
+      protein: data.protein || null,
+      carbs: data.carbs || null,
+      fats: data.fats || null,
+      fiber: data.fiber || null,
+    },
+  });
+}
+
+/**
+ * Lista todas las comidas del banco.
+ */
+export async function listMeals() {
+  return prisma.meal.findMany({
+    orderBy: { createdAt: 'desc' },
+  });
+}
+
+/**
+ * Obtiene una comida por su ID.
+ */
+export async function getMealById(id: string) {
+  return prisma.meal.findUnique({
+    where: { id },
+  });
+}
+
+/**
+ * Actualiza una comida existente.
+ */
+export async function updateMeal(id: string, data: {
+  name?: string;
+  description?: string;
+  instructions?: string;
+  imageUrl?: string;
+  calories?: number | null;
+  protein?: number | null;
+  carbs?: number | null;
+  fats?: number | null;
+  fiber?: number | null;
+}) {
+  const updateData: any = {};
+  if (data.name !== undefined) updateData.name = data.name;
+  if (data.description !== undefined) updateData.description = data.description || null;
+  if (data.instructions !== undefined) updateData.instructions = data.instructions || null;
+  if (data.imageUrl !== undefined) updateData.imageUrl = data.imageUrl || null;
+  if (data.calories !== undefined) updateData.calories = data.calories;
+  if (data.protein !== undefined) updateData.protein = data.protein;
+  if (data.carbs !== undefined) updateData.carbs = data.carbs;
+  if (data.fats !== undefined) updateData.fats = data.fats;
+  if (data.fiber !== undefined) updateData.fiber = data.fiber;
+
+  return prisma.meal.update({
+    where: { id },
+    data: updateData,
+  });
+}
+
+/**
+ * Elimina una comida del banco.
+ * Esta operación no afecta las dietas existentes que usan esta comida.
+ */
+export async function deleteMeal(id: string) {
+  return prisma.meal.delete({
+    where: { id },
+  });
+}
+
+/**
+ * Importa múltiples comidas desde un array JSON.
+ * Crea las comidas y devuelve información sobre cuántas se crearon exitosamente.
+ */
+export async function importMeals(meals: Array<{
+  name: string;
+  description?: string;
+  instructions?: string;
+  imageUrl?: string;
+  calories?: number;
+  protein?: number;
+  carbs?: number;
+  fats?: number;
+  fiber?: number;
+}>) {
+  const results = {
+    created: 0,
+    skipped: 0,
+    errors: [] as Array<{ meal: string; error: string }>,
+  };
+
+  for (const mealData of meals) {
+    try {
+      // Verificar si ya existe una comida con el mismo nombre
+      const existing = await prisma.meal.findFirst({
+        where: { name: mealData.name },
+      });
+
+      if (existing) {
+        results.skipped++;
+        continue;
+      }
+
+      await prisma.meal.create({
+        data: {
+          name: mealData.name,
+          description: mealData.description || null,
+          instructions: mealData.instructions || null,
+          imageUrl: mealData.imageUrl || null,
+          calories: mealData.calories || null,
+          protein: mealData.protein || null,
+          carbs: mealData.carbs || null,
+          fats: mealData.fats || null,
+          fiber: mealData.fiber || null,
+        },
+      });
+
+      results.created++;
+    } catch (error: any) {
+      results.errors.push({
+        meal: mealData.name,
+        error: error.message || 'Error desconocido',
+      });
+    }
+  }
+
+  return results;
+}
+
+
+--- END OF FILE: src\modules\meals\meals.service.ts ---
+
+
+--- START OF FILE: src\modules\memberships\memberships.controller.ts ---
+import type { Request, Response } from 'express';
+import {
+  createMembershipPlan,
+  listMembershipPlans,
+  getMembershipPlanById,
+  updateMembershipPlan,
+  deleteMembershipPlan,
+} from './memberships.service.js';
+
+/**
+ * Controlador para crear un nuevo plan de membresía.
+ * Solo SUPERADMIN puede crear planes (protegido por middleware hasRole).
+ */
+export async function createMembershipPlanCtrl(req: Request, res: Response) {
+  try {
+    const plan = await createMembershipPlan(req.body);
+    res.status(201).json(plan);
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+}
+
+/**
+ * Controlador para listar planes de membresía.
+ * Todos los usuarios autenticados pueden ver los planes activos.
+ * Solo SUPERADMIN puede ver planes inactivos.
+ */
+export async function listMembershipPlansCtrl(req: Request, res: Response) {
+  try {
+    if (!req.user) {
+      return res.status(401).json({ message: 'No autorizado' });
+    }
+
+    const includeInactive = req.user.role === 'SUPERADMIN';
+    const plans = await listMembershipPlans(includeInactive);
+    res.json(plans);
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+}
+
+/**
+ * Controlador para obtener un plan de membresía específico por su ID.
+ * Todos los usuarios autenticados pueden ver los detalles de un plan.
+ */
+export async function getMembershipPlanCtrl(req: Request, res: Response) {
+  try {
+    if (!req.user) {
+      return res.status(401).json({ message: 'No autorizado' });
+    }
+
+    const id = req.params.id as string;
+    const plan = await getMembershipPlanById(id);
+    
+    if (!plan) {
+      return res.status(404).json({ message: 'Plan de membresía no encontrado' });
+    }
+    
+    res.json(plan);
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+}
+
+/**
+ * Controlador para actualizar un plan de membresía existente.
+ * Solo SUPERADMIN puede actualizar planes (protegido por middleware hasRole).
+ */
+export async function updateMembershipPlanCtrl(req: Request, res: Response) {
+  try {
+    const id = req.params.id as string;
+    const updated = await updateMembershipPlan(id, req.body);
+    res.json(updated);
+  } catch (error: any) {
+    if (error.code === 'P2025') {
+      return res.status(404).json({ message: 'Plan de membresía no encontrado' });
+    }
+    res.status(500).json({ message: error.message });
+  }
+}
+
+/**
+ * Controlador para eliminar un plan de membresía.
+ * Solo SUPERADMIN puede eliminar planes (protegido por middleware hasRole).
+ */
+export async function deleteMembershipPlanCtrl(req: Request, res: Response) {
+  try {
+    const id = req.params.id as string;
+    await deleteMembershipPlan(id);
+    res.status(204).send();
+  } catch (error: any) {
+    if (error.code === 'P2025') {
+      return res.status(404).json({ message: 'Plan de membresía no encontrado' });
+    }
+    res.status(500).json({ message: error.message });
+  }
+}
+
+
+--- END OF FILE: src\modules\memberships\memberships.controller.ts ---
+
+
+--- START OF FILE: src\modules\memberships\memberships.routes.ts ---
+import { Router } from 'express';
+import { auth } from '../../middleware/auth.js';
+import { validate } from '../../middleware/validate.js';
+import { hasRole } from '../../middleware/hasRole.js';
+import { Role } from '../../types/role.js';
+import {
+  createMembershipPlanSchema,
+  updateMembershipPlanSchema,
+  membershipPlanIdParamSchema,
+} from './memberships.schema.js';
+import {
+  createMembershipPlanCtrl,
+  listMembershipPlansCtrl,
+  getMembershipPlanCtrl,
+  updateMembershipPlanCtrl,
+  deleteMembershipPlanCtrl,
+} from './memberships.controller.js';
+
+const router = Router();
+
+/**
+ * @swagger
+ * tags:
+ *   - name: Memberships
+ *     description: Gestión de planes de membresía
+ */
+
+/**
+ * @swagger
+ * /api/memberships:
+ *   get:
+ *     summary: Lista todos los planes de membresía
+ *     tags: [Memberships]
+ *     security: [ { bearerAuth: [] } ]
+ *     responses:
+ *       200:
+ *         description: Lista de planes de membresía
+ */
+router.get('/', auth, listMembershipPlansCtrl);
+
+/**
+ * @swagger
+ * /api/memberships:
+ *   post:
+ *     summary: Crea un plan de membresía
+ *     tags: [Memberships]
+ *     security: [ { bearerAuth: [] } ]
+ *     responses:
+ *       201:
+ *         description: Plan de membresía creado
+ */
+router.post(
+  '/',
+  auth,
+  hasRole(Role.SUPERADMIN, Role.ADMIN_CENTER),
+  validate(createMembershipPlanSchema),
+  createMembershipPlanCtrl
+);
+
+/**
+ * @swagger
+ * /api/memberships/{id}:
+ *   get:
+ *     summary: Obtiene un plan de membresía por ID
+ *     tags: [Memberships]
+ *     security: [ { bearerAuth: [] } ]
+ *     responses:
+ *       200:
+ *         description: Plan de membresía encontrado
+ *       404:
+ *         description: Plan no encontrado
+ */
+router.get('/:id', auth, validate(membershipPlanIdParamSchema), getMembershipPlanCtrl);
+
+/**
+ * @swagger
+ * /api/memberships/{id}:
+ *   patch:
+ *     summary: Actualiza un plan de membresía
+ *     tags: [Memberships]
+ *     security: [ { bearerAuth: [] } ]
+ *     responses:
+ *       200:
+ *         description: Plan actualizado
+ *       404:
+ *         description: Plan no encontrado
+ */
+router.patch(
+  '/:id',
+  auth,
+  hasRole(Role.SUPERADMIN, Role.ADMIN_CENTER),
+  validate(updateMembershipPlanSchema),
+  updateMembershipPlanCtrl
+);
+
+/**
+ * @swagger
+ * /api/memberships/{id}:
+ *   delete:
+ *     summary: Elimina un plan de membresía
+ *     tags: [Memberships]
+ *     security: [ { bearerAuth: [] } ]
+ *     responses:
+ *       204:
+ *         description: Plan eliminado
+ *       404:
+ *         description: Plan no encontrado
+ */
+router.delete(
+  '/:id',
+  auth,
+  hasRole(Role.SUPERADMIN, Role.ADMIN_CENTER),
+  validate(membershipPlanIdParamSchema),
+  deleteMembershipPlanCtrl
+);
+
+export default router;
+
+
+--- END OF FILE: src\modules\memberships\memberships.routes.ts ---
+
+
+--- START OF FILE: src\modules\memberships\memberships.schema.ts ---
+import { z } from 'zod';
+import { cuidSchema } from '../../utils/validation.js';
+
+export const createMembershipPlanSchema = {
+  body: z.object({
+    name: z.string().min(1, 'El nombre es requerido'),
+    description: z.string().optional(),
+    price: z.number().min(0, 'El precio debe ser mayor o igual a 0'),
+    duration: z.number().int().min(1, 'La duración debe ser al menos 1 mes'),
+    features: z.array(z.string()).default([]),
+    isActive: z.boolean().optional().default(true),
+  }),
+};
+
+export const updateMembershipPlanSchema = {
+  params: z.object({ id: cuidSchema }),
+  body: z.object({
+    name: z.string().min(1).optional(),
+    description: z.string().optional(),
+    price: z.number().min(0).optional(),
+    duration: z.number().int().min(1).optional(),
+    features: z.array(z.string()).optional(),
+    isActive: z.boolean().optional(),
+  }),
+};
+
+export const membershipPlanIdParamSchema = {
+  params: z.object({ id: cuidSchema }),
+};
+
+
+--- END OF FILE: src\modules\memberships\memberships.schema.ts ---
+
+
+--- START OF FILE: src\modules\memberships\memberships.service.ts ---
+import { prisma } from '../../config/db.js';
+
+/**
+ * Crea un nuevo plan de membresía en el sistema.
+ */
+export async function createMembershipPlan(data: {
+  name: string;
+  description?: string;
+  price: number;
+  duration: number;
+  features?: string[];
+  isActive?: boolean;
+}) {
+  return prisma.membershipPlan.create({
+    data: {
+      name: data.name,
+      description: data.description ?? null,
+      price: data.price,
+      duration: data.duration,
+      features: data.features || [],
+      isActive: data.isActive !== undefined ? data.isActive : true,
+    },
+  });
+}
+
+/**
+ * Lista todos los planes de membresía.
+ * Si includeInactive es false, solo retorna los planes activos.
+ */
+export async function listMembershipPlans(includeInactive: boolean = false) {
+  const where = includeInactive ? {} : { isActive: true };
+  
+  return prisma.membershipPlan.findMany({
+    where,
+    orderBy: [
+      { isActive: 'desc' },
+      { price: 'asc' },
+      { createdAt: 'desc' },
+    ],
+  });
+}
+
+/**
+ * Obtiene un plan de membresía específico por su ID.
+ */
+export async function getMembershipPlanById(id: string) {
+  return prisma.membershipPlan.findUnique({ where: { id } });
+}
+
+/**
+ * Actualiza un plan de membresía existente.
+ */
+export async function updateMembershipPlan(
+  id: string,
+  data: Partial<Parameters<typeof createMembershipPlan>[0]>
+) {
+  const updateData: any = {};
+  
+  if (data.name !== undefined) updateData.name = data.name;
+  if (data.description !== undefined) updateData.description = data.description ?? null;
+  if (data.price !== undefined) updateData.price = data.price;
+  if (data.duration !== undefined) updateData.duration = data.duration;
+  if (data.features !== undefined) updateData.features = data.features;
+  if (data.isActive !== undefined) updateData.isActive = data.isActive;
+  
+  return prisma.membershipPlan.update({ where: { id }, data: updateData });
+}
+
+/**
+ * Elimina un plan de membresía de la base de datos.
+ */
+export async function deleteMembershipPlan(id: string) {
+  return prisma.membershipPlan.delete({ where: { id } });
+}
+
+
+--- END OF FILE: src\modules\memberships\memberships.service.ts ---
 
 
 --- START OF FILE: src\modules\notifications\notifications.controller.ts ---
@@ -16072,6 +18144,884 @@ export async function getMeWithCenter(id: string) {
 --- END OF FILE: src\modules\users\users.service.ts ---
 
 
+--- START OF FILE: src\modules\workouts\workouts.controller.ts ---
+import type { Request, Response } from 'express';
+import { prisma } from '../../config/db.js';
+import {
+  createWorkout,
+  listWorkouts,
+  getWorkoutById,
+  updateWorkout,
+  deleteWorkout,
+  addExerciseToWorkout,
+  updateWorkoutExercise,
+  removeExerciseFromWorkout,
+  reorderWorkoutExercises,
+  duplicateWorkout,
+} from './workouts.service.js';
+
+/**
+ * Controlador para crear un nuevo entrenamiento.
+ * El entrenamiento se crea para el usuario autenticado.
+ */
+export async function createWorkoutCtrl(req: Request, res: Response) {
+  try {
+    if (!req.user) return res.status(401).json({ message: 'No autorizado' });
+    const workout = await createWorkout(req.user.sub, req.body);
+    res.status(201).json(workout);
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+}
+
+/**
+ * Controlador para listar entrenamientos.
+ * Puede filtrar por usuario si se proporciona userId en query params.
+ * Los entrenadores pueden ver entrenamientos de otros usuarios.
+ */
+export async function listWorkoutsCtrl(req: Request, res: Response) {
+  try {
+    const userId = req.query.userId as string | undefined;
+    const workouts = await listWorkouts(userId || null);
+    res.json(workouts);
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+}
+
+/**
+ * Controlador para obtener un entrenamiento específico por su ID.
+ */
+export async function getWorkoutCtrl(req: Request, res: Response) {
+  try {
+    const id = req.params.id;
+    if (!id) return res.status(400).json({ message: 'ID requerido' });
+    const workout = await getWorkoutById(id);
+    if (!workout) return res.status(404).json({ message: 'Entrenamiento no encontrado' });
+    res.json(workout);
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+}
+
+/**
+ * Controlador para actualizar un entrenamiento existente.
+ * Los usuarios solo pueden actualizar sus propios entrenamientos.
+ * Los entrenadores pueden actualizar entrenamientos de usuarios.
+ */
+export async function updateWorkoutCtrl(req: Request, res: Response) {
+  try {
+    if (!req.user) return res.status(401).json({ message: 'No autorizado' });
+    const id = req.params.id;
+    if (!id) return res.status(400).json({ message: 'ID requerido' });
+
+    // Verificar que el entrenamiento existe y que el usuario tiene permiso
+    const workout = await getWorkoutById(id);
+    if (!workout) return res.status(404).json({ message: 'Entrenamiento no encontrado' });
+
+    // Si no es el dueño y no es entrenador/admin, denegar
+    const isOwner = workout.userId === req.user.sub;
+    const isTrainer = req.user.role === 'TRAINER' || req.user.role === 'ADMIN_CENTER' || req.user.role === 'SUPERADMIN';
+    if (!isOwner && !isTrainer) {
+      return res.status(403).json({ message: 'No tienes permiso para editar este entrenamiento' });
+    }
+
+    const updated = await updateWorkout(id, req.body);
+    res.json(updated);
+  } catch (error: any) {
+    if (error.code === 'P2025') return res.status(404).json({ message: 'Entrenamiento no encontrado' });
+    res.status(500).json({ message: error.message });
+  }
+}
+
+/**
+ * Controlador para eliminar un entrenamiento.
+ */
+export async function deleteWorkoutCtrl(req: Request, res: Response) {
+  try {
+    if (!req.user) return res.status(401).json({ message: 'No autorizado' });
+    const id = req.params.id;
+    if (!id) return res.status(400).json({ message: 'ID requerido' });
+
+    // Verificar que el entrenamiento existe y que el usuario tiene permiso
+    const workout = await getWorkoutById(id);
+    if (!workout) return res.status(404).json({ message: 'Entrenamiento no encontrado' });
+
+    const isOwner = workout.userId === req.user.sub;
+    const isTrainer = req.user.role === 'TRAINER' || req.user.role === 'ADMIN_CENTER' || req.user.role === 'SUPERADMIN';
+    if (!isOwner && !isTrainer) {
+      return res.status(403).json({ message: 'No tienes permiso para eliminar este entrenamiento' });
+    }
+
+    await deleteWorkout(id);
+    res.status(204).send();
+  } catch (error: any) {
+    if (error.code === 'P2025') return res.status(404).json({ message: 'Entrenamiento no encontrado' });
+    res.status(500).json({ message: error.message });
+  }
+}
+
+/**
+ * Controlador para duplicar un entrenamiento existente.
+ * Crea una copia con el mismo contenido y un nombre con sufijo (1), (2), etc.
+ */
+export async function duplicateWorkoutCtrl(req: Request, res: Response) {
+  try {
+    if (!req.user) return res.status(401).json({ message: 'No autorizado' });
+    const id = req.params.id;
+    if (!id) return res.status(400).json({ message: 'ID requerido' });
+
+    const duplicated = await duplicateWorkout(id, req.user.sub);
+    res.status(201).json(duplicated);
+  } catch (error: any) {
+    if (error.code === 'P2025' || error.message === 'Entrenamiento no encontrado') {
+      return res.status(404).json({ message: 'Entrenamiento no encontrado' });
+    }
+    res.status(500).json({ message: error.message });
+  }
+}
+
+/**
+ * Controlador para agregar un ejercicio a un entrenamiento.
+ */
+export async function addExerciseToWorkoutCtrl(req: Request, res: Response) {
+  try {
+    if (!req.user) return res.status(401).json({ message: 'No autorizado' });
+    const workoutId = req.params.id;
+    if (!workoutId) return res.status(400).json({ message: 'ID de entrenamiento requerido' });
+
+    // Verificar permisos
+    const workout = await getWorkoutById(workoutId);
+    if (!workout) return res.status(404).json({ message: 'Entrenamiento no encontrado' });
+
+    const isOwner = workout.userId === req.user.sub;
+    const isTrainer = req.user.role === 'TRAINER' || req.user.role === 'ADMIN_CENTER' || req.user.role === 'SUPERADMIN';
+    if (!isOwner && !isTrainer) {
+      return res.status(403).json({ message: 'No tienes permiso para editar este entrenamiento' });
+    }
+
+    const workoutExercise = await addExerciseToWorkout(workoutId, req.body);
+    res.status(201).json(workoutExercise);
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+}
+
+/**
+ * Controlador para actualizar un ejercicio en un entrenamiento.
+ */
+export async function updateWorkoutExerciseCtrl(req: Request, res: Response) {
+  try {
+    if (!req.user) return res.status(401).json({ message: 'No autorizado' });
+    const exerciseId = req.params.exerciseId;
+    if (!exerciseId) return res.status(400).json({ message: 'ID de ejercicio requerido' });
+
+    // Verificar que el ejercicio del entrenamiento existe y obtener el entrenamiento
+    const workoutExercise = await prisma.workoutExercise.findUnique({
+      where: { id: exerciseId },
+      include: { workout: true },
+    });
+
+    if (!workoutExercise) return res.status(404).json({ message: 'Ejercicio no encontrado en el entrenamiento' });
+
+    // Verificar permisos
+    const isOwner = workoutExercise.workout.userId === req.user.sub;
+    const isTrainer = req.user.role === 'TRAINER' || req.user.role === 'ADMIN_CENTER' || req.user.role === 'SUPERADMIN';
+    if (!isOwner && !isTrainer) {
+      return res.status(403).json({ message: 'No tienes permiso para editar este entrenamiento' });
+    }
+
+    const updated = await updateWorkoutExercise(exerciseId, req.body);
+    res.json(updated);
+  } catch (error: any) {
+    if (error.code === 'P2025') return res.status(404).json({ message: 'Ejercicio no encontrado' });
+    res.status(500).json({ message: error.message });
+  }
+}
+
+/**
+ * Controlador para eliminar un ejercicio de un entrenamiento.
+ */
+export async function removeExerciseFromWorkoutCtrl(req: Request, res: Response) {
+  try {
+    if (!req.user) return res.status(401).json({ message: 'No autorizado' });
+    const exerciseId = req.params.exerciseId;
+    if (!exerciseId) return res.status(400).json({ message: 'ID de ejercicio requerido' });
+
+    // Verificar que el ejercicio del entrenamiento existe y obtener el entrenamiento
+    const workoutExercise = await prisma.workoutExercise.findUnique({
+      where: { id: exerciseId },
+      include: { workout: true },
+    });
+
+    if (!workoutExercise) return res.status(404).json({ message: 'Ejercicio no encontrado en el entrenamiento' });
+
+    // Verificar permisos
+    const isOwner = workoutExercise.workout.userId === req.user.sub;
+    const isTrainer = req.user.role === 'TRAINER' || req.user.role === 'ADMIN_CENTER' || req.user.role === 'SUPERADMIN';
+    if (!isOwner && !isTrainer) {
+      return res.status(403).json({ message: 'No tienes permiso para editar este entrenamiento' });
+    }
+
+    await removeExerciseFromWorkout(exerciseId);
+    res.status(204).send();
+  } catch (error: any) {
+    if (error.code === 'P2025') return res.status(404).json({ message: 'Ejercicio no encontrado' });
+    res.status(500).json({ message: error.message });
+  }
+}
+
+/**
+ * Controlador para reordenar ejercicios (arrastrar y soltar).
+ */
+export async function reorderWorkoutExercisesCtrl(req: Request, res: Response) {
+  try {
+    if (!req.user) return res.status(401).json({ message: 'No autorizado' });
+    const workoutId = req.params.id;
+    if (!workoutId) return res.status(400).json({ message: 'ID de entrenamiento requerido' });
+
+    // Verificar permisos
+    const workout = await getWorkoutById(workoutId);
+    if (!workout) return res.status(404).json({ message: 'Entrenamiento no encontrado' });
+
+    const isOwner = workout.userId === req.user.sub;
+    const isTrainer = req.user.role === 'TRAINER' || req.user.role === 'ADMIN_CENTER' || req.user.role === 'SUPERADMIN';
+    if (!isOwner && !isTrainer) {
+      return res.status(403).json({ message: 'No tienes permiso para editar este entrenamiento' });
+    }
+
+    const updated = await reorderWorkoutExercises(workoutId, req.body.exercises);
+    res.json(updated);
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+}
+
+
+--- END OF FILE: src\modules\workouts\workouts.controller.ts ---
+
+
+--- START OF FILE: src\modules\workouts\workouts.routes.ts ---
+import { Router } from 'express';
+import { auth } from '../../middleware/auth.js';
+import { validate } from '../../middleware/validate.js';
+import {
+  createWorkoutSchema,
+  updateWorkoutSchema,
+  workoutIdParamSchema,
+  listWorkoutsQuerySchema,
+  addExerciseToWorkoutSchema,
+  updateWorkoutExerciseSchema,
+  removeExerciseFromWorkoutSchema,
+  reorderWorkoutExercisesSchema,
+} from './workouts.schema.js';
+import {
+  createWorkoutCtrl,
+  listWorkoutsCtrl,
+  getWorkoutCtrl,
+  updateWorkoutCtrl,
+  deleteWorkoutCtrl,
+  addExerciseToWorkoutCtrl,
+  updateWorkoutExerciseCtrl,
+  removeExerciseFromWorkoutCtrl,
+  reorderWorkoutExercisesCtrl,
+  duplicateWorkoutCtrl,
+} from './workouts.controller.js';
+
+const router = Router();
+
+/**
+ * @swagger
+ * tags:
+ *   - name: Workouts
+ *     description: Gestión de entrenamientos de usuarios
+ */
+
+/**
+ * @swagger
+ * /api/workouts:
+ *   get:
+ *     summary: Lista todos los entrenamientos
+ *     tags: [Workouts]
+ *     security: [ { bearerAuth: [] } ]
+ */
+router.get('/', auth, listWorkoutsCtrl);
+
+/**
+ * @swagger
+ * /api/workouts:
+ *   post:
+ *     summary: Crea un nuevo entrenamiento para el usuario autenticado
+ *     tags: [Workouts]
+ *     security: [ { bearerAuth: [] } ]
+ */
+router.post('/', auth, validate(createWorkoutSchema), createWorkoutCtrl);
+
+/**
+ * @swagger
+ * /api/workouts/{id}:
+ *   get:
+ *     summary: Obtiene un entrenamiento por ID
+ *     tags: [Workouts]
+ *     security: [ { bearerAuth: [] } ]
+ */
+router.get('/:id', auth, validate(workoutIdParamSchema), getWorkoutCtrl);
+
+/**
+ * @swagger
+ * /api/workouts/{id}:
+ *   patch:
+ *     summary: Actualiza un entrenamiento
+ *     tags: [Workouts]
+ *     security: [ { bearerAuth: [] } ]
+ */
+router.patch('/:id', auth, validate(updateWorkoutSchema), updateWorkoutCtrl);
+
+/**
+ * @swagger
+ * /api/workouts/{id}:
+ *   delete:
+ *     summary: Elimina un entrenamiento
+ *     tags: [Workouts]
+ *     security: [ { bearerAuth: [] } ]
+ */
+router.delete('/:id', auth, validate(workoutIdParamSchema), deleteWorkoutCtrl);
+
+/**
+ * @swagger
+ * /api/workouts/{id}/duplicate:
+ *   post:
+ *     summary: Duplica un entrenamiento existente para el usuario autenticado
+ *     tags: [Workouts]
+ *     security: [ { bearerAuth: [] } ]
+ */
+router.post('/:id/duplicate', auth, validate(workoutIdParamSchema), duplicateWorkoutCtrl);
+
+/**
+ * @swagger
+ * /api/workouts/{id}/exercises:
+ *   post:
+ *     summary: Agrega un ejercicio a un entrenamiento en un día específico
+ *     tags: [Workouts]
+ *     security: [ { bearerAuth: [] } ]
+ */
+router.post('/:id/exercises', auth, validate(addExerciseToWorkoutSchema), addExerciseToWorkoutCtrl);
+
+/**
+ * @swagger
+ * /api/workouts/{id}/reorder:
+ *   post:
+ *     summary: Reordena ejercicios en un entrenamiento (arrastrar y soltar)
+ *     tags: [Workouts]
+ *     security: [ { bearerAuth: [] } ]
+ */
+router.post('/:id/reorder', auth, validate(reorderWorkoutExercisesSchema), reorderWorkoutExercisesCtrl);
+
+/**
+ * @swagger
+ * /api/workouts/exercises/{exerciseId}:
+ *   patch:
+ *     summary: Actualiza un ejercicio en un entrenamiento
+ *     tags: [Workouts]
+ *     security: [ { bearerAuth: [] } ]
+ */
+router.patch('/exercises/:exerciseId', auth, validate(updateWorkoutExerciseSchema), updateWorkoutExerciseCtrl);
+
+/**
+ * @swagger
+ * /api/workouts/exercises/{exerciseId}:
+ *   delete:
+ *     summary: Elimina un ejercicio de un entrenamiento
+ *     tags: [Workouts]
+ *     security: [ { bearerAuth: [] } ]
+ */
+router.delete('/exercises/:exerciseId', auth, validate(removeExerciseFromWorkoutSchema), removeExerciseFromWorkoutCtrl);
+
+export default router;
+
+
+--- END OF FILE: src\modules\workouts\workouts.routes.ts ---
+
+
+--- START OF FILE: src\modules\workouts\workouts.schema.ts ---
+import { z } from 'zod';
+import { cuidSchema, optionalCuidSchema } from '../../utils/validation.js';
+
+export const createWorkoutSchema = {
+  body: z.object({
+    name: z.string().min(1, 'name is required'),
+    description: z.string().optional(),
+  }).strict(),
+};
+
+export const updateWorkoutSchema = {
+  params: z.object({ id: cuidSchema }),
+  body: z.object({
+    name: z.string().min(1).optional(),
+    description: z.string().optional(),
+  }).strict(),
+};
+
+export const workoutIdParamSchema = {
+  params: z.object({ id: cuidSchema }),
+};
+
+export const listWorkoutsQuerySchema = {
+  // Acepta cualquier combinación de query params (o ninguno) para evitar errores 400
+  // El controlador se encarga de interpretar opcionalmente userId si viene.
+  query: z.any(),
+};
+
+export const addExerciseToWorkoutSchema = {
+  params: z.object({ id: cuidSchema }),
+  body: z.object({
+    exerciseId: cuidSchema,
+    dayOfWeek: z.number().int().min(0).max(6), // 0 = Domingo, 1 = Lunes, ..., 6 = Sábado
+    order: z.number().int().min(0),
+    sets: z.number().int().positive().optional(),
+    reps: z.number().int().positive().optional(),
+    weight: z.number().positive().optional(),
+    duration: z.number().int().positive().optional(), // en segundos
+    restSeconds: z.number().int().nonnegative().optional(),
+    notes: z.string().optional(),
+  }).strict(),
+};
+
+export const updateWorkoutExerciseSchema = {
+  params: z.object({ exerciseId: cuidSchema }),
+  body: z.object({
+    dayOfWeek: z.number().int().min(0).max(6).optional(),
+    order: z.number().int().min(0).optional(),
+    sets: z.number().int().positive().nullable().optional(),
+    reps: z.number().int().positive().nullable().optional(),
+    weight: z.number().positive().nullable().optional(),
+    duration: z.number().int().positive().nullable().optional(),
+    restSeconds: z.number().int().nonnegative().nullable().optional(),
+    notes: z.string().nullable().optional(),
+  }).strict(),
+};
+
+export const removeExerciseFromWorkoutSchema = {
+  params: z.object({ exerciseId: cuidSchema }),
+};
+
+export const reorderWorkoutExercisesSchema = {
+  params: z.object({ id: cuidSchema }),
+  body: z.object({
+    exercises: z.array(z.object({
+      id: cuidSchema,
+      dayOfWeek: z.number().int().min(0).max(6),
+      order: z.number().int().min(0),
+    })).min(1),
+  }).strict(),
+};
+
+
+--- END OF FILE: src\modules\workouts\workouts.schema.ts ---
+
+
+--- START OF FILE: src\modules\workouts\workouts.service.ts ---
+import { prisma } from '../../config/db.js';
+
+/**
+ * Crea un nuevo entrenamiento para un usuario.
+ */
+export async function createWorkout(userId: string, data: {
+  name: string;
+  description?: string;
+}) {
+  return prisma.workout.create({
+    data: {
+      userId,
+      name: data.name,
+      description: data.description || null,
+    },
+    include: {
+      exercises: {
+        include: {
+          exercise: {
+            include: {
+              machineType: {
+                select: {
+                  id: true,
+                  name: true,
+                  type: true,
+                },
+              },
+            },
+          },
+        },
+        orderBy: [
+          { dayOfWeek: 'asc' },
+          { order: 'asc' },
+        ],
+      },
+      user: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+        },
+      },
+    },
+  });
+}
+
+/**
+ * Lista todos los entrenamientos.
+ * Si se proporciona userId, lista solo los entrenamientos de ese usuario.
+ */
+export async function listWorkouts(userId?: string | null) {
+  const where = userId
+    ? { userId }
+    : {};
+
+  return prisma.workout.findMany({
+    where,
+    include: {
+      exercises: {
+        include: {
+          exercise: {
+            include: {
+              machineType: {
+                select: {
+                  id: true,
+                  name: true,
+                  type: true,
+                },
+              },
+            },
+          },
+        },
+        orderBy: [
+          { dayOfWeek: 'asc' },
+          { order: 'asc' },
+        ],
+      },
+      user: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+        },
+      },
+    },
+    orderBy: { createdAt: 'desc' },
+  });
+}
+
+/**
+ * Obtiene un entrenamiento por su ID.
+ */
+export async function getWorkoutById(id: string) {
+  return prisma.workout.findUnique({
+    where: { id },
+    include: {
+      exercises: {
+        include: {
+          exercise: {
+            include: {
+              machineType: {
+                select: {
+                  id: true,
+                  name: true,
+                  type: true,
+                },
+              },
+            },
+          },
+        },
+        orderBy: [
+          { dayOfWeek: 'asc' },
+          { order: 'asc' },
+        ],
+      },
+      user: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+        },
+      },
+    },
+  });
+}
+
+/**
+ * Actualiza un entrenamiento existente.
+ */
+export async function updateWorkout(id: string, data: {
+  name?: string;
+  description?: string;
+}) {
+  const updateData: any = {};
+  if (data.name !== undefined) updateData.name = data.name;
+  if (data.description !== undefined) updateData.description = data.description || null;
+
+  return prisma.workout.update({
+    where: { id },
+    data: updateData,
+    include: {
+      exercises: {
+        include: {
+          exercise: {
+            include: {
+              machineType: {
+                select: {
+                  id: true,
+                  name: true,
+                  type: true,
+                },
+              },
+            },
+          },
+        },
+        orderBy: [
+          { dayOfWeek: 'asc' },
+          { order: 'asc' },
+        ],
+      },
+      user: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+        },
+      },
+    },
+  });
+}
+
+/**
+ * Elimina un entrenamiento y todos sus ejercicios asociados.
+ */
+export async function deleteWorkout(id: string) {
+  return prisma.workout.delete({
+    where: { id },
+  });
+}
+
+/**
+ * Duplica un entrenamiento completo (incluyendo sus ejercicios) para un usuario.
+ * - Copia name, description y todos los WorkoutExercise asociados.
+ * - Genera un nombre único añadiendo sufijos " (1)", " (2)", etc. basados en el nombre original.
+ */
+export async function duplicateWorkout(workoutId: string, userId: string) {
+  return prisma.$transaction(async (tx) => {
+    const original = await tx.workout.findUnique({
+      where: { id: workoutId },
+      include: {
+        exercises: true,
+      },
+    });
+
+    if (!original) {
+      throw new Error('Entrenamiento no encontrado');
+    }
+
+    // Calcular nombre único: "Nombre", "Nombre (1)", "Nombre (2)", ...
+    const baseName = original.name;
+
+    const existing = await tx.workout.findMany({
+      where: {
+        userId,
+        name: {
+          startsWith: baseName,
+        },
+      },
+      select: { name: true },
+    });
+
+    let suffix = 1;
+    let newName = `${baseName} (${suffix})`;
+
+    const existingNames = new Set(existing.map(w => w.name));
+    while (existingNames.has(newName)) {
+      suffix += 1;
+      newName = `${baseName} (${suffix})`;
+    }
+
+    const newWorkout = await tx.workout.create({
+      data: {
+        userId,
+        name: newName,
+        description: original.description,
+      },
+    });
+
+    if (original.exercises.length > 0) {
+      await tx.workoutExercise.createMany({
+        data: original.exercises.map(ex => ({
+          workoutId: newWorkout.id,
+          exerciseId: ex.exerciseId,
+          dayOfWeek: ex.dayOfWeek,
+          order: ex.order,
+          sets: ex.sets,
+          reps: ex.reps,
+          weight: ex.weight,
+          duration: ex.duration,
+          restSeconds: ex.restSeconds,
+          notes: ex.notes,
+        })),
+      });
+    }
+
+    // Devolver el nuevo entrenamiento con relaciones completas, reutilizando getWorkoutById
+    return getWorkoutById(newWorkout.id);
+  });
+}
+
+/**
+ * Agrega un ejercicio a un entrenamiento en un día específico.
+ */
+export async function addExerciseToWorkout(workoutId: string, data: {
+  exerciseId: string;
+  dayOfWeek: number; // 0 = Domingo, 1 = Lunes, ..., 6 = Sábado
+  order: number; // Orden en el día (para arrastrar y soltar)
+  sets?: number;
+  reps?: number;
+  weight?: number;
+  duration?: number;
+  restSeconds?: number;
+  notes?: string;
+}) {
+  // Verificar que el entrenamiento existe
+  const workout = await prisma.workout.findUnique({ where: { id: workoutId } });
+  if (!workout) {
+    throw new Error('Entrenamiento no encontrado');
+  }
+
+  // Verificar que el ejercicio existe
+  const exercise = await prisma.exercise.findUnique({ where: { id: data.exerciseId } });
+  if (!exercise) {
+    throw new Error('Ejercicio no encontrado');
+  }
+
+  // Validar dayOfWeek (0-6)
+  if (data.dayOfWeek < 0 || data.dayOfWeek > 6) {
+    throw new Error('dayOfWeek debe estar entre 0 (Domingo) y 6 (Sábado)');
+  }
+
+  return prisma.workoutExercise.create({
+    data: {
+      workoutId,
+      exerciseId: data.exerciseId,
+      dayOfWeek: data.dayOfWeek,
+      order: data.order,
+      sets: data.sets || null,
+      reps: data.reps || null,
+      weight: data.weight || null,
+      duration: data.duration || null,
+      restSeconds: data.restSeconds || null,
+      notes: data.notes || null,
+    },
+    include: {
+      exercise: {
+        include: {
+          machineType: {
+            select: {
+              id: true,
+              name: true,
+              type: true,
+            },
+          },
+        },
+      },
+    },
+  });
+}
+
+/**
+ * Actualiza un ejercicio en un entrenamiento.
+ */
+export async function updateWorkoutExercise(id: string, data: {
+  dayOfWeek?: number;
+  order?: number;
+  sets?: number | null;
+  reps?: number | null;
+  weight?: number | null;
+  duration?: number | null;
+  restSeconds?: number | null;
+  notes?: string | null;
+}) {
+  const updateData: any = {};
+  if (data.dayOfWeek !== undefined) {
+    if (data.dayOfWeek < 0 || data.dayOfWeek > 6) {
+      throw new Error('dayOfWeek debe estar entre 0 (Domingo) y 6 (Sábado)');
+    }
+    updateData.dayOfWeek = data.dayOfWeek;
+  }
+  if (data.order !== undefined) updateData.order = data.order;
+  if (data.sets !== undefined) updateData.sets = data.sets;
+  if (data.reps !== undefined) updateData.reps = data.reps;
+  if (data.weight !== undefined) updateData.weight = data.weight;
+  if (data.duration !== undefined) updateData.duration = data.duration;
+  if (data.restSeconds !== undefined) updateData.restSeconds = data.restSeconds;
+  if (data.notes !== undefined) updateData.notes = data.notes;
+
+  return prisma.workoutExercise.update({
+    where: { id },
+    data: updateData,
+    include: {
+      exercise: {
+        include: {
+          machineType: {
+            select: {
+              id: true,
+              name: true,
+              type: true,
+            },
+          },
+        },
+      },
+    },
+  });
+}
+
+/**
+ * Elimina un ejercicio de un entrenamiento.
+ */
+export async function removeExerciseFromWorkout(id: string) {
+  return prisma.workoutExercise.delete({
+    where: { id },
+  });
+}
+
+/**
+ * Actualiza el orden de múltiples ejercicios (para arrastrar y soltar).
+ */
+export async function reorderWorkoutExercises(workoutId: string, exercises: Array<{
+  id: string;
+  dayOfWeek: number;
+  order: number;
+}>) {
+  // Verificar que el entrenamiento existe
+  const workout = await prisma.workout.findUnique({ where: { id: workoutId } });
+  if (!workout) {
+    throw new Error('Entrenamiento no encontrado');
+  }
+
+  // Actualizar cada ejercicio
+  const updates = exercises.map(ex => 
+    prisma.workoutExercise.update({
+      where: { id: ex.id },
+      data: {
+        dayOfWeek: ex.dayOfWeek,
+        order: ex.order,
+      },
+    })
+  );
+
+  await Promise.all(updates);
+
+  // Retornar el entrenamiento actualizado
+  return getWorkoutById(workoutId);
+}
+
+
+--- END OF FILE: src\modules\workouts\workouts.service.ts ---
+
+
 --- START OF FILE: src\services\cloudinary.service.ts ---
 import { cloudinary } from '../config/cloudinary.js';
 
@@ -16216,6 +19166,67 @@ export class CloudinaryService {
 }
 
 --- END OF FILE: src\services\cloudinary.service.ts ---
+
+
+--- START OF FILE: src\services\notification.service.ts ---
+import { PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient();
+
+export enum NotificationType {
+  INFO = 'INFO',
+  SUCCESS = 'SUCCESS',
+  WARNING = 'WARNING',
+  ERROR = 'ERROR'
+}
+
+export class NotificationService {
+  /**
+   * Crea una notificación para un usuario específico.
+   */
+  static async notify(userId: string, title: string, message: string, type: NotificationType = NotificationType.INFO) {
+    try {
+      return await prisma.notification.create({
+        data: {
+          userId,
+          title,
+          message,
+          type
+        }
+      });
+    } catch (error) {
+      console.error('❌ Error al crear notificación:', error);
+    }
+  }
+
+  /**
+   * Envía una notificación a todos los administradores (Auditoría del sistema).
+   */
+  static async notifyAdmins(title: string, message: string, type: NotificationType = NotificationType.INFO) {
+    try {
+      const admins = await prisma.user.findMany({
+        where: {
+          role: { in: ['SUPERADMIN', 'ADMIN_CENTER'] }
+        },
+        select: { id: true }
+      });
+
+      const notifications = admins.map(admin => ({
+        userId: admin.id,
+        title,
+        message,
+        type
+      }));
+
+      return await prisma.notification.createMany({
+        data: notifications
+      });
+    } catch (error) {
+      console.error('❌ Error notificando a administradores:', error);
+    }
+  }
+}
+--- END OF FILE: src\services\notification.service.ts ---
 
 
 --- START OF FILE: src\tests\auth.test.ts ---
@@ -16592,24 +19603,50 @@ export const logger = winston.createLogger({
 import { z } from 'zod';
 
 /**
- * Schema de validación Zod para CUIDs (Collision-resistant Unique Identifier).
- * Valida que el string tenga exactamente 25 caracteres, empiece con 'c' y continúe con 24 caracteres alfanuméricos en minúsculas.
- * Utilizado para validar IDs de parámetros de ruta y cuerpos de peticiones.
+ * --- VALIDACIÓN DE IDs (CUID) ---
+ * Acepta tanto CUID v1 (empieza por 'c') como v2 y UUIDs.
+ * Verifica solo caracteres alfanuméricos y longitud.
  */
-export const cuidSchema = z.string().regex(/^c[a-z0-9]{24}$/, {
-  message: 'ID inválido: debe ser un CUID válido'
-});
+export const cuidSchema = z.string()
+  .min(20, { message: 'El ID es demasiado corto' })
+  .max(32, { message: 'El ID es demasiado largo' })
+  .regex(/^[a-z0-9]+$/, { message: 'El ID solo puede contener caracteres alfanuméricos' });
 
 /**
- * Schema de validación Zod para CUIDs opcionales.
- * Aplica la misma validación que cuidSchema pero permite valores undefined o null.
- * Útil para campos opcionales que cuando están presentes deben ser CUIDs válidos.
+ * Versión opcional del ID.
+ * .nullish() permite recibir 'null' o 'undefined'.
  */
-export const optionalCuidSchema = z.string().regex(/^c[a-z0-9]{24}$/, {
-  message: 'ID inválido: debe ser un CUID válido'
-}).optional();
+export const optionalCuidSchema = cuidSchema.nullish();
 
 
+// --- VALIDACIONES COMUNES ---
+
+export const emailSchema = z.string()
+  .email({ message: "El formato del email no es válido" })
+  .toLowerCase()
+  .trim();
+
+export const passwordSchema = z.string()
+  .min(6, { message: "La contraseña debe tener al menos 6 caracteres" });
+
+/**
+ * Validación de Fechas - FIX APLICADO
+ * Hemos eliminado el objeto { invalid_type_error: ... } dentro de z.date()
+ * para evitar el error de tipos en tu versión de TypeScript/Zod.
+ */
+export const dateSchema = z.preprocess((arg) => {
+  if (typeof arg === "string" || arg instanceof Date) return new Date(arg);
+  return arg;
+}, z.date()); 
+// Al dejar z.date() vacío, Zod validará automáticamente que el resultado del preprocess sea una fecha válida.
+
+/**
+ * Esquema de Paginación
+ */
+export const paginationSchema = z.object({
+  page: z.number().int().positive().default(1),
+  limit: z.number().int().positive().max(100).default(10),
+});
 --- END OF FILE: src\utils\validation.ts ---
 
 

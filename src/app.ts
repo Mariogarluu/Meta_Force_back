@@ -37,7 +37,6 @@ app.use(express.json({ limit: '10mb' }));
 app.use(requestLogger);
 app.use('/api/health', healthRoutes);
 
-// El limitador general solo en producción
 if (env.NODE_ENV === 'production') {
   app.use(generalLimiter);
 }
@@ -65,7 +64,6 @@ const swaggerOptions = {
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, swaggerOptions));
 
-// RELAJAMOS EL LIMITADOR: Solo lo usamos si no estamos en desarrollo para evitar cortes con el emulador
 if (env.NODE_ENV !== 'test' && env.NODE_ENV !== 'development') {
   app.use('/api/auth', authLimiter, authRoutes);
 } else {

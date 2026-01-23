@@ -37,7 +37,8 @@ app.use(express.json({ limit: '10mb' }));
 app.use(requestLogger);
 app.use('/api/health', healthRoutes);
 
-if (env.NODE_ENV !== 'test') {
+// El limitador general solo en producción
+if (env.NODE_ENV === 'production') {
   app.use(generalLimiter);
 }
 
@@ -64,7 +65,8 @@ const swaggerOptions = {
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, swaggerOptions));
 
-if (env.NODE_ENV !== 'test') {
+// RELAJAMOS EL LIMITADOR: Solo lo usamos si no estamos en desarrollo para evitar cortes con el emulador
+if (env.NODE_ENV !== 'test' && env.NODE_ENV !== 'development') {
   app.use('/api/auth', authLimiter, authRoutes);
 } else {
   app.use('/api/auth', authRoutes);
@@ -84,5 +86,7 @@ app.use('/api/workouts', workoutRoutes);
 app.use('/api/meals', mealRoutes);
 app.use('/api/diets', dietRoutes);
 app.use('/api/memberships', membershipRoutes);
+
 app.use(errorHandler);
+
 export default app;

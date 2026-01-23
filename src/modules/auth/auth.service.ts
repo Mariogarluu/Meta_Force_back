@@ -5,12 +5,6 @@ import { createUser, findUserByEmail, getMeWithCenter } from '../users/users.ser
 import { Role } from '../../types/role.js';
 import { notifySuperAdmins } from '../notifications/notifications.service.js';
 
-/**
- * Registra un nuevo usuario en el sistema.
- * Valida que el email no esté ya registrado, hashea la contraseña con bcrypt,
- * crea el usuario con estado PENDING por defecto y genera un token JWT.
- * * NOTIFICACIÓN: Avisa a los Superadmins sobre el nuevo registro pendiente.
- */
 export async function register(email: string, name: string, password: string, role?: Role) {
   const existing = await findUserByEmail(email);
   if (existing) {
@@ -21,7 +15,6 @@ export async function register(email: string, name: string, password: string, ro
   const user = await createUser(email, name, hash, role);
   const userWithCenter = await getMeWithCenter(user.id);
   
-  // Notificar a Superadmins
   try {
     await notifySuperAdmins(
       'Nuevo Usuario Registrado 👤',
@@ -55,23 +48,23 @@ export async function register(email: string, name: string, password: string, ro
   };
 }
 
-/**
- * Autentica un usuario con su email y contraseña.
- * Verifica que el usuario exista, que su cuenta esté activa (status ACTIVE),
- * compara la contraseña con el hash almacenado y genera un token JWT válido por 7 días.
- */
 export async function login(email: string, password: string) {
   const user = await findUserByEmail(email);
   if (!user) {
+    console.log(`❌ Login fallido: El email ${email} no existe.`);
     throw new Error('Credenciales inválidas');
   }
 
+  // Si acabas de registrar al usuario, su status será 'PENDING' y no le dejará entrar
+  // Comprueba esto en Prisma Studio si no puedes loguear
   if (user.status !== 'ACTIVE') {
+    console.log(`❌ Login bloqueado: El usuario ${email} tiene estado ${user.status}.`);
     throw new Error('Cuenta no validada. Contacta con un administrador para activar tu cuenta.');
   }
   
   const ok = await bcrypt.compare(password, user.passwordHash);
   if (!ok) {
+    console.log(`❌ Login fallido: Contraseña incorrecta para ${email}.`);
     throw new Error('Credenciales inválidas');
   }
   

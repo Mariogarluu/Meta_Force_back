@@ -4,13 +4,20 @@ import { logger } from './utils/logger.js';
 
 if (process.env.NODE_ENV !== 'production' || !process.env.VERCEL) {
   const port = process.env.PORT ? parseInt(process.env.PORT, 10) : env.PORT;
-  const host = process.env.NODE_ENV === 'production' ? '0.0.0.0' : 'localhost';
+  
+  // Usamos '0.0.0.0' para que el servidor sea accesible desde fuera del localhost de la PC
+  // Esto es fundamental para que el emulador de Android (10.0.2.2) pueda conectar.
+  const host = '0.0.0.0';
 
   const server = app.listen(port, host, () => {
-    logger.info(`API escuchando en http://${host}:${port}`);
+    logger.info(`----------------------------------------------------------`);
+    logger.info(`API escuchando en: http://localhost:${port}`);
+    logger.info(`Accesible desde emulador Android en: http://10.0.2.2:${port}`);
     logger.info(`Entorno: ${env.NODE_ENV}`);
+    logger.info(`----------------------------------------------------------`);
   });
 
+  // Manejo de cierre gracioso (Graceful Shutdown)
   process.on('SIGTERM', () => {
     logger.info('SIGTERM recibido, cerrando servidor...');
     server.close(() => {

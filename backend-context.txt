@@ -10445,7 +10445,8 @@ app.use(express.json({ limit: '10mb' }));
 app.use(requestLogger);
 app.use('/api/health', healthRoutes);
 
-if (env.NODE_ENV !== 'test') {
+// El limitador general solo en producción
+if (env.NODE_ENV === 'production') {
   app.use(generalLimiter);
 }
 
@@ -10472,7 +10473,8 @@ const swaggerOptions = {
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, swaggerOptions));
 
-if (env.NODE_ENV !== 'test') {
+// RELAJAMOS EL LIMITADOR: Solo lo usamos si no estamos en desarrollo para evitar cortes con el emulador
+if (env.NODE_ENV !== 'test' && env.NODE_ENV !== 'development') {
   app.use('/api/auth', authLimiter, authRoutes);
 } else {
   app.use('/api/auth', authRoutes);
@@ -10492,8 +10494,9 @@ app.use('/api/workouts', workoutRoutes);
 app.use('/api/meals', mealRoutes);
 app.use('/api/diets', dietRoutes);
 app.use('/api/memberships', membershipRoutes);
+
 app.use(errorHandler);
-app.use('/api/notifications', notificationRoutes);
+
 export default app;
 --- END OF FILE: src\app.ts ---
 
@@ -10748,6 +10751,7 @@ if (process.env.NODE_ENV !== 'production' || !process.env.VERCEL) {
   const server = app.listen(port, host, () => {
     logger.info(`API escuchando en http://${host}:${port}`);
     logger.info(`Entorno: ${env.NODE_ENV}`);
+    logger.info(`Túnel ADB detectado: El emulador puede usar http://localhost:${port}`);
   });
 
   process.on('SIGTERM', () => {
@@ -11609,45 +11613,36 @@ import type { Request, Response } from 'express';
 import { register, login } from './auth.service.js';
 import { registerSchema, loginSchema } from '../users/users.schema.js';
 
-/**
- * Controlador para registrar un nuevo usuario en el sistema.
- * Valida los datos con Zod antes de procesar el registro.
- * Retorna el usuario creado y un token JWT con status 201.
- * Retorna status 409 si el email ya está registrado.
- */
 export async function registerCtrl(req: Request, res: Response) {
   try {
     const { email, name, password, role } = registerSchema.parse(req.body);
-    const data = await register(email, name, password, role as any);
-    res.status(201).json(data);
+    // Limpiamos los datos antes de enviar al servicio
+    const data = await register(email.trim(), name.trim(), password.trim(), role as any);
+    return res.status(201).json(data);
   } catch (e: any) {
+    console.error('🔥 Error en Registro:', e.message);
     if (e.message === 'Email ya registrado') {
       return res.status(409).json({ message: e.message });
     }
-    res.status(400).json({ message: e.message });
+    return res.status(400).json({ message: e.message });
   }
 }
 
-/**
- * Controlador para autenticar un usuario existente.
- * Valida las credenciales y genera un token JWT válido por 7 días.
- * Retorna el usuario y el token si las credenciales son correctas.
- * Retorna status 401 si las credenciales son inválidas.
- */
 export async function loginCtrl(req: Request, res: Response) {
   try {
     const { email, password } = loginSchema.parse(req.body);
-    const data = await login(email, password);
-    res.json(data);
+    // IMPORTANTE: Limpiamos los datos para evitar caracteres como \n
+    const data = await login(email.trim(), password.trim());
+    return res.json(data);
   } catch (e: any) {
-    if (e.message === 'Credenciales inválidas') {
+    console.error('🔥 Error en Login:', e.message);
+    if (e.message === 'Credenciales inválidas' || e.message.includes('Cuenta no validada')) {
       return res.status(401).json({ message: e.message });
     }
-    res.status(400).json({ message: e.message });
+    // Siempre devolvemos JSON para que Retrofit no de "unexpected end of stream"
+    return res.status(400).json({ message: e.message });
   }
 }
-
-
 --- END OF FILE: src\modules\auth\auth.controller.ts ---
 
 
@@ -11740,12 +11735,6 @@ import { createUser, findUserByEmail, getMeWithCenter } from '../users/users.ser
 import { Role } from '../../types/role.js';
 import { notifySuperAdmins } from '../notifications/notifications.service.js';
 
-/**
- * Registra un nuevo usuario en el sistema.
- * Valida que el email no esté ya registrado, hashea la contraseña con bcrypt,
- * crea el usuario con estado PENDING por defecto y genera un token JWT.
- * * NOTIFICACIÓN: Avisa a los Superadmins sobre el nuevo registro pendiente.
- */
 export async function register(email: string, name: string, password: string, role?: Role) {
   const existing = await findUserByEmail(email);
   if (existing) {
@@ -11756,7 +11745,6 @@ export async function register(email: string, name: string, password: string, ro
   const user = await createUser(email, name, hash, role);
   const userWithCenter = await getMeWithCenter(user.id);
   
-  // Notificar a Superadmins
   try {
     await notifySuperAdmins(
       'Nuevo Usuario Registrado 👤',
@@ -11790,23 +11778,23 @@ export async function register(email: string, name: string, password: string, ro
   };
 }
 
-/**
- * Autentica un usuario con su email y contraseña.
- * Verifica que el usuario exista, que su cuenta esté activa (status ACTIVE),
- * compara la contraseña con el hash almacenado y genera un token JWT válido por 7 días.
- */
 export async function login(email: string, password: string) {
   const user = await findUserByEmail(email);
   if (!user) {
+    console.log(`❌ Login fallido: El email ${email} no existe.`);
     throw new Error('Credenciales inválidas');
   }
 
+  // Si acabas de registrar al usuario, su status será 'PENDING' y no le dejará entrar
+  // Comprueba esto en Prisma Studio si no puedes loguear
   if (user.status !== 'ACTIVE') {
+    console.log(`❌ Login bloqueado: El usuario ${email} tiene estado ${user.status}.`);
     throw new Error('Cuenta no validada. Contacta con un administrador para activar tu cuenta.');
   }
   
   const ok = await bcrypt.compare(password, user.passwordHash);
   if (!ok) {
+    console.log(`❌ Login fallido: Contraseña incorrecta para ${email}.`);
     throw new Error('Credenciales inválidas');
   }
   
@@ -19166,67 +19154,6 @@ export class CloudinaryService {
 }
 
 --- END OF FILE: src\services\cloudinary.service.ts ---
-
-
---- START OF FILE: src\services\notification.service.ts ---
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
-
-export enum NotificationType {
-  INFO = 'INFO',
-  SUCCESS = 'SUCCESS',
-  WARNING = 'WARNING',
-  ERROR = 'ERROR'
-}
-
-export class NotificationService {
-  /**
-   * Crea una notificación para un usuario específico.
-   */
-  static async notify(userId: string, title: string, message: string, type: NotificationType = NotificationType.INFO) {
-    try {
-      return await prisma.notification.create({
-        data: {
-          userId,
-          title,
-          message,
-          type
-        }
-      });
-    } catch (error) {
-      console.error('❌ Error al crear notificación:', error);
-    }
-  }
-
-  /**
-   * Envía una notificación a todos los administradores (Auditoría del sistema).
-   */
-  static async notifyAdmins(title: string, message: string, type: NotificationType = NotificationType.INFO) {
-    try {
-      const admins = await prisma.user.findMany({
-        where: {
-          role: { in: ['SUPERADMIN', 'ADMIN_CENTER'] }
-        },
-        select: { id: true }
-      });
-
-      const notifications = admins.map(admin => ({
-        userId: admin.id,
-        title,
-        message,
-        type
-      }));
-
-      return await prisma.notification.createMany({
-        data: notifications
-      });
-    } catch (error) {
-      console.error('❌ Error notificando a administradores:', error);
-    }
-  }
-}
---- END OF FILE: src\services\notification.service.ts ---
 
 
 --- START OF FILE: src\tests\auth.test.ts ---

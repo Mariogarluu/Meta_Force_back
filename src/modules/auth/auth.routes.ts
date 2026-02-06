@@ -73,4 +73,19 @@ router.post('/register', validate(registerSchema), registerCtrl);
  */
 router.post('/login', validate(loginSchema), loginCtrl);
 
+/**
+ * @swagger
+ * /api/auth/logout:
+ *   post:
+ *     summary: Cierra sesión y elimina la cookie de autenticación
+ *     tags: [Auth]
+ *     responses:
+ *       200:
+ *         description: Logout exitoso
+ */
+router.post('/logout', (req, res, next) => {
+  // @ts-ignore
+  import('./auth.controller.js').then(m => m.logoutCtrl(req, res)).catch(next);
+});
+
 export default router;

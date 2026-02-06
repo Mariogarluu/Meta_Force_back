@@ -18,3 +18,5 @@ logs/
 
 
 /src/generated/prisma
+
+backend-context.txt

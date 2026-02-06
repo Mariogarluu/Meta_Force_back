@@ -1,90 +1,153 @@
-import express, { type Request, type Response } from 'express';
+import express, { Application, Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
+import morgan from 'morgan';
+import rateLimit from 'express-rate-limit';
 import swaggerUi from 'swagger-ui-express';
-import { errorHandler } from './middleware/error.js';
-import { generalLimiter, authLimiter } from './middleware/rateLimiter.js';
-import { requestLogger } from './middleware/requestLogger.js';
-import { env } from './config/env.js';
-import { swaggerSpec } from './config/swagger.js';
-import authRoutes from './modules/auth/auth.routes.js';
-import usersRoutes from './modules/users/users.routes.js';
-import centerRoutes from './modules/centers/centers.routes.js';
-import userCenterRouter from './modules/users/user-center.routes.js';
-import classRoutes from './modules/classes/classes.routes.js';
-import userClassRouter from './modules/users/user-class.routes.js';
-import machineRoutes from './modules/machines/machines.routes.js';
-import accessRoutes from './modules/access/access.routes.js';
-import notificationRoutes from './modules/notifications/notifications.routes.js';
-import ticketRoutes from './modules/tickets/tickets.routes.js';
-import membershipRoutes from './modules/memberships/memberships.routes.js';
-import healthRoutes from './modules/health/health.routes.js';
-import exerciseRoutes from './modules/exercises/exercises.routes.js';
-import workoutRoutes from './modules/workouts/workouts.routes.js';
-import mealRoutes from './modules/meals/meals.routes.js';
-import dietRoutes from './modules/diets/diets.routes.js';
+import { noCache } from './middleware/no-cache.js';
+import { swaggerSpec } from './config/swagger.js'; // Importamos la config real
 
-const app = express();
+const app: Application = express();
+const isDev = process.env['NODE_ENV'] === 'development';
 
-app.set('trust proxy', 1);
+// 1. WHITELIST DE ORÍGENES (CORS)
+const allowedOrigins = [
+  'http://localhost:4200',
+  'http://localhost:3000',
+  'https://meta-force.vercel.app'
+];
 
-app.use((helmet as any)({
-  contentSecurityPolicy: false,
-}));
-
-app.use(cors());
-app.use(express.json({ limit: '10mb' }));
-app.use(requestLogger);
-app.use('/api/health', healthRoutes);
-
-if (env.NODE_ENV === 'production') {
-  app.use(generalLimiter);
+if (process.env['FRONTEND_URL']) {
+  allowedOrigins.push(process.env['FRONTEND_URL']);
 }
 
+// 2. SEGURIDAD HTTP (HELMET) - Ajustado para Swagger
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      useDefaults: false,
+      directives: {
+        defaultSrc: ["'self'"],
+        // Swagger necesita 'unsafe-inline' y 'unsafe-eval' para funcionar correctamente en el navegador
+        scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "http://localhost:*"], 
+        styleSrc: ["'self'", "'unsafe-inline'", "https:"],
+        imgSrc: ["'self'", "data:", "https:", "validator.swagger.io"],
+        fontSrc: ["'self'", "data:", "https:"],
+        connectSrc: isDev
+          ? ["'self'", "http://localhost:*", "ws://localhost:*", "https:"] 
+          : ["'self'", "https:"],
+        objectSrc: ["'none'"],
+        mediaSrc: ["'self'"],
+        frameSrc: ["'none'"],
+        upgradeInsecureRequests: isDev ? null : [],
+      },
+    },
+    crossOriginEmbedderPolicy: false,
+    hsts: {
+      maxAge: 31536000,
+      includeSubDomains: true,
+      preload: true,
+    }
+  })
+);
+
+// 3. CONFIGURACIÓN CORS
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        console.error(`[CORS Blocked] Origin: ${origin}`);
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
+    credentials: true,
+    maxAge: 86400
+  })
+);
+
+// 4. CACHE Y RATE LIMITING
+app.use(noCache);
+
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: true, message: 'Too many requests' }
+});
+
+// Aplicar Rate Limit SOLO a rutas de API, excluyendo Swagger
+app.use('/api/', limiter);
+
+// 5. MIDDLEWARES BASE
+app.use(morgan('dev'));
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+// 6. RUTAS BASE
+
 app.get('/', (_req: Request, res: Response) => {
-  res.status(200).json({
-    ok: true,
-    message: 'Meta-Force API está funcionando correctamente',
+  res.status(200).json({ 
+    message: 'Meta-Force API Secure Gateway',
     version: '1.0.0',
     docs: '/api-docs'
   });
 });
 
 app.get('/health', (_req: Request, res: Response) => {
-  res.json({ ok: true });
+  res.status(200).json({ 
+    status: 'OK', 
+    timestamp: new Date().toISOString(), 
+    env: isDev ? 'dev' : 'prod' 
+  });
 });
 
-const swaggerOptions = {
-  customCssUrl: 'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.0.0/swagger-ui.min.css',
-  customJs: [
-    'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.0.0/swagger-ui-bundle.min.js',
-    'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.0.0/swagger-ui-standalone-preset.min.js',
-  ],
-};
+// 7. SWAGGER UI (RESTAURADO)
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
+  customCss: '.swagger-ui .topbar { display: none }', // Opcional: Estética
+  customSiteTitle: "Meta-Force API Docs",
+  // Opciones críticas para evitar bloqueos CSP en algunos navegadores
+  swaggerOptions: {
+    persistAuthorization: true,
+  }
+}));
 
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, swaggerOptions));
+// TODO: Importar Rutas
+// import authRoutes from './routes/auth.routes.js';
+// app.use('/api/auth', authRoutes);
 
-if (env.NODE_ENV !== 'test' && env.NODE_ENV !== 'development') {
-  app.use('/api/auth', authLimiter, authRoutes);
-} else {
-  app.use('/api/auth', authRoutes);
-}
+// 8. MANEJO DE 404
+app.use((_req: Request, _res: Response, next: NextFunction) => {
+  const error: any = new Error('Resource Not Found');
+  error.status = 404;
+  error.code = 'NOT_FOUND';
+  next(error);
+});
 
-app.use('/api/users', usersRoutes);
-app.use('/api/centers', centerRoutes);
-app.use('/api/users', userCenterRouter);
-app.use('/api/classes', classRoutes);
-app.use('/api/users', userClassRouter);
-app.use('/api/machines', machineRoutes);
-app.use('/api/access', accessRoutes);
-app.use('/api/notifications', notificationRoutes);
-app.use('/api/tickets', ticketRoutes);
-app.use('/api/exercises', exerciseRoutes);
-app.use('/api/workouts', workoutRoutes);
-app.use('/api/meals', mealRoutes);
-app.use('/api/diets', dietRoutes);
-app.use('/api/memberships', membershipRoutes);
+// 9. ERROR HANDLING
+app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
+  if (err.message !== 'Not allowed by CORS' && err.status !== 404) {
+    console.error(err);
+  }
+  
+  const status = err.status || 500;
+  const message = err.message || 'Internal Server Error';
+  
+  if (message === 'Not allowed by CORS') {
+    res.status(403).json({ error: true, message: 'CORS Policy Violation' });
+    return;
+  }
 
-app.use(errorHandler);
+  res.status(status).json({
+    error: true,
+    message,
+    code: err.code || 'INTERNAL_ERROR',
+    ...(isDev && { stack: err.stack }),
+  });
+});
 
 export default app;

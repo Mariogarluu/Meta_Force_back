@@ -11,6 +11,7 @@ import rateLimit from 'express-rate-limit';
 import swaggerUi from 'swagger-ui-express';
 // @ts-ignore
 import hpp from 'hpp';
+import { xssSanitizer } from './middleware/xssSanitizer.js';
 import { noCache } from './middleware/no-cache.js';
 import { logger } from './utils/logger.js';
 import { swaggerSpec } from './config/swagger.js'; // Importamos la config real
@@ -84,6 +85,7 @@ app.use(noCache);
 
 // @ts-ignore
 app.use(hpp());
+app.use(xssSanitizer);
 
 // @ts-ignore
 const limiter = rateLimit({

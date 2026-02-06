@@ -49,3 +49,12 @@ export async function loginCtrl(req: Request, res: Response) {
     return res.status(400).json({ message: e.message });
   }
 }
+
+export function logoutCtrl(_req: Request, res: Response) {
+  res.clearCookie(COOKIE_NAME, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'strict'
+  });
+  return res.status(200).json({ message: 'Logout exitoso' });
+}

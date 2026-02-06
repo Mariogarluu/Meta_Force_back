@@ -46,38 +46,38 @@ if (process.env['FRONTEND_URL']) {
 }
 
 // 2. SEGURIDAD HTTP (HELMET) - Ajustado para Swagger
-// 2. SEGURIDAD HTTP (HELMET) - Excluir /api-docs y ajustar para Vercel Live
-app.use((req, res, next) => {
-  if (req.path.startsWith('/api-docs')) {
-    return next();
-  }
-  // @ts-ignore
-  helmetSafe({
-    contentSecurityPolicy: {
-      useDefaults: false,
-      directives: {
-        defaultSrc: ["'self'"],
-        scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://vercel.live", "https://vercel.com"],
-        styleSrc: ["'self'", "'unsafe-inline'", "https:", "https://vercel.live"],
-        imgSrc: ["'self'", "data:", "https:", "validator.swagger.io", "https://vercel.com", "https://assets.vercel.com"],
-        fontSrc: ["'self'", "data:", "https:", "https://assets.vercel.com"],
-        connectSrc: isDev
-          ? ["'self'", "http://localhost:*", "ws://localhost:*", "https:", "https://vercel.live", "wss://*.pusher.com"]
-          : ["'self'", "https:", "https://vercel.live", "wss://*.pusher.com"],
-        objectSrc: ["'none'"],
-        mediaSrc: ["'self'"],
-        frameSrc: ["'none'", "https://vercel.live"],
-        upgradeInsecureRequests: isDev ? null : [],
-      },
-    },
-    crossOriginEmbedderPolicy: false,
-    hsts: {
-      maxAge: 31536000,
-      includeSubDomains: true,
-      preload: true,
-    }
-  })(req, res, next);
-});
+// 2. SEGURIDAD HTTP (HELMET) - DISABLED FOR DEBUGGING
+// app.use((req, res, next) => {
+//   if (req.path.startsWith('/api-docs')) {
+//     return next();
+//   }
+//   // @ts-ignore
+//   helmetSafe({
+//     contentSecurityPolicy: {
+//       useDefaults: false,
+//       directives: {
+//         defaultSrc: ["'self'"],
+//         scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://vercel.live", "https://vercel.com"],
+//         styleSrc: ["'self'", "'unsafe-inline'", "https:", "https://vercel.live"],
+//         imgSrc: ["'self'", "data:", "https:", "validator.swagger.io", "https://vercel.com", "https://assets.vercel.com"],
+//         fontSrc: ["'self'", "data:", "https:", "https://assets.vercel.com"],
+//         connectSrc: isDev
+//           ? ["'self'", "http://localhost:*", "ws://localhost:*", "https:", "https://vercel.live", "wss://*.pusher.com"]
+//           : ["'self'", "https:", "https://vercel.live", "wss://*.pusher.com"],
+//         objectSrc: ["'none'"],
+//         mediaSrc: ["'self'"],
+//         frameSrc: ["'none'", "https://vercel.live"],
+//         upgradeInsecureRequests: isDev ? null : [],
+//       },
+//     },
+//     crossOriginEmbedderPolicy: false,
+//     hsts: {
+//       maxAge: 31536000,
+//       includeSubDomains: true,
+//       preload: true,
+//     }
+//   })(req, res, next);
+// });
 
 // 3. CONFIGURACIÓN CORS
 app.use(
@@ -113,33 +113,33 @@ app.use(hppSafe());
 app.use(xssSanitizer);
 
 // @ts-ignore
-const limiter = rateLimitSafe({
-  windowMs: 15 * 60 * 1000,
-  max: 100,
-  standardHeaders: true,
-  legacyHeaders: false,
-  message: { error: true, message: 'Too many requests' }
-});
+// const limiter = rateLimitSafe({
+//   windowMs: 15 * 60 * 1000,
+//   max: 100,
+//   standardHeaders: true,
+//   legacyHeaders: false,
+//   message: { error: true, message: 'Too many requests' }
+// });
 
 // @ts-ignore
-const authLimiter = rateLimitSafe({
-  windowMs: 60 * 60 * 1000, // 1 hora
-  max: 5, // 5 intentos fallidos permitidos
-  standardHeaders: true,
-  legacyHeaders: false,
-  message: { error: true, message: 'Too many login attempts, please try again after an hour' }
-});
+// const authLimiter = rateLimitSafe({
+//   windowMs: 60 * 60 * 1000, // 1 hora
+//   max: 5, // 5 intentos fallidos permitidos
+//   standardHeaders: true,
+//   legacyHeaders: false,
+//   message: { error: true, message: 'Too many login attempts, please try again after an hour' }
+// });
 
 // Aplicar Rate Limit SOLO a rutas de API general
-app.use('/api/', limiter);
+// app.use('/api/', limiter);
 // Aplicar Rate Limit estricto a Auth
-app.use('/api/auth', authLimiter);
+// app.use('/api/auth', authLimiter);
 
 // 6. RUTAS BASE
 
 app.get('/', (_req: Request, res: Response) => {
   res.status(200).json({
-    message: 'Meta-Force API Secure Gateway',
+    message: 'Meta-Force API Secure Gateway (Debug Mode)',
     version: '1.0.0',
     docs: '/api-docs',
     env: process.env.NODE_ENV
@@ -155,18 +155,18 @@ app.get('/health', (_req: Request, res: Response) => {
 });
 
 // 7. SWAGGER UI (Safe Mode)
-try {
-  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
-    customCss: '.swagger-ui .topbar { display: none }',
-    customSiteTitle: "Meta-Force API Docs",
-    swaggerOptions: {
-      persistAuthorization: true,
-    }
-  }));
-} catch (error) {
-  console.error('Error al inicializar Swagger:', error);
-  app.get('/api-docs', (req, res) => res.status(503).send('Documentación no disponible temporalmente'));
-}
+// try {
+//   app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
+//     customCss: '.swagger-ui .topbar { display: none }', 
+//     customSiteTitle: "Meta-Force API Docs",
+//     swaggerOptions: {
+//       persistAuthorization: true,
+//     }
+//   }));
+// } catch (error) {
+//   console.error('Error al inicializar Swagger:', error);
+//   app.get('/api-docs', (req, res) => res.status(503).send('Documentación no disponible temporalmente'));
+// }
 
 // TODO: Importar Rutas
 // import authRoutes from './routes/auth.routes.js';

@@ -1,23 +1,23 @@
 import express, { Application, Request, Response, NextFunction } from 'express';
-// @ts-ignore
-import cors from 'cors';
-// @ts-ignore
-import helmet from 'helmet';
+// // @ts-ignore
+// import cors from 'cors';
+// // @ts-ignore
+// import helmet from 'helmet';
 import morgan from 'morgan';
-// @ts-ignore
-import rateLimit from 'express-rate-limit';
-// @ts-ignore
-// @ts-ignore
-import swaggerUi from 'swagger-ui-express';
-// @ts-ignore
-import hpp from 'hpp';
-// @ts-ignore
-import cookieParser from 'cookie-parser';
-import { xssSanitizer } from './middleware/xssSanitizer.js';
-import { noCache } from './middleware/no-cache.js';
+// // @ts-ignore
+// import rateLimit from 'express-rate-limit';
+// // @ts-ignore
+// // @ts-ignore
+// import swaggerUi from 'swagger-ui-express';
+// // @ts-ignore
+// import hpp from 'hpp';
+// // @ts-ignore
+// import cookieParser from 'cookie-parser';
+// import { xssSanitizer } from './middleware/xssSanitizer.js';
+// import { noCache } from './middleware/no-cache.js';
 import { logger } from './utils/logger.js';
-import { swaggerSpec } from './config/swagger.js'; // Importamos la config real
-import authRoutes from './modules/auth/auth.routes.js';
+// import { swaggerSpec } from './config/swagger.js'; // Importamos la config real
+// import authRoutes from './modules/auth/auth.routes.js';
 
 const app: Application = express();
 const isDev = process.env['NODE_ENV'] === 'development';

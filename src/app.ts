@@ -34,14 +34,17 @@ if (process.env['FRONTEND_URL']) {
 }
 
 // 2. SEGURIDAD HTTP (HELMET) - Ajustado para Swagger
-app.use(
+// 2. SEGURIDAD HTTP (HELMET) - Excluir /api-docs
+app.use((req, res, next) => {
+  if (req.path.startsWith('/api-docs')) {
+    return next();
+  }
   // @ts-ignore
   helmet({
     contentSecurityPolicy: {
       useDefaults: false,
       directives: {
         defaultSrc: ["'self'"],
-        // Swagger necesita 'unsafe-inline' y 'unsafe-eval' para funcionar correctamente en el navegador
         scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "http://localhost:*"],
         styleSrc: ["'self'", "'unsafe-inline'", "https:"],
         imgSrc: ["'self'", "data:", "https:", "validator.swagger.io"],
@@ -61,8 +64,8 @@ app.use(
       includeSubDomains: true,
       preload: true,
     }
-  })
-);
+  })(req, res, next);
+});
 
 // 3. CONFIGURACIÓN CORS
 app.use(
@@ -83,8 +86,15 @@ app.use(
 );
 
 // 4. CACHE, HPP Y RATE LIMITING
-app.use(noCache);
+// 5. PARSERS (ANTES DE SEGURIDAD DE BODY)
+app.use(morgan('dev'));
+// @ts-ignore
+app.use(cookieParser());
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
+// 6. SANITIZACIÓN Y RATE LIMITING
+app.use(noCache);
 // @ts-ignore
 app.use(hpp());
 app.use(xssSanitizer);
@@ -111,13 +121,6 @@ const authLimiter = rateLimit({
 app.use('/api/', limiter);
 // Aplicar Rate Limit estricto a Auth
 app.use('/api/auth', authLimiter);
-
-// 5. MIDDLEWARES BASE
-app.use(morgan('dev'));
-// @ts-ignore
-app.use(cookieParser());
-app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // 6. RUTAS BASE
 

@@ -1,8 +1,12 @@
 import express, { Application, Request, Response, NextFunction } from 'express';
+// @ts-ignore
 import cors from 'cors';
+// @ts-ignore
 import helmet from 'helmet';
 import morgan from 'morgan';
+// @ts-ignore
 import rateLimit from 'express-rate-limit';
+// @ts-ignore
 import swaggerUi from 'swagger-ui-express';
 import { noCache } from './middleware/no-cache.js';
 import { swaggerSpec } from './config/swagger.js'; // Importamos la config real
@@ -29,12 +33,12 @@ app.use(
       directives: {
         defaultSrc: ["'self'"],
         // Swagger necesita 'unsafe-inline' y 'unsafe-eval' para funcionar correctamente en el navegador
-        scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "http://localhost:*"], 
+        scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "http://localhost:*"],
         styleSrc: ["'self'", "'unsafe-inline'", "https:"],
         imgSrc: ["'self'", "data:", "https:", "validator.swagger.io"],
         fontSrc: ["'self'", "data:", "https:"],
         connectSrc: isDev
-          ? ["'self'", "http://localhost:*", "ws://localhost:*", "https:"] 
+          ? ["'self'", "http://localhost:*", "ws://localhost:*", "https:"]
           : ["'self'", "https:"],
         objectSrc: ["'none'"],
         mediaSrc: ["'self'"],
@@ -91,7 +95,7 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 // 6. RUTAS BASE
 
 app.get('/', (_req: Request, res: Response) => {
-  res.status(200).json({ 
+  res.status(200).json({
     message: 'Meta-Force API Secure Gateway',
     version: '1.0.0',
     docs: '/api-docs'
@@ -99,10 +103,10 @@ app.get('/', (_req: Request, res: Response) => {
 });
 
 app.get('/health', (_req: Request, res: Response) => {
-  res.status(200).json({ 
-    status: 'OK', 
-    timestamp: new Date().toISOString(), 
-    env: isDev ? 'dev' : 'prod' 
+  res.status(200).json({
+    status: 'OK',
+    timestamp: new Date().toISOString(),
+    env: isDev ? 'dev' : 'prod'
   });
 });
 
@@ -133,10 +137,10 @@ app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
   if (err.message !== 'Not allowed by CORS' && err.status !== 404) {
     console.error(err);
   }
-  
+
   const status = err.status || 500;
   const message = err.message || 'Internal Server Error';
-  
+
   if (message === 'Not allowed by CORS') {
     res.status(403).json({ error: true, message: 'CORS Policy Violation' });
     return;

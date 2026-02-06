@@ -38,12 +38,12 @@ const swaggerDefinition = {
 const options: swaggerJSDoc.Options = {
   swaggerDefinition,
   apis: [
-    // Escaneo de rutas y esquemas en estructura modular (Development TS)
-    path.join(process.cwd(), 'src/modules/**/*.routes.ts'),
-    path.join(process.cwd(), 'src/modules/**/*.schema.ts'),
-    // Soporte para archivos compilados (Production JS)
-    path.join(process.cwd(), 'dist/modules/**/*.routes.js'),
-    path.join(process.cwd(), 'dist/modules/**/*.schema.js'),
+    // Intentar buscar en src y dist, pero no crashear si no encuentra
+    process.env.NODE_ENV === 'production'
+      ? path.join(process.cwd(), 'api/**/*routes.js') // Fallback para structure tipo API
+      : path.join(process.cwd(), 'src/modules/**/*.routes.ts'),
+
+    path.join(process.cwd(), 'dist/modules/**/*.routes.js')
   ],
 };
 

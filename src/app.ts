@@ -110,33 +110,33 @@ app.use(hppSafe());
 app.use(xssSanitizer);
 
 // @ts-ignore
-const limiter = rateLimitSafe({
-  windowMs: 15 * 60 * 1000,
-  max: 100,
-  standardHeaders: true,
-  legacyHeaders: false,
-  message: { error: true, message: 'Too many requests' }
-});
+// const limiter = rateLimitSafe({
+//   windowMs: 15 * 60 * 1000,
+//   max: 100,
+//   standardHeaders: true,
+//   legacyHeaders: false,
+//   message: { error: true, message: 'Too many requests' }
+// });
 
 // @ts-ignore
-const authLimiter = rateLimitSafe({
-  windowMs: 60 * 60 * 1000, // 1 hora
-  max: 5, // 5 intentos fallidos permitidos
-  standardHeaders: true,
-  legacyHeaders: false,
-  message: { error: true, message: 'Too many login attempts, please try again after an hour' }
-});
+// const authLimiter = rateLimitSafe({
+//   windowMs: 60 * 60 * 1000, // 1 hora
+//   max: 5, // 5 intentos fallidos permitidos
+//   standardHeaders: true,
+//   legacyHeaders: false,
+//   message: { error: true, message: 'Too many login attempts, please try again after an hour' }
+// });
 
 // Aplicar Rate Limit SOLO a rutas de API general
-app.use('/api/', limiter);
+// app.use('/api/', limiter);
 // Aplicar Rate Limit estricto a Auth
-app.use('/api/auth', authLimiter);
+// app.use('/api/auth', authLimiter);
 
 // 6. RUTAS BASE
 
 app.get('/', (_req: Request, res: Response) => {
   res.status(200).json({
-    message: 'Meta-Force API Secure Gateway',
+    message: 'Meta-Force API Secure Gateway (Recovering...)',
     version: '1.0.0',
     docs: '/api-docs',
     env: process.env.NODE_ENV
@@ -151,19 +151,19 @@ app.get('/health', (_req: Request, res: Response) => {
   });
 });
 
-// 7. SWAGGER UI (Safe Mode)
-try {
-  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
-    customCss: '.swagger-ui .topbar { display: none }',
-    customSiteTitle: "Meta-Force API Docs",
-    swaggerOptions: {
-      persistAuthorization: true,
-    }
-  }));
-} catch (error) {
-  console.error('Error al inicializar Swagger:', error);
-  app.get('/api-docs', (req, res) => res.status(503).send('Documentación no disponible temporalmente'));
-}
+// 7. SWAGGER UI (Safe Mode) - DESACTIVADO TEMPORALMENTE
+// try {
+//   app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
+//     customCss: '.swagger-ui .topbar { display: none }', 
+//     customSiteTitle: "Meta-Force API Docs",
+//     swaggerOptions: {
+//       persistAuthorization: true,
+//     }
+//   }));
+// } catch (error) {
+//   console.error('Error al inicializar Swagger:', error);
+//   app.get('/api-docs', (req, res) => res.status(503).send('Documentación no disponible temporalmente'));
+// }
 
 // RUTAS API
 app.use('/api/auth', authRoutes);

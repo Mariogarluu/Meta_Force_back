@@ -6,7 +6,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon src/index.ts",
-    "build": "npx prisma generate",
+    "build": "npx prisma generate && tsc -p .",
     "build:ts": "tsc -p .",
     "start": "node dist/src/index.js",
     "start:prod": "node scripts/start-prod.js",

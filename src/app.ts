@@ -25,6 +25,15 @@ const isDev = process.env['NODE_ENV'] === 'development';
 // Configuración para Vercel (Proxy)
 app.set('trust proxy', 1);
 
+// Helper para compatibilidad ESM/CJS
+const getSafe = (pkg: any) => (pkg && pkg.default) ? pkg.default : pkg;
+
+const helmetSafe = getSafe(helmet);
+const corsSafe = getSafe(cors);
+const rateLimitSafe = getSafe(rateLimit);
+const hppSafe = getSafe(hpp);
+const cookieParserSafe = getSafe(cookieParser);
+
 // 1. WHITELIST DE ORÍGENES (CORS)
 const allowedOrigins = [
   'http://localhost:4200',
@@ -43,7 +52,7 @@ app.use((req, res, next) => {
     return next();
   }
   // @ts-ignore
-  helmet({
+  helmetSafe({
     contentSecurityPolicy: {
       useDefaults: false,
       directives: {
@@ -72,8 +81,8 @@ app.use((req, res, next) => {
 
 // 3. CONFIGURACIÓN CORS
 app.use(
-  cors({
-    origin: (origin, callback) => {
+  corsSafe({
+    origin: (origin: any, callback: any) => {
       // Permitir acceso desde Vercel Live y Vercel Previews
       if (!origin || allowedOrigins.includes(origin) || origin.endsWith('.vercel.app') || origin === 'https://vercel.live') {
         callback(null, true);
@@ -93,18 +102,18 @@ app.use(
 // 5. PARSERS (ANTES DE SEGURIDAD DE BODY)
 app.use(morgan('dev'));
 // @ts-ignore
-app.use(cookieParser());
+app.use(cookieParserSafe());
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // 6. SANITIZACIÓN Y RATE LIMITING
 app.use(noCache);
 // @ts-ignore
-app.use(hpp());
+app.use(hppSafe());
 app.use(xssSanitizer);
 
 // @ts-ignore
-const limiter = rateLimit({
+const limiter = rateLimitSafe({
   windowMs: 15 * 60 * 1000,
   max: 100,
   standardHeaders: true,
@@ -113,7 +122,7 @@ const limiter = rateLimit({
 });
 
 // @ts-ignore
-const authLimiter = rateLimit({
+const authLimiter = rateLimitSafe({
   windowMs: 60 * 60 * 1000, // 1 hora
   max: 5, // 5 intentos fallidos permitidos
   standardHeaders: true,

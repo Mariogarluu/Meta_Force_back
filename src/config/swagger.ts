@@ -47,4 +47,19 @@ const options: swaggerJSDoc.Options = {
   ],
 };
 
-export const swaggerSpec = swaggerJSDoc(options);
+let swaggerSpec: object;
+
+try {
+  swaggerSpec = swaggerJSDoc(options);
+  console.log('✅ Swagger Docs generados correctamente');
+} catch (error) {
+  console.error('❌ Error fatal al generar Swagger Docs:', error);
+  // Fallback seguro para no tumbar la API
+  swaggerSpec = {
+    openapi: '3.0.0',
+    info: swaggerDefinition.info,
+    paths: {}
+  };
+}
+
+export { swaggerSpec };

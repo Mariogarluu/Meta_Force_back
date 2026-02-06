@@ -61,7 +61,7 @@ function setupDatabaseUrl() {
 function runCommand(command, args, options = {}) {
   return new Promise((resolve, reject) => {
     console.log(`\n▶️  Ejecutando: ${command} ${args.join(' ')}`);
-    
+
     const child = spawn(command, args, {
       stdio: 'inherit',
       shell: true,
@@ -107,8 +107,12 @@ async function main() {
       // Continuar con el inicio del servidor, las migraciones se ejecutarán en runtime
     }
 
-    // 4. Iniciar servidor
-    await runCommand('npm', ['start']);
+    // 4. Iniciar servidor (Solo si NO estamos en Vercel)
+    if (process.env.VERCEL === '1') {
+      console.log('✅ Detectado entorno Vercel: Saltando inicio de servidor (Serverless)');
+    } else {
+      await runCommand('npm', ['start']);
+    }
   } catch (error) {
     console.error('❌ Error en start:prod:', error.message);
     process.exit(1);

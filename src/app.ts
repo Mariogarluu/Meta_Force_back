@@ -11,6 +11,8 @@ import rateLimit from 'express-rate-limit';
 import swaggerUi from 'swagger-ui-express';
 // @ts-ignore
 import hpp from 'hpp';
+// @ts-ignore
+import cookieParser from 'cookie-parser';
 import { xssSanitizer } from './middleware/xssSanitizer.js';
 import { noCache } from './middleware/no-cache.js';
 import { logger } from './utils/logger.js';
@@ -112,6 +114,8 @@ app.use('/api/auth', authLimiter);
 
 // 5. MIDDLEWARES BASE
 app.use(morgan('dev'));
+// @ts-ignore
+app.use(cookieParser());
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 

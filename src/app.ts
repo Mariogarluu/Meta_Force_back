@@ -27,6 +27,7 @@ if (process.env['FRONTEND_URL']) {
 
 // 2. SEGURIDAD HTTP (HELMET) - Ajustado para Swagger
 app.use(
+  // @ts-ignore
   helmet({
     contentSecurityPolicy: {
       useDefaults: false,
@@ -76,6 +77,7 @@ app.use(
 // 4. CACHE Y RATE LIMITING
 app.use(noCache);
 
+// @ts-ignore
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 100,

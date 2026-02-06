@@ -7,9 +7,14 @@ import morgan from 'morgan';
 // @ts-ignore
 import rateLimit from 'express-rate-limit';
 // @ts-ignore
+// @ts-ignore
 import swaggerUi from 'swagger-ui-express';
+// @ts-ignore
+import hpp from 'hpp';
 import { noCache } from './middleware/no-cache.js';
+import { logger } from './utils/logger.js';
 import { swaggerSpec } from './config/swagger.js'; // Importamos la config real
+import authRoutes from './modules/auth/auth.routes.js';
 
 const app: Application = express();
 const isDev = process.env['NODE_ENV'] === 'development';
@@ -74,8 +79,11 @@ app.use(
   })
 );
 
-// 4. CACHE Y RATE LIMITING
+// 4. CACHE, HPP Y RATE LIMITING
 app.use(noCache);
+
+// @ts-ignore
+app.use(hpp());
 
 // @ts-ignore
 const limiter = rateLimit({
@@ -86,8 +94,19 @@ const limiter = rateLimit({
   message: { error: true, message: 'Too many requests' }
 });
 
-// Aplicar Rate Limit SOLO a rutas de API, excluyendo Swagger
+// @ts-ignore
+const authLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000, // 1 hora
+  max: 5, // 5 intentos fallidos permitidos
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: true, message: 'Too many login attempts, please try again after an hour' }
+});
+
+// Aplicar Rate Limit SOLO a rutas de API general
 app.use('/api/', limiter);
+// Aplicar Rate Limit estricto a Auth
+app.use('/api/auth', authLimiter);
 
 // 5. MIDDLEWARES BASE
 app.use(morgan('dev'));
@@ -124,7 +143,7 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
 
 // TODO: Importar Rutas
 // import authRoutes from './routes/auth.routes.js';
-// app.use('/api/auth', authRoutes);
+app.use('/api/auth', authRoutes);
 
 // 8. MANEJO DE 404
 app.use((_req: Request, _res: Response, next: NextFunction) => {
@@ -137,7 +156,7 @@ app.use((_req: Request, _res: Response, next: NextFunction) => {
 // 9. ERROR HANDLING
 app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
   if (err.message !== 'Not allowed by CORS' && err.status !== 404) {
-    console.error(err);
+    logger.error(`${err.status || 500} - ${err.message} - ${_req.originalUrl} - ${_req.method} - ${_req.ip}`);
   }
 
   const status = err.status || 500;

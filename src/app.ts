@@ -22,6 +22,9 @@ import authRoutes from './modules/auth/auth.routes.js';
 const app: Application = express();
 const isDev = process.env['NODE_ENV'] === 'development';
 
+// Configuración para Vercel (Proxy)
+app.set('trust proxy', 1);
+
 // 1. WHITELIST DE ORÍGENES (CORS)
 const allowedOrigins = [
   'http://localhost:4200',
@@ -34,7 +37,7 @@ if (process.env['FRONTEND_URL']) {
 }
 
 // 2. SEGURIDAD HTTP (HELMET) - Ajustado para Swagger
-// 2. SEGURIDAD HTTP (HELMET) - Excluir /api-docs
+// 2. SEGURIDAD HTTP (HELMET) - Excluir /api-docs y ajustar para Vercel Live
 app.use((req, res, next) => {
   if (req.path.startsWith('/api-docs')) {
     return next();
@@ -45,16 +48,16 @@ app.use((req, res, next) => {
       useDefaults: false,
       directives: {
         defaultSrc: ["'self'"],
-        scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "http://localhost:*"],
-        styleSrc: ["'self'", "'unsafe-inline'", "https:"],
-        imgSrc: ["'self'", "data:", "https:", "validator.swagger.io"],
-        fontSrc: ["'self'", "data:", "https:"],
+        scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://vercel.live", "https://vercel.com"],
+        styleSrc: ["'self'", "'unsafe-inline'", "https:", "https://vercel.live"],
+        imgSrc: ["'self'", "data:", "https:", "validator.swagger.io", "https://vercel.com", "https://assets.vercel.com"],
+        fontSrc: ["'self'", "data:", "https:", "https://assets.vercel.com"],
         connectSrc: isDev
-          ? ["'self'", "http://localhost:*", "ws://localhost:*", "https:"]
-          : ["'self'", "https:"],
+          ? ["'self'", "http://localhost:*", "ws://localhost:*", "https:", "https://vercel.live", "wss://*.pusher.com"]
+          : ["'self'", "https:", "https://vercel.live", "wss://*.pusher.com"],
         objectSrc: ["'none'"],
         mediaSrc: ["'self'"],
-        frameSrc: ["'none'"],
+        frameSrc: ["'none'", "https://vercel.live"],
         upgradeInsecureRequests: isDev ? null : [],
       },
     },
@@ -71,7 +74,8 @@ app.use((req, res, next) => {
 app.use(
   cors({
     origin: (origin, callback) => {
-      if (!origin || allowedOrigins.includes(origin)) {
+      // Permitir acceso desde Vercel Live y Vercel Previews
+      if (!origin || allowedOrigins.includes(origin) || origin.endsWith('.vercel.app') || origin === 'https://vercel.live') {
         callback(null, true);
       } else {
         console.error(`[CORS Blocked] Origin: ${origin}`);
@@ -128,7 +132,8 @@ app.get('/', (_req: Request, res: Response) => {
   res.status(200).json({
     message: 'Meta-Force API Secure Gateway',
     version: '1.0.0',
-    docs: '/api-docs'
+    docs: '/api-docs',
+    env: process.env.NODE_ENV
   });
 });
 
@@ -140,15 +145,19 @@ app.get('/health', (_req: Request, res: Response) => {
   });
 });
 
-// 7. SWAGGER UI (RESTAURADO)
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
-  customCss: '.swagger-ui .topbar { display: none }', // Opcional: Estética
-  customSiteTitle: "Meta-Force API Docs",
-  // Opciones críticas para evitar bloqueos CSP en algunos navegadores
-  swaggerOptions: {
-    persistAuthorization: true,
-  }
-}));
+// 7. SWAGGER UI (Safe Mode)
+try {
+  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
+    customCss: '.swagger-ui .topbar { display: none }',
+    customSiteTitle: "Meta-Force API Docs",
+    swaggerOptions: {
+      persistAuthorization: true,
+    }
+  }));
+} catch (error) {
+  console.error('Error al inicializar Swagger:', error);
+  app.get('/api-docs', (req, res) => res.status(503).send('Documentación no disponible temporalmente'));
+}
 
 // TODO: Importar Rutas
 // import authRoutes from './routes/auth.routes.js';

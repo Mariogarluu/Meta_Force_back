@@ -11,19 +11,14 @@ const swaggerDefinition = {
     version: '1.0.0',
     description: 'Documentación oficial de la API de Meta-Force Gym Management System',
   },
-  servers: isProduction
-    ? [
-        {
-          url: 'https://meta-force-back.vercel.app',
-          description: 'Servidor de Producción',
-        },
-      ]
-    : [
-        {
-          url: `http://localhost:${port}`,
-          description: 'Servidor de Desarrollo Local',
-        },
-      ],
+  servers: [
+    {
+      url: process.env['VERCEL_URL']
+        ? `https://${process.env['VERCEL_URL']}`
+        : (isProduction ? 'https://meta-force-back.vercel.app' : `http://localhost:${port}`),
+      description: isProduction ? 'Servidor de Producción' : 'Servidor Local',
+    },
+  ],
   components: {
     securitySchemes: {
       bearerAuth: {

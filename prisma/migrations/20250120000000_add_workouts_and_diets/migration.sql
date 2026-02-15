@@ -112,16 +112,8 @@ CREATE INDEX IF NOT EXISTS "DietMeal_dietId_idx" ON "DietMeal"("dietId");
 CREATE INDEX IF NOT EXISTS "DietMeal_mealId_idx" ON "DietMeal"("mealId");
 CREATE INDEX IF NOT EXISTS "DietMeal_dietId_dayOfWeek_idx" ON "DietMeal"("dietId", "dayOfWeek");
 
--- AddForeignKey
-DO $$ 
-BEGIN
-  IF NOT EXISTS (SELECT 1 FROM information_schema.table_constraints 
-                 WHERE constraint_name = 'Exercise_machineTypeId_fkey' 
-                 AND table_name = 'Exercise') THEN
-    ALTER TABLE "Exercise" ADD CONSTRAINT "Exercise_machineTypeId_fkey" 
-      FOREIGN KEY ("machineTypeId") REFERENCES "MachineType"("id") ON DELETE SET NULL ON UPDATE CASCADE;
-  END IF;
-END $$;
+-- AddForeignKey Exercise_machineTypeId: NO añadir aquí. MachineType se crea en 20251215.
+-- La FK se añade en 20251229193216_add_workouts_and_diets cuando MachineType ya existe.
 
 -- AddForeignKey
 DO $$ 

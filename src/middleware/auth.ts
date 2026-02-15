@@ -16,20 +16,27 @@ declare global {
   }
 }
 
+const COOKIE_NAME = 'auth_token';
+
 /**
- * Middleware de autenticación JWT que verifica y valida el token Bearer en el header Authorization.
- * Extrae la información del usuario del token JWT y la añade a req.user para uso en los controladores.
- * Valida que el token contenga sub, email, role y centerId (opcional) en el payload.
- * Retorna 401 si el token es inválido, está mal formado o falta.
+ * Middleware de autenticación JWT que verifica el token desde:
+ * 1. Header Authorization: Bearer <token>
+ * 2. Cookie auth_token (HttpOnly, enviada con withCredentials)
+ * Valida el payload y añade req.user. Retorna 401 si falta o es inválido.
  */
 export function auth(req: Request, res: Response, next: NextFunction) {
+  let token: string | undefined;
   const header = req.headers.authorization;
   
-  if (!header?.startsWith('Bearer ')) {
-    return res.status(401).json({ message: 'No autorizado' });
+  if (header?.startsWith('Bearer ')) {
+    token = header.split(' ')[1];
+  } else if (req.cookies?.[COOKIE_NAME]) {
+    token = req.cookies[COOKIE_NAME] as string;
   }
   
-  const token = header.split(' ')[1];
+  if (!token) {
+    return res.status(401).json({ message: 'No autorizado' });
+  }
   
   if (!token) {
     return res.status(401).json({ message: 'No autorizado' });

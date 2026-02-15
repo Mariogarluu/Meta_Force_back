@@ -92,19 +92,22 @@ async function main() {
     // 1. Establecer DATABASE_URL
     setupDatabaseUrl();
 
-    // 2. Build TypeScript
+    // 2. Build (prisma generate)
     await runCommand('npm', ['run', 'build']);
 
-    // 3. Prisma migrate deploy (DATABASE_URL está disponible en process.env)
-    // Nota: En Render, las bases de datos internas pueden no ser accesibles durante el build
-    // Si falla, las migraciones se ejecutarán al iniciar el servidor
-    try {
-      await runCommand('npx', ['prisma', 'migrate', 'deploy']);
-    } catch (migrateError) {
-      console.warn('⚠️  Advertencia: No se pudieron ejecutar las migraciones durante el build');
-      console.warn('   Las migraciones se intentarán ejecutar al iniciar el servidor');
-      console.warn(`   Error: ${migrateError.message}`);
-      // Continuar con el inicio del servidor, las migraciones se ejecutarán en runtime
+    // 3. Prisma migrate deploy
+    // Vercel + Render: La DB de Render (Frankfurt) suele dar P1017 desde los build de Vercel (US).
+    // Saltamos migrate en Vercel. Ejecuta manualmente: DATABASE_URL=xxx npx prisma migrate deploy
+    // Ver docs/VERCEL_DEPLOY.md
+    if (process.env.VERCEL === '1') {
+      console.log('⏭️  Vercel detectado: omitiendo prisma migrate deploy (ejecutar manualmente si hay migraciones nuevas)');
+    } else {
+      try {
+        await runCommand('npx', ['prisma', 'migrate', 'deploy']);
+      } catch (migrateError) {
+        console.warn('⚠️  Advertencia: Migraciones fallidas - ejecutar manualmente: npx prisma migrate deploy');
+        console.warn(`   Error: ${migrateError.message}`);
+      }
     }
 
     // 4. Iniciar servidor (Solo si NO estamos en Vercel)

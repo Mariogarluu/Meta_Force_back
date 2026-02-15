@@ -17,6 +17,21 @@ import { noCache } from './middleware/no-cache.js';
 import { logger } from './utils/logger.js';
 import { swaggerSpec } from './config/swagger.js';
 import authRoutes from './modules/auth/auth.routes.js';
+import usersRoutes from './modules/users/users.routes.js';
+import centerRoutes from './modules/centers/centers.routes.js';
+import userCenterRouter from './modules/users/user-center.routes.js';
+import classRoutes from './modules/classes/classes.routes.js';
+import userClassRouter from './modules/users/user-class.routes.js';
+import machineRoutes from './modules/machines/machines.routes.js';
+import accessRoutes from './modules/access/access.routes.js';
+import notificationRoutes from './modules/notifications/notifications.routes.js';
+import ticketRoutes from './modules/tickets/tickets.routes.js';
+import exerciseRoutes from './modules/exercises/exercises.routes.js';
+import workoutRoutes from './modules/workouts/workouts.routes.js';
+import mealRoutes from './modules/meals/meals.routes.js';
+import dietRoutes from './modules/diets/diets.routes.js';
+import membershipRoutes from './modules/memberships/memberships.routes.js';
+import healthRoutes from './modules/health/health.routes.js';
 
 const app: Application = express();
 const isDev = process.env['NODE_ENV'] === 'development';
@@ -136,7 +151,7 @@ app.use(xssSanitizer);
 
 app.get('/', (_req: Request, res: Response) => {
   res.status(200).json({
-    message: 'Meta-Force API Secure Gateway (Recovering...)',
+    message: 'Meta-Force API Secure Gateway',
     version: '1.0.0',
     docs: '/api-docs',
     env: process.env.NODE_ENV
@@ -151,22 +166,38 @@ app.get('/health', (_req: Request, res: Response) => {
   });
 });
 
-// 7. SWAGGER UI (Safe Mode) - DESACTIVADO TEMPORALMENTE
-// try {
-//   app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
-//     customCss: '.swagger-ui .topbar { display: none }', 
-//     customSiteTitle: "Meta-Force API Docs",
-//     swaggerOptions: {
-//       persistAuthorization: true,
-//     }
-//   }));
-// } catch (error) {
-//   console.error('Error al inicializar Swagger:', error);
-//   app.get('/api-docs', (req, res) => res.status(503).send('Documentación no disponible temporalmente'));
-// }
+// 7. SWAGGER UI (documentación API)
+const swaggerUiDefault = getSafe(swaggerUi);
+try {
+  app.use('/api-docs', swaggerUiDefault.serve, swaggerUiDefault.setup(swaggerSpec, {
+    customCss: '.swagger-ui .topbar { display: none }',
+    customSiteTitle: 'Meta-Force API Docs',
+    swaggerOptions: {
+      persistAuthorization: true,
+    }
+  }));
+} catch (error) {
+  logger.error('Error al inicializar Swagger:', error);
+  app.get('/api-docs', (_req: Request, res: Response) => res.status(503).send('Documentación no disponible'));
+}
 
 // RUTAS API
 app.use('/api/auth', authRoutes);
+app.use('/api/health', healthRoutes);
+app.use('/api/users', usersRoutes);
+app.use('/api/users', userCenterRouter);
+app.use('/api/users', userClassRouter);
+app.use('/api/centers', centerRoutes);
+app.use('/api/classes', classRoutes);
+app.use('/api/machines', machineRoutes);
+app.use('/api/access', accessRoutes);
+app.use('/api/notifications', notificationRoutes);
+app.use('/api/tickets', ticketRoutes);
+app.use('/api/exercises', exerciseRoutes);
+app.use('/api/workouts', workoutRoutes);
+app.use('/api/meals', mealRoutes);
+app.use('/api/diets', dietRoutes);
+app.use('/api/memberships', membershipRoutes);
 
 // 8. MANEJO DE 404
 app.use((_req: Request, _res: Response, next: NextFunction) => {

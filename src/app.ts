@@ -1,16 +1,10 @@
 import express, { Application, Request, Response, NextFunction } from 'express';
-// @ts-ignore
 import cors from 'cors';
-// @ts-ignore
 import helmet from 'helmet';
 import morgan from 'morgan';
-// @ts-ignore
 import rateLimit from 'express-rate-limit';
-// @ts-ignore
 import swaggerUi from 'swagger-ui-express';
-// @ts-ignore
 import hpp from 'hpp';
-// @ts-ignore
 import cookieParser from 'cookie-parser';
 import { xssSanitizer } from './middleware/xssSanitizer.js';
 import { noCache } from './middleware/no-cache.js';
@@ -125,28 +119,26 @@ app.use(noCache);
 app.use(hppSafe());
 app.use(xssSanitizer);
 
-// @ts-ignore
-// const limiter = rateLimitSafe({
-//   windowMs: 15 * 60 * 1000,
-//   max: 100,
-//   standardHeaders: true,
-//   legacyHeaders: false,
-//   message: { error: true, message: 'Too many requests' }
-// });
+const limiter = rateLimitSafe({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: true, message: 'Too many requests' }
+});
 
-// @ts-ignore
-// const authLimiter = rateLimitSafe({
-//   windowMs: 60 * 60 * 1000, // 1 hora
-//   max: 5, // 5 intentos fallidos permitidos
-//   standardHeaders: true,
-//   legacyHeaders: false,
-//   message: { error: true, message: 'Too many login attempts, please try again after an hour' }
-// });
+const authLimiter = rateLimitSafe({
+  windowMs: 60 * 60 * 1000, // 1 hora
+  max: 5, // 5 intentos fallidos permitidos
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: true, message: 'Too many login attempts, please try again after an hour' }
+});
 
 // Aplicar Rate Limit SOLO a rutas de API general
-// app.use('/api/', limiter);
+app.use('/api/', limiter);
 // Aplicar Rate Limit estricto a Auth
-// app.use('/api/auth', authLimiter);
+app.use('/api/auth', authLimiter);
 
 // 6. RUTAS BASE
 

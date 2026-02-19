@@ -18,7 +18,7 @@ function setupDatabaseUrl() {
 
   // Si no existe, intentar construir desde variables separadas
   const { DB_USER, DB_PASSWORD, DB_HOST, DB_PORT, DB_DATABASE } = process.env;
-  
+
   if (DB_USER && DB_PASSWORD && DB_DATABASE) {
     const user = encodeURIComponent(DB_USER);
     const password = encodeURIComponent(DB_PASSWORD);
@@ -47,6 +47,7 @@ const envSchema = z.object({
 
   // Seguridad y Requeridos
   JWT_SECRET: z.string().min(32, 'JWT_SECRET debe tener al menos 32 caracteres por seguridad.').nonempty(),
+  GEMINI_API_KEY: z.string().optional(),
 
   // Seguridad (BCrypt)
   BCRYPT_SALT_ROUNDS: z.preprocess(
@@ -112,7 +113,7 @@ export function getDatabaseUrl(): string {
   if (process.env.DATABASE_URL) {
     return process.env.DATABASE_URL;
   }
-  
+
   // Prioridad 2: Construir desde variables separadas
   const { DB_USER, DB_PASSWORD, DB_HOST, DB_PORT, DB_DATABASE } = env;
   if (!DB_USER || !DB_PASSWORD || !DB_DATABASE) {

@@ -46,6 +46,8 @@ model User {
   notifications    Notification[]
   workouts         Workout[] @relation("UserWorkouts") // Entrenamientos del usuario
   diets            Diet[] @relation("UserDiets") // Dietas del usuario
+  chatSessions     AiChatSession[]
+
 }
 
 // ... (modelos Center, GymClass, Machine iguales)
@@ -302,3 +304,30 @@ model MembershipPlan {
 
   @@index([isActive])
 }
+
+// Sesión de chat con la IA
+model AiChatSession {
+  id        String          @id @default(cuid())
+  userId    String
+  user      User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String?         // Título autogenerado o "Nuevo chat"
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+  messages  AiChatMessage[]
+
+  @@index([userId])
+}
+
+// Mensaje individual en el chat
+model AiChatMessage {
+  id        String        @id @default(cuid())
+  sessionId String
+  session   AiChatSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  role      String        // 'user' | 'model'
+  content   String        // Contenido del mensaje
+  createdAt DateTime      @default(now())
+
+  @@index([sessionId])
+  @@index([createdAt])
+}
+

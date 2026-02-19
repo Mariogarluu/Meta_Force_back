@@ -27,6 +27,7 @@
   "license": "ISC",
   "dependencies": {
     "@angular/cdk": "^21.0.5",
+    "@google/generative-ai": "^0.24.1",
     "@prisma/client": "^6.18.0",
     "@types/bcrypt": "^6.0.0",
     "@types/cookie-parser": "^1.4.10",

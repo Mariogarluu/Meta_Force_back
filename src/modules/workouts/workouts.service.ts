@@ -309,6 +309,71 @@ export async function addExerciseToWorkout(workoutId: string, data: {
 }
 
 /**
+ * Agrega múltiples ejercicios a un entrenamiento en una sola transacción.
+ */
+export async function addExercisesToWorkout(workoutId: string, exercisesData: Array<{
+  exerciseId: string;
+  dayOfWeek: number;
+  order: number;
+  sets?: number;
+  reps?: number;
+  weight?: number;
+  duration?: number;
+  restSeconds?: number;
+  notes?: string;
+}>) {
+  // Verificar que el entrenamiento existe
+  const workout = await prisma.workout.findUnique({ where: { id: workoutId } });
+  if (!workout) {
+    throw new Error('Entrenamiento no encontrado');
+  }
+
+  // Validar todos los dayOfWeek
+  for (const data of exercisesData) {
+    if (data.dayOfWeek < 0 || data.dayOfWeek > 6) {
+      throw new Error(`dayOfWeek ${data.dayOfWeek} inválido. Debe estar entre 0 y 6.`);
+    }
+  }
+
+  // Crear los ejercicios en una transacción
+  // Nota: createMany no soporta relaciones anidadas en SQLite/otros dbs a veces, 
+  // pero sí en Postgres. Sin embargo, createMany no devuelve los objetos creados con includes.
+  // Para devolver los objetos completos, usamos $transaction con múltiples create.
+
+  return prisma.$transaction(
+    exercisesData.map(data =>
+      prisma.workoutExercise.create({
+        data: {
+          workoutId,
+          exerciseId: data.exerciseId,
+          dayOfWeek: data.dayOfWeek,
+          order: data.order,
+          sets: data.sets || null,
+          reps: data.reps || null,
+          weight: data.weight || null,
+          duration: data.duration || null,
+          restSeconds: data.restSeconds || null,
+          notes: data.notes || null,
+        },
+        include: {
+          exercise: {
+            include: {
+              machineType: {
+                select: {
+                  id: true,
+                  name: true,
+                  type: true,
+                },
+              },
+            },
+          },
+        },
+      })
+    )
+  );
+}
+
+/**
  * Actualiza un ejercicio en un entrenamiento.
  */
 export async function updateWorkoutExercise(id: string, data: {
@@ -379,7 +444,7 @@ export async function reorderWorkoutExercises(workoutId: string, exercises: Arra
   }
 
   // Actualizar cada ejercicio
-  const updates = exercises.map(ex => 
+  const updates = exercises.map(ex =>
     prisma.workoutExercise.update({
       where: { id: ex.id },
       data: {

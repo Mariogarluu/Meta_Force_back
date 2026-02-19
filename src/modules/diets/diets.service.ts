@@ -189,6 +189,55 @@ export async function addMealToDiet(dietId: string, data: {
 }
 
 /**
+ * Agrega múltiples comidas a una dieta en una sola transacción.
+ */
+export async function addMealsToDiet(dietId: string, mealsData: Array<{
+  mealId: string;
+  dayOfWeek: number;
+  mealType: string;
+  order: number;
+  quantity?: number;
+  notes?: string;
+}>) {
+  // Verificar que la dieta existe
+  const diet = await prisma.diet.findUnique({ where: { id: dietId } });
+  if (!diet) {
+    throw new Error('Dieta no encontrada');
+  }
+
+  const validMealTypes = ['desayuno', 'almuerzo', 'comida', 'merienda', 'cena'];
+
+  // Validaciones previas
+  for (const data of mealsData) {
+    if (data.dayOfWeek < 0 || data.dayOfWeek > 6) {
+      throw new Error(`dayOfWeek ${data.dayOfWeek} inválido. Debe estar entre 0 y 6.`);
+    }
+    if (!validMealTypes.includes(data.mealType.toLowerCase())) {
+      throw new Error(`mealType '${data.mealType}' inválido.`);
+    }
+  }
+
+  return prisma.$transaction(
+    mealsData.map(data =>
+      prisma.dietMeal.create({
+        data: {
+          dietId,
+          mealId: data.mealId,
+          dayOfWeek: data.dayOfWeek,
+          mealType: data.mealType.toLowerCase(),
+          order: data.order,
+          quantity: data.quantity || null,
+          notes: data.notes || null,
+        },
+        include: {
+          meal: true,
+        },
+      })
+    )
+  );
+}
+
+/**
  * Actualiza una comida en una dieta.
  */
 export async function updateDietMeal(id: string, data: {
@@ -250,7 +299,7 @@ export async function reorderDietMeals(dietId: string, meals: Array<{
   }
 
   // Actualizar cada comida
-  const updates = meals.map(m => 
+  const updates = meals.map(m =>
     prisma.dietMeal.update({
       where: { id: m.id },
       data: {

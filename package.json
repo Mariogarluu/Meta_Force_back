@@ -15,7 +15,7 @@
     "test": "NODE_ENV=test NODE_OPTIONS=--experimental-vm-modules jest",
     "test:watch": "NODE_ENV=test NODE_OPTIONS=--experimental-vm-modules jest --watch",
     "test:coverage": "NODE_ENV=test NODE_OPTIONS=--experimental-vm-modules jest --coverage",
-    "build": "npx prisma generate",
+    "build": "npx prisma generate && tsc -p .",
     "prisma:studio": "dotenv -e .env -- npx prisma studio",
     "prisma:studio:prod": "dotenv -e .env.production.local -- prisma studio",
     "prisma:status": "dotenv -e .env -- npx prisma migrate status",

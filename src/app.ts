@@ -88,26 +88,26 @@ app.use((req, res, next) => {
 });
 
 // 3. CONFIGURACIÓN CORS
-app.use(
-  corsSafe({
-    origin: (origin: any, callback: any) => {
-      // Permitir acceso desde Vercel Live y Vercel Previews
-      if (!origin || allowedOrigins.includes(origin) || origin.endsWith('.vercel.app') || origin === 'https://vercel.live') {
-        callback(null, true);
-      } else {
-        console.error(`[CORS Blocked] Origin: ${origin}`);
-        callback(new Error('Not allowed by CORS'));
-      }
-    },
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
-    credentials: true,
-    maxAge: 86400
-  })
-);
+const corsOptions = {
+  origin: (origin: any, callback: any) => {
+    // Permitir acceso sin origen (apps nativas Android) y orígenes permitidos
+    if (!origin || allowedOrigins.includes(origin) || origin.endsWith('.vercel.app') || origin === 'https://vercel.live') {
+      callback(null, true);
+    } else {
+      console.error(`[CORS Blocked] Origin: ${origin}`);
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
+  credentials: true,
+  maxAge: 86400
+};
+
+app.use(corsSafe(corsOptions));
 
 // 4. PRE-FLIGHT OPTIONS HANDLER (antes del rate limiter)
-app.options('*', corsSafe() as any);
+app.options('*', corsSafe(corsOptions) as any);
 
 // 5. PARSERS (ANTES DE SEGURIDAD DE BODY)
 app.use(morgan('dev'));

@@ -106,10 +106,7 @@ const corsOptions = {
 
 app.use(corsSafe(corsOptions));
 
-// 4. PRE-FLIGHT OPTIONS HANDLER (antes del rate limiter)
-app.options('*', corsSafe(corsOptions) as any);
-
-// 5. PARSERS (ANTES DE SEGURIDAD DE BODY)
+// 4. PARSERS (ANTES DE SEGURIDAD DE BODY)
 app.use(morgan('dev'));
 // @ts-ignore
 app.use(cookieParserSafe());

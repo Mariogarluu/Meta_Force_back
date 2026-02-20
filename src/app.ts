@@ -70,8 +70,8 @@ app.use((req, res, next) => {
         imgSrc: ["'self'", "data:", "https:", "validator.swagger.io", "https://vercel.com", "https://assets.vercel.com"],
         fontSrc: ["'self'", "data:", "https:", "https://assets.vercel.com"],
         connectSrc: isDev
-          ? ["'self'", "http://localhost:*", "ws://localhost:*", "https:", "https://vercel.live", "wss://*.pusher.com"]
-          : ["'self'", "https:", "https://vercel.live", "wss://*.pusher.com"],
+          ? ["'self'", "http://localhost:*", "ws://localhost:*", "https:", "data:", "https://vercel.live", "wss://*.pusher.com"]
+          : ["'self'", "https:", "data:", "https://vercel.live", "wss://*.pusher.com"],
         objectSrc: ["'none'"],
         mediaSrc: ["'self'"],
         frameSrc: ["'none'", "https://vercel.live"],

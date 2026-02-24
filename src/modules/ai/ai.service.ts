@@ -205,8 +205,37 @@ export async function getUserSessions(userId: string) {
  */
 export async function saveAiPlan(userId: string, plan: AiGeneratedPlan) {
     if (plan.type === "WORKOUT") {
+        // 1. Resolver ejercicios fuera de la transacción para evitar envenenarla con P2002
+        let dbExercises: Record<string, string> = {};
+        const safeDays = Array.isArray(plan.days) ? plan.days : [];
+        for (const day of safeDays) {
+            const items = day?.items || day?.exercises || day?.meals || [];
+            if (!Array.isArray(items)) continue;
+            for (const item of items) {
+                if (!item || !item.name) continue;
+                const itemName = String(item.name).trim();
+                if (dbExercises[itemName]) continue;
+
+                let dbEx = await (prisma as any).exercise.findFirst({
+                    where: { name: { equals: itemName, mode: 'insensitive' } }
+                });
+                if (!dbEx) {
+                    try {
+                        dbEx = await (prisma as any).exercise.create({
+                            data: { name: itemName, description: 'Generado por AI' }
+                        });
+                    } catch (e: any) {
+                        if (e.code === 'P2002') {
+                            dbEx = await (prisma as any).exercise.findFirst({ where: { name: itemName } });
+                        }
+                    }
+                }
+                if (dbEx) dbExercises[itemName] = dbEx.id;
+            }
+        }
+
+        // 2. Ejecutar transacción segura
         return prisma.$transaction(async (tx) => {
-            // 1. Crear Entrenamiento
             const workout = await tx.workout.create({
                 data: {
                     userId,
@@ -215,8 +244,6 @@ export async function saveAiPlan(userId: string, plan: AiGeneratedPlan) {
                 }
             });
 
-            // 2. Procesar días y ejercicios
-            const safeDays = Array.isArray(plan.days) ? plan.days : [];
             for (let d = 0; d < safeDays.length; d++) {
                 const day = safeDays[d];
                 if (!day) continue;
@@ -226,27 +253,14 @@ export async function saveAiPlan(userId: string, plan: AiGeneratedPlan) {
                 for (let i = 0; i < items.length; i++) {
                     const item = items[i];
                     if (!item || !item.name) continue;
+                    const itemName = String(item.name).trim();
+                    const exerciseId = dbExercises[itemName];
+                    if (!exerciseId) continue;
 
-                    // Buscar si existe un ejercicio con ese nombre (case insensitive approx)
-                    let dbExercise = await tx.exercise.findFirst({
-                        where: { name: { contains: item.name, mode: 'insensitive' } }
-                    });
-
-                    // Si no existe, crearlo al vuelo
-                    if (!dbExercise) {
-                        dbExercise = await tx.exercise.create({
-                            data: {
-                                name: item.name,
-                                description: 'Generado por AI'
-                            }
-                        });
-                    }
-
-                    // Vincular al entrenamiento
                     await tx.workoutExercise.create({
                         data: {
                             workoutId: workout.id,
-                            exerciseId: dbExercise.id,
+                            exerciseId: exerciseId,
                             dayOfWeek: typeof day?.dayOfWeek === 'number' ? day.dayOfWeek : (d + 1),
                             order: i,
                             sets: Number(item.sets) || 3,
@@ -256,12 +270,40 @@ export async function saveAiPlan(userId: string, plan: AiGeneratedPlan) {
                     });
                 }
             }
-
             return workout;
         });
     } else if (plan.type === "DIET") {
+        // 1. Resolver comidas fuera de la transacción para evitar envenenar P2002
+        let dbMeals: Record<string, string> = {};
+        const safeDays = Array.isArray(plan.days) ? plan.days : [];
+        for (const day of safeDays) {
+            const items = day?.items || day?.exercises || day?.meals || [];
+            if (!Array.isArray(items)) continue;
+            for (const item of items) {
+                if (!item || !item.name) continue;
+                const itemName = String(item.name).trim();
+                if (dbMeals[itemName]) continue;
+
+                let dbM = await (prisma as any).meal.findFirst({
+                    where: { name: { equals: itemName, mode: 'insensitive' } }
+                });
+                if (!dbM) {
+                    try {
+                        dbM = await (prisma as any).meal.create({
+                            data: { name: itemName, description: 'Generada por AI' }
+                        });
+                    } catch (e: any) {
+                        if (e.code === 'P2002') {
+                            dbM = await (prisma as any).meal.findFirst({ where: { name: itemName } });
+                        }
+                    }
+                }
+                if (dbM) dbMeals[itemName] = dbM.id;
+            }
+        }
+
+        // 2. Ejecutar transacción segura
         return prisma.$transaction(async (tx) => {
-            // 1. Crear Dieta
             const diet = await tx.diet.create({
                 data: {
                     userId,
@@ -270,8 +312,6 @@ export async function saveAiPlan(userId: string, plan: AiGeneratedPlan) {
                 }
             });
 
-            // 2. Procesar días y comidas
-            const safeDays = Array.isArray(plan.days) ? plan.days : [];
             for (let d = 0; d < safeDays.length; d++) {
                 const day = safeDays[d];
                 if (!day) continue;
@@ -281,38 +321,11 @@ export async function saveAiPlan(userId: string, plan: AiGeneratedPlan) {
                 for (let i = 0; i < items.length; i++) {
                     const item = items[i];
                     if (!item || !item.name) continue;
+                    const itemName = String(item.name).trim();
+                    const mealId = dbMeals[itemName];
+                    if (!mealId) continue;
 
-                    // Buscar si existe una comida
-                    let dbMeal = await tx.meal.findFirst({
-                        where: { name: { contains: item.name, mode: 'insensitive' } }
-                    });
-
-                    // Si no existe, crearla
-                    if (!dbMeal) {
-                        try {
-                            dbMeal = await tx.meal.create({
-                                data: {
-                                    name: item.name,
-                                    description: 'Generada por AI'
-                                }
-                            });
-                        } catch (e: any) {
-                            // If another concurrent request or slight variation created it and violated unique
-                            // just fetch the existing one again
-                            if (e.code === 'P2002') {
-                                dbMeal = await tx.meal.findFirst({
-                                    where: { name: item.name }
-                                });
-                            }
-
-                            // If still fails, skip this item
-                            if (!dbMeal) continue;
-                        }
-                    }
-
-                    // Vincular a la dieta
-                    // Asignamos un mealType genérico o adivinado
-                    const typeLower = String(item.name).toLowerCase();
+                    const typeLower = itemName.toLowerCase();
                     let mealType = "almuerzo";
                     if (typeLower.includes("desayuno") || typeLower.includes("breakfast")) mealType = "desayuno";
                     else if (typeLower.includes("cena") || typeLower.includes("dinner")) mealType = "cena";
@@ -321,7 +334,7 @@ export async function saveAiPlan(userId: string, plan: AiGeneratedPlan) {
                     await tx.dietMeal.create({
                         data: {
                             dietId: diet.id,
-                            mealId: dbMeal.id,
+                            mealId: mealId,
                             dayOfWeek: typeof day?.dayOfWeek === 'number' ? day.dayOfWeek : (d + 1),
                             mealType: mealType,
                             order: i,
@@ -330,7 +343,6 @@ export async function saveAiPlan(userId: string, plan: AiGeneratedPlan) {
                     });
                 }
             }
-
             return diet;
         });
     } else {

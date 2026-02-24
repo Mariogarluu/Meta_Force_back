@@ -116,13 +116,13 @@ export async function chatWithAi(userId: string, userMessage: string, sessionId?
                 "days": [
                     {
                         "dayOfWeek": 1,
-                        "items": [
+                        "items": [ // CRITICAL: MANTIENE ESTA CLAVE COMO "items". NUNCA uses "exercises" ni "meals".
                             {
                                 "name": "Nombre Ejercicio o Comida",
                                 "sets": 4, // Solo si es WORKOUT
                                 "reps": 10, // Solo si es WORKOUT
                                 "quantity": "1 porción", // Solo si es DIET
-                                "notes": "Notas" 
+                                "notes": "Notas adicionales" 
                             }
                         ]
                     }
@@ -277,12 +277,25 @@ export async function saveAiPlan(userId: string, plan: AiGeneratedPlan) {
 
                     // Si no existe, crearla
                     if (!dbMeal) {
-                        dbMeal = await tx.meal.create({
-                            data: {
-                                name: item.name,
-                                description: 'Generada por AI'
+                        try {
+                            dbMeal = await tx.meal.create({
+                                data: {
+                                    name: item.name,
+                                    description: 'Generada por AI'
+                                }
+                            });
+                        } catch (e: any) {
+                            // If another concurrent request or slight variation created it and violated unique
+                            // just fetch the existing one again
+                            if (e.code === 'P2002') {
+                                dbMeal = await tx.meal.findFirst({
+                                    where: { name: item.name }
+                                });
                             }
-                        });
+
+                            // If still fails, skip this item
+                            if (!dbMeal) continue;
+                        }
                     }
 
                     // Vincular a la dieta

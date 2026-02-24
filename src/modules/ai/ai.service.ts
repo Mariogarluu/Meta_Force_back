@@ -111,9 +111,20 @@ export async function chatWithAi(userId: string, userMessage: string, sessionId?
         Estructura JSON para rutinas:
         {
             "plan": {
-                "name": "Nombre",
-                "description": "Desc",
-                "days": [...]
+                "name": "Nombre de Rutina",
+                "description": "Breve descripción",
+                "days": [
+                    {
+                        "dayOfWeek": 1,
+                        "exercises": [
+                            {
+                                "exerciseName": "Nombre de la Máquina/Ejercicio (ej. Press Banca)",
+                                "sets": 4,
+                                "reps": 10
+                            }
+                        ]
+                    }
+                ]
             }
         }
     `;

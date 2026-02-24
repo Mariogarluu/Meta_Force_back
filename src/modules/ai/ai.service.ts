@@ -3,28 +3,27 @@ import { logger } from '../../utils/logger.js';
 import { env } from '../../config/env.js';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
-// Estructura de respuesta para rutinas (mantener compatible)
-interface AiWorkoutPlan {
+// Estructura de respuesta combinada para rutinas o dietas
+export interface AiGeneratedPlan {
+    type: "WORKOUT" | "DIET";
     name: string;
     description: string;
     days: {
         dayOfWeek: number; // 0-6
-        exercises: {
-            exerciseName: string;
-            matchId?: string;
-            sets: number;
-            reps: number;
-            weight?: number;
-            restSeconds?: number;
+        items: {
+            name: string;
+            sets?: number;
+            reps?: number;
+            quantity?: string;
             notes?: string;
         }[];
     }[];
 }
 
 // Interfaz para respuestas de chat
-interface ChatResponse {
+export interface ChatResponse {
     message: string;
-    plan?: AiWorkoutPlan; // Opcional, si la IA decide generar un plan
+    plan?: AiGeneratedPlan; // Opcional, si la IA decide generar un plan
 }
 
 /**
@@ -108,19 +107,22 @@ export async function chatWithAi(userId: string, userMessage: string, sessionId?
         1. Si el usuario pregunta sobre CUALQUIER tema que no sea deporte, dieta o salud (ej: política, cine, matemáticas), DEBES rechazar responder educadamente. Ejemplo: "Soy un entrenador, solo puedo ayudarte con tus metas físicas."
         2. Puedes generar rutinas de ejercicios. Si el usuario pide una rutina, devuelve un JSON ESTRUCTURADO dentro de un bloque de código \`\`\`json ... \`\`\`.
         
-        Estructura JSON para rutinas:
+        Estructura JSON:
         {
             "plan": {
-                "name": "Nombre de Rutina",
+                "type": "WORKOUT", // o "DIET"
+                "name": "Nombre del Plan",
                 "description": "Breve descripción",
                 "days": [
                     {
                         "dayOfWeek": 1,
-                        "exercises": [
+                        "items": [
                             {
-                                "exerciseName": "Nombre de la Máquina/Ejercicio (ej. Press Banca)",
-                                "sets": 4,
-                                "reps": 10
+                                "name": "Nombre Ejercicio o Comida",
+                                "sets": 4, // Solo si es WORKOUT
+                                "reps": 10, // Solo si es WORKOUT
+                                "quantity": "1 porción", // Solo si es DIET
+                                "notes": "Notas" 
                             }
                         ]
                     }
@@ -136,9 +138,9 @@ export async function chatWithAi(userId: string, userMessage: string, sessionId?
     // 4. Llamar a la IA
     const aiRawResponse = await callGemini(systemPrompt as string, fullPrompt);
 
-    // 5. Procesar respuesta (detectar si hay JSON de rutina)
+    // 5. Procesar respuesta (detectar si hay JSON)
     let finalMessage = aiRawResponse;
-    let generatedPlan: AiWorkoutPlan | undefined;
+    let generatedPlan: AiGeneratedPlan | undefined;
 
     // Intentar extraer JSON si existe
     const jsonMatch: RegExpMatchArray | null = aiRawResponse.match(/```json([\s\S]*?)```/);
@@ -194,4 +196,119 @@ export async function getUserSessions(userId: string) {
             }
         }
     });
+}
+
+/**
+ * Guarda un plan generado por la IA en la base de datos (Workout o Diet)
+ */
+export async function saveAiPlan(userId: string, plan: AiGeneratedPlan) {
+    if (plan.type === "WORKOUT") {
+        return prisma.$transaction(async (tx) => {
+            // 1. Crear Entrenamiento
+            const workout = await tx.workout.create({
+                data: {
+                    userId,
+                    name: plan.name,
+                    description: plan.description,
+                }
+            });
+
+            // 2. Procesar días y ejercicios
+            for (const day of plan.days) {
+                if (!day.items) continue;
+                for (let i = 0; i < day.items.length; i++) {
+                    const item = day.items[i];
+                    if (!item) continue;
+
+                    // Buscar si existe un ejercicio con ese nombre (case insensitive approx)
+                    let dbExercise = await tx.exercise.findFirst({
+                        where: { name: { contains: item.name, mode: 'insensitive' } }
+                    });
+
+                    // Si no existe, crearlo al vuelo
+                    if (!dbExercise) {
+                        dbExercise = await tx.exercise.create({
+                            data: {
+                                name: item.name,
+                                description: 'Generado por AI'
+                            }
+                        });
+                    }
+
+                    // Vincular al entrenamiento
+                    await tx.workoutExercise.create({
+                        data: {
+                            workoutId: workout.id,
+                            exerciseId: dbExercise.id,
+                            dayOfWeek: day.dayOfWeek,
+                            order: i,
+                            sets: item.sets || 3,
+                            reps: item.reps || 10,
+                            notes: item.notes || null,
+                        }
+                    });
+                }
+            }
+
+            return workout;
+        });
+    } else if (plan.type === "DIET") {
+        return prisma.$transaction(async (tx) => {
+            // 1. Crear Dieta
+            const diet = await tx.diet.create({
+                data: {
+                    userId,
+                    name: plan.name,
+                    description: plan.description,
+                }
+            });
+
+            // 2. Procesar días y comidas
+            for (const day of plan.days) {
+                if (!day.items) continue;
+                for (let i = 0; i < day.items.length; i++) {
+                    const item = day.items[i];
+                    if (!item) continue;
+
+                    // Buscar si existe una comida
+                    let dbMeal = await tx.meal.findFirst({
+                        where: { name: { contains: item.name, mode: 'insensitive' } }
+                    });
+
+                    // Si no existe, crearla
+                    if (!dbMeal) {
+                        dbMeal = await tx.meal.create({
+                            data: {
+                                name: item.name,
+                                description: 'Generada por AI'
+                            }
+                        });
+                    }
+
+                    // Vincular a la dieta
+                    // Asignamos un mealType genérico o adivinado
+                    const typeLower = item.name.toLowerCase();
+                    let mealType = "almuerzo";
+                    if (typeLower.includes("desayuno")) mealType = "desayuno";
+                    else if (typeLower.includes("cena")) mealType = "cena";
+                    else if (typeLower.includes("merienda")) mealType = "merienda";
+
+                    await tx.dietMeal.create({
+                        data: {
+                            dietId: diet.id,
+                            mealId: dbMeal.id,
+                            dayOfWeek: day.dayOfWeek,
+                            mealType: mealType,
+                            order: i,
+                            notes: item.quantity ? `${item.quantity}. ${item.notes || ''}` : (item.notes || null),
+                        }
+                    });
+                }
+            }
+
+            return diet;
+        });
+    } else {
+        throw new Error('Tipo de plan no soportado (debe ser WORKOUT o DIET)');
+    }
 }

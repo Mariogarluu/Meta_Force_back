@@ -10,13 +10,15 @@ export interface AiGeneratedPlan {
     description: string;
     days: {
         dayOfWeek: number; // 0-6
-        items: {
+        items?: {
             name: string;
             sets?: number;
             reps?: number;
             quantity?: string;
             notes?: string;
         }[];
+        exercises?: any[]; // Fallback for AI hallucination
+        meals?: any[]; // Fallback for AI hallucination
     }[];
 }
 
@@ -208,17 +210,22 @@ export async function saveAiPlan(userId: string, plan: AiGeneratedPlan) {
             const workout = await tx.workout.create({
                 data: {
                     userId,
-                    name: plan.name,
-                    description: plan.description,
+                    name: plan.name || 'Rutina de Entrenamiento',
+                    description: plan.description || 'Generado por IA',
                 }
             });
 
             // 2. Procesar días y ejercicios
-            for (const day of plan.days) {
-                if (!day.items) continue;
-                for (let i = 0; i < day.items.length; i++) {
-                    const item = day.items[i];
-                    if (!item) continue;
+            const safeDays = Array.isArray(plan.days) ? plan.days : [];
+            for (let d = 0; d < safeDays.length; d++) {
+                const day = safeDays[d];
+                if (!day) continue;
+                const items = day.items || day.exercises || day.meals || [];
+                if (!Array.isArray(items)) continue;
+
+                for (let i = 0; i < items.length; i++) {
+                    const item = items[i];
+                    if (!item || !item.name) continue;
 
                     // Buscar si existe un ejercicio con ese nombre (case insensitive approx)
                     let dbExercise = await tx.exercise.findFirst({
@@ -240,10 +247,10 @@ export async function saveAiPlan(userId: string, plan: AiGeneratedPlan) {
                         data: {
                             workoutId: workout.id,
                             exerciseId: dbExercise.id,
-                            dayOfWeek: day.dayOfWeek,
+                            dayOfWeek: typeof day?.dayOfWeek === 'number' ? day.dayOfWeek : (d + 1),
                             order: i,
-                            sets: item.sets || 3,
-                            reps: item.reps || 10,
+                            sets: Number(item.sets) || 3,
+                            reps: Number(item.reps) || 10,
                             notes: item.notes || null,
                         }
                     });
@@ -258,17 +265,22 @@ export async function saveAiPlan(userId: string, plan: AiGeneratedPlan) {
             const diet = await tx.diet.create({
                 data: {
                     userId,
-                    name: plan.name,
-                    description: plan.description,
+                    name: plan.name || 'Plan de Nutrición',
+                    description: plan.description || 'Generado por IA',
                 }
             });
 
             // 2. Procesar días y comidas
-            for (const day of plan.days) {
-                if (!day.items) continue;
-                for (let i = 0; i < day.items.length; i++) {
-                    const item = day.items[i];
-                    if (!item) continue;
+            const safeDays = Array.isArray(plan.days) ? plan.days : [];
+            for (let d = 0; d < safeDays.length; d++) {
+                const day = safeDays[d];
+                if (!day) continue;
+                const items = day.items || day.exercises || day.meals || [];
+                if (!Array.isArray(items)) continue;
+
+                for (let i = 0; i < items.length; i++) {
+                    const item = items[i];
+                    if (!item || !item.name) continue;
 
                     // Buscar si existe una comida
                     let dbMeal = await tx.meal.findFirst({
@@ -300,17 +312,17 @@ export async function saveAiPlan(userId: string, plan: AiGeneratedPlan) {
 
                     // Vincular a la dieta
                     // Asignamos un mealType genérico o adivinado
-                    const typeLower = item.name.toLowerCase();
+                    const typeLower = String(item.name).toLowerCase();
                     let mealType = "almuerzo";
-                    if (typeLower.includes("desayuno")) mealType = "desayuno";
-                    else if (typeLower.includes("cena")) mealType = "cena";
-                    else if (typeLower.includes("merienda")) mealType = "merienda";
+                    if (typeLower.includes("desayuno") || typeLower.includes("breakfast")) mealType = "desayuno";
+                    else if (typeLower.includes("cena") || typeLower.includes("dinner")) mealType = "cena";
+                    else if (typeLower.includes("merienda") || typeLower.includes("snack")) mealType = "merienda";
 
                     await tx.dietMeal.create({
                         data: {
                             dietId: diet.id,
                             mealId: dbMeal.id,
-                            dayOfWeek: day.dayOfWeek,
+                            dayOfWeek: typeof day?.dayOfWeek === 'number' ? day.dayOfWeek : (d + 1),
                             mealType: mealType,
                             order: i,
                             notes: item.quantity ? `${item.quantity}. ${item.notes || ''}` : (item.notes || null),

@@ -48,3 +48,23 @@ export async function savePlanCtrl(req: Request, res: Response) {
         return res.status(500).json({ message: error.message || 'Error guardando plan' });
     }
 }
+
+export async function deleteSessionCtrl(req: Request, res: Response) {
+    try {
+        const userId = (req as any).user.sub;
+        const { sessionId } = req.params;
+
+        if (!sessionId) {
+            return res.status(400).json({ message: 'Se requiere el ID de la sesión' });
+        }
+
+        const result = await import('./ai.service.js').then(m => m.deleteSession(userId, sessionId));
+        return res.status(200).json(result);
+    } catch (error: any) {
+        logger.error('Error en deleteSessionCtrl:', error);
+        if (error.message === 'Sesión no encontrada' || error.message === 'No tienes permiso para eliminar esta sesión') {
+            return res.status(403).json({ message: error.message });
+        }
+        return res.status(500).json({ message: 'Error al eliminar la sesión' });
+    }
+}

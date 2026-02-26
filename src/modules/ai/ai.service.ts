@@ -194,10 +194,35 @@ export async function getUserSessions(userId: string) {
         include: {
             messages: {
                 orderBy: { createdAt: 'desc' },
-                take: 1
             }
         }
     });
+}
+
+/**
+ * Elimina una sesión de chat y sus mensajes asociados
+ */
+export async function deleteSession(userId: string, sessionId: string) {
+    // 1. Verificar que la sesión existe y pertenece al usuario
+    const session = await (prisma as any).aiChatSession.findUnique({
+        where: { id: sessionId }
+    });
+
+    if (!session) {
+        throw new Error('Sesión no encontrada');
+    }
+
+    if (session.userId !== userId) {
+        throw new Error('No tienes permiso para eliminar esta sesión');
+    }
+
+    // 2. Eliminar la sesión (los mensajes se eliminarán en cascada gracias a onDelete: Cascade en Prisma, 
+    // o podemos borrarlos explícitamente si no está configurado). Prisma maneja Cascade si está en schema.
+    await (prisma as any).aiChatSession.delete({
+        where: { id: sessionId }
+    });
+
+    return { success: true, message: 'Sesión eliminada correctamente' };
 }
 
 /**

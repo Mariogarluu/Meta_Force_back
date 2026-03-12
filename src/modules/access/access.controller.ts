@@ -12,6 +12,9 @@ import { Role } from '../../types/role.js';
  * @param req - Request con los datos del QR en req.body y el usuario autenticado en req.user
  * @param res - Response con el resultado de la operación (entry/exit) y datos del usuario
  */
+/**
+ * Controller to process a scanned QR code for entry or exit.
+ */
 export async function scanQRCtrl(req: Request, res: Response) {
   try {
     if (!req.user) {

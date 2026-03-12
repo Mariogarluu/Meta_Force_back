@@ -7,6 +7,13 @@ import { createNotification } from '../notifications/notifications.service.js';
 /**
  * Crea un nuevo usuario en el sistema.
  */
+/**
+ * Creates a new user in the database.
+ * @param email - Unique email address
+ * @param name - Display name
+ * @param passwordHash - Bcrypt hashed password
+ * @param role - System role
+ */
 export async function createUser(email: string, name: string, passwordHash: string, role?: Role | string) {
   return prisma.user.create({
     data: { 
@@ -19,10 +26,16 @@ export async function createUser(email: string, name: string, passwordHash: stri
   });
 }
 
+/**
+ * Finds a user by their unique email.
+ */
 export async function findUserByEmail(email: string) {
   return prisma.user.findUnique({ where: { email } });
 }
 
+/**
+ * Finds a user by their unique ID.
+ */
 export async function findUserById(id: string) {
   return prisma.user.findUnique({
     where: { id },
@@ -32,6 +45,9 @@ export async function findUserById(id: string) {
   });
 }
 
+/**
+ * Lists users, optionally filtered by center.
+ */
 export async function listUsers(centerId?: string | null) {
   const where = centerId ? { centerId } : {};
   return prisma.user.findMany({
@@ -122,10 +138,16 @@ export async function updateUser(id: string, data: { name?: string; email?: stri
   return updatedUser;
 }
 
+/**
+ * Deletes a user record by ID.
+ */
 export async function deleteUser(id: string) {
   return prisma.user.delete({ where: { id } });
 }
 
+/**
+ * Updates a user's basic profile information.
+ */
 export async function updateProfile(userId: string, data: { name?: string; email?: string; profileImageUrl?: string | null }) {
   return prisma.user.update({
     where: { id: userId },

@@ -1,3 +1,7 @@
+/**
+ * Main entry point of the application.
+ * Starts the Express server and handles process-level events.
+ */
 import app from './app.js';
 import { env } from './config/env.js';
 import { logger } from './utils/logger.js';

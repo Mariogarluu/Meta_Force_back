@@ -20,7 +20,9 @@
     "prisma:studio:prod": "dotenv -e .env.production.local -- prisma studio",
     "prisma:status": "dotenv -e .env -- npx prisma migrate status",
     "prisma:diagnose": "node scripts/diagnose-migrations.js",
-    "vercel-reset": "npx prisma migrate reset --force && npm run build"
+    "vercel-reset": "npx prisma migrate reset --force && npm run build",
+    "doc": "typedoc --out docs src",
+    "doc:serve": "npx http-server docs -p 8081"
   },
   "keywords": [],
   "author": "",
@@ -70,6 +72,7 @@
     "ts-jest": "^29.4.5",
     "ts-node": "^10.9.2",
     "tsx": "^4.20.6",
+    "typedoc": "^0.28.17",
     "typescript": "^5.9.3"
   }
 }

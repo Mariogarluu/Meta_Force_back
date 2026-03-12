@@ -5,6 +5,15 @@ import { createUser, findUserByEmail, getMeWithCenter } from '../users/users.ser
 import { Role } from '../../types/role.js';
 import { notifySuperAdmins } from '../notifications/notifications.service.js';
 
+/**
+ * Registers a new user in the system.
+ * Hashes the password, creates the user record, and generates a JWT.
+ * @param email - User's email address
+ * @param name - User's full name
+ * @param password - Plain text password (will be hashed)
+ * @param role - Optional initial role
+ * @returns Object containing user profile and JWT
+ */
 export async function register(email: string, name: string, password: string, role?: Role) {
   const existing = await findUserByEmail(email);
   if (existing) {
@@ -48,6 +57,13 @@ export async function register(email: string, name: string, password: string, ro
   };
 }
 
+/**
+ * Authenticates a user with email and password.
+ * Verifies credentials, checks if the account is ACTIVE, and generates a JWT.
+ * @param email - User's email address
+ * @param password - Plain text password
+ * @returns Object containing user profile and JWT
+ */
 export async function login(email: string, password: string) {
   const user = await findUserByEmail(email);
   if (!user) {

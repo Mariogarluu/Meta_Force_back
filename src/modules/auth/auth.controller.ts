@@ -14,6 +14,11 @@ const setCookie = (res: Response, token: string) => {
   });
 };
 
+/**
+ * Handles user registration.
+ * Validates input, creates a new user, sends notifications to admins,
+ * and sets an authentication cookie.
+ */
 export async function registerCtrl(req: Request, res: Response) {
   try {
     const { email, name, password, role } = registerSchema.parse(req.body);
@@ -32,6 +37,11 @@ export async function registerCtrl(req: Request, res: Response) {
   }
 }
 
+/**
+ * Handles user login.
+ * Validates credentials, checks account status, and sets an authentication cookie
+ * upon successful authentication.
+ */
 export async function loginCtrl(req: Request, res: Response) {
   try {
     const { email, password } = loginSchema.parse(req.body);
@@ -50,6 +60,10 @@ export async function loginCtrl(req: Request, res: Response) {
   }
 }
 
+/**
+ * Handles user logout.
+ * Clears the authentication cookie and ends the session.
+ */
 export function logoutCtrl(_req: Request, res: Response) {
   res.clearCookie(COOKIE_NAME, {
     httpOnly: true,

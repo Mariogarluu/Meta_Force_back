@@ -11,6 +11,9 @@ import {
 /**
  * Controlador para crear un nuevo ejercicio en el banco.
  */
+/**
+ * Controller to create a new exercise.
+ */
 export async function createExerciseCtrl(req: Request, res: Response) {
   try {
     const exercise = await createExercise(req.body);
@@ -24,6 +27,9 @@ export async function createExerciseCtrl(req: Request, res: Response) {
 /**
  * Controlador para listar todos los ejercicios.
  * Puede filtrar por tipo de máquina si se proporciona machineTypeId en query params.
+ */
+/**
+ * Controller to list all exercises.
  */
 export async function listExercisesCtrl(req: Request, res: Response) {
   try {

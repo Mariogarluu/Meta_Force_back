@@ -11,6 +11,10 @@ import {
  * Controlador para crear un nuevo plan de membresía.
  * Solo SUPERADMIN puede crear planes (protegido por middleware hasRole).
  */
+/**
+ * Controller to create a new membership plan.
+ * Restricted to SUPERADMIN.
+ */
 export async function createMembershipPlanCtrl(req: Request, res: Response) {
   try {
     const plan = await createMembershipPlan(req.body);

@@ -28,6 +28,11 @@ import membershipRoutes from './modules/memberships/memberships.routes.js';
 import healthRoutes from './modules/health/health.routes.js';
 import aiRoutes from './modules/ai/ai.routes.js';
 
+/**
+ * Main application entry point for the Meta-Force Backend.
+ * Configures Express middleware, security policies (CORS, Helmet, Rate Limiting),
+ * Swagger documentation, and API routing.
+ */
 const app: Application = express();
 const isDev = process.env['NODE_ENV'] === 'development';
 

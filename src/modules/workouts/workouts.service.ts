@@ -3,6 +3,9 @@ import { prisma } from '../../config/db.js';
 /**
  * Crea un nuevo entrenamiento para un usuario.
  */
+/**
+ * Creates a new workout plan for a user.
+ */
 export async function createWorkout(userId: string, data: {
   name: string;
   description?: string;
@@ -47,6 +50,9 @@ export async function createWorkout(userId: string, data: {
 /**
  * Lista todos los entrenamientos.
  * Si se proporciona userId, lista solo los entrenamientos de ese usuario.
+ */
+/**
+ * Lists workout plans, optionally filtered by user.
  */
 export async function listWorkouts(userId?: string | null) {
   const where = userId

@@ -11,6 +11,10 @@ export class CloudinaryService {
    * @param userId - ID del usuario para nombrar la imagen
    * @returns URL pública de la imagen subida
    */
+/**
+ * Uploads a profile image for a specific user to Cloudinary.
+ * Applies transformations like cropping and quality optimization.
+ */
   static async uploadProfileImage(fileBuffer: Buffer, userId: string): Promise<string> {
     return new Promise((resolve, reject) => {
       const uploadStream = cloudinary.uploader.upload_stream(

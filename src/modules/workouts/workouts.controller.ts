@@ -17,6 +17,10 @@ import {
  * Controlador para crear un nuevo entrenamiento.
  * El entrenamiento se crea para el usuario autenticado.
  */
+/**
+ * Controller to create a new workout plan.
+ * Plans are associated with the authenticated user.
+ */
 export async function createWorkoutCtrl(req: Request, res: Response) {
   try {
     if (!req.user) return res.status(401).json({ message: 'No autorizado' });
@@ -31,6 +35,10 @@ export async function createWorkoutCtrl(req: Request, res: Response) {
  * Controlador para listar entrenamientos.
  * Puede filtrar por usuario si se proporciona userId en query params.
  * Los entrenadores pueden ver entrenamientos de otros usuarios.
+ */
+/**
+ * Controller to list workout plans.
+ * Supports filtering by user ID (restricted to owners and trainers).
  */
 export async function listWorkoutsCtrl(req: Request, res: Response) {
   try {
@@ -117,6 +125,10 @@ export async function deleteWorkoutCtrl(req: Request, res: Response) {
 /**
  * Controlador para duplicar un entrenamiento existente.
  * Crea una copia con el mismo contenido y un nombre con sufijo (1), (2), etc.
+ */
+/**
+ * Controller to duplicate an existing workout.
+ * Creates a unique copy with a numbered suffix.
  */
 export async function duplicateWorkoutCtrl(req: Request, res: Response) {
   try {

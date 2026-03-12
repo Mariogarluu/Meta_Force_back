@@ -12,6 +12,14 @@ import { Role } from '../../types/role.js';
  * @param req - Request con los datos del centro en el body
  * @param res - Response con el centro creado o error
  */
+/**
+ * Controller to create a new gym center.
+ * Restricted to SUPERADMIN.
+ */
+/**
+ * Controller to create a new gym center.
+ * Restricted to SUPERADMIN.
+ */
 export async function createCenterCtrl(req: Request, res: Response) {
   try {
     const center = await createCenter(req.body);
@@ -30,6 +38,12 @@ export async function createCenterCtrl(req: Request, res: Response) {
  * 
  * @param req - Request con el usuario autenticado en req.user
  * @param res - Response con la lista de centros filtrada según permisos
+ */
+/**
+ * Controller to list centers with role-based filtering.
+ */
+/**
+ * Controller to list centers with role-based filtering.
  */
 export async function listCentersCtrl(req: Request, res: Response) {
   try {

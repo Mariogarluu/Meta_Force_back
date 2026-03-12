@@ -7,6 +7,9 @@ import { prisma } from '../config/db.js';
  * SUPERADMIN tiene acceso completo a todos los recursos sin restricciones.
  * Retorna 403 si el usuario no tiene un centro asignado o si no tiene permisos.
  */
+/**
+ * Middleware to ensure ADMIN_CENTER can only access their assigned center.
+ */
 export function checkCenterAccess(req: Request, res: Response, next: NextFunction) {
   if (!req.user) {
     return res.status(401).json({ message: 'No autorizado' });

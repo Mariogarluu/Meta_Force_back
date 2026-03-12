@@ -22,6 +22,9 @@ import {
 /**
  * Controlador para crear un nuevo tipo de máquina
  */
+/**
+ * Controller to create a new machine type.
+ */
 export async function createMachineTypeCtrl(req: Request, res: Response) {
   try {
     const machineType = await createMachineType(req.body);
@@ -36,6 +39,9 @@ export async function createMachineTypeCtrl(req: Request, res: Response) {
 
 /**
  * Controlador para listar todos los tipos de máquinas
+ */
+/**
+ * Controller to list all machine types.
  */
 export async function listMachineTypesCtrl(req: Request, res: Response) {
   try {
@@ -97,6 +103,9 @@ export async function deleteMachineTypeCtrl(req: Request, res: Response) {
 
 /**
  * Controlador para agregar instancias de un tipo de máquina a un centro
+ */
+/**
+ * Controller to add machine instances to a center.
  */
 export async function addMachineToCenterCtrl(req: Request, res: Response) {
   try {
@@ -160,6 +169,9 @@ export async function removeMachineFromCenterCtrl(req: Request, res: Response) {
 
 /**
  * Controlador para listar todas las máquinas (instancias)
+ */
+/**
+ * Controller to list all machines (instances).
  */
 export async function listMachinesCtrl(req: Request, res: Response) {
   try {

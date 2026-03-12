@@ -20,6 +20,11 @@ import { CloudinaryService } from '../../services/cloudinary.service.js';
  * SUPERADMIN puede ver todos los usuarios, ADMIN_CENTER solo ve usuarios de su centro.
  * Retorna un array con la información pública de cada usuario.
  */
+/**
+ * Controller to list system users.
+ * SUPERADMIN can see all users, ADMIN_CENTER only sees users assigned to their center.
+ * Returns an array of user objects with public profile information.
+ */
 export async function listUsersCtrl(req: Request, res: Response) {
   try {
     if (!req.user) {
@@ -41,6 +46,11 @@ export async function listUsersCtrl(req: Request, res: Response) {
  * Retorna solo entrenadores con estado ACTIVE.
  * Puede filtrar por centro si se proporciona centerId en query params.
  */
+/**
+ * Controller to list active trainers.
+ * Accessible to all authenticated users. Filters by active status and
+ * optionally by center if centerId is provided in query parameters.
+ */
 export async function listTrainersCtrl(req: Request, res: Response) {
   try {
     if (!req.user) {
@@ -59,6 +69,10 @@ export async function listTrainersCtrl(req: Request, res: Response) {
  * Controlador para obtener un usuario específico por su ID.
  * Verifica los permisos según el rol del usuario autenticado.
  * ADMIN_CENTER solo puede ver usuarios de su propio centro.
+ */
+/**
+ * Controller to retrieve a specific user by ID.
+ * Enforces permission checks based on the authenticated user's role.
  */
 export async function getUserCtrl(req: Request, res: Response) {
   try {
@@ -97,6 +111,10 @@ export async function getUserCtrl(req: Request, res: Response) {
  * Incluye información del centro asignado si tiene uno.
  * Utiliza el ID del usuario desde el token JWT.
  */
+/**
+ * Controller to get the currently authenticated user's profile.
+ * Uses the user ID from the JWT sub claim.
+ */
 export async function meCtrl(req: Request, res: Response) {
   try {
     if (!req.user) {
@@ -132,6 +150,12 @@ export async function meCtrl(req: Request, res: Response) {
  * 
  * @param req - Request con el ID del usuario en req.params.id y datos en req.body
  * @param res - Response con el usuario actualizado o error
+ */
+/**
+ * Controller to update an existing user.
+ * 
+ * IMPORTANT: centerId (physical location) can only be updated via the QR scanner endpoint.
+ * Enforces role-based restrictions for ADMIN_CENTER and role assignments.
  */
 export async function updateUserCtrl(req: Request, res: Response) {
   try {
@@ -190,6 +214,10 @@ export async function updateUserCtrl(req: Request, res: Response) {
  * Verifica que el usuario autenticado tenga permisos para eliminar al usuario especificado.
  * ADMIN_CENTER solo puede eliminar usuarios de su propio centro.
  */
+/**
+ * Controller to delete a user.
+ * Enforces permission checks to ensure admins only delete users they have access to.
+ */
 export async function deleteUserCtrl(req: Request, res: Response) {
   try {
     if (!req.user) {
@@ -231,6 +259,10 @@ export async function deleteUserCtrl(req: Request, res: Response) {
  * Solo permite modificar nombre y email, no permite cambiar el rol.
  * Utiliza el ID del usuario autenticado desde el token JWT.
  */
+/**
+ * Controller for users to update their own profile.
+ * Restricted to non-sensitive fields like name and email.
+ */
 export async function updateProfileCtrl(req: Request, res: Response) {
   try {
     if (!req.user) {
@@ -256,6 +288,10 @@ export async function updateProfileCtrl(req: Request, res: Response) {
  * Controlador para cambiar la contraseña del usuario autenticado.
  * Verifica que la contraseña actual sea correcta antes de actualizarla.
  * Hashea la nueva contraseña antes de almacenarla en la base de datos.
+ */
+/**
+ * Controller to change the authenticated user's password.
+ * Requires verification of the current password.
  */
 export async function changePasswordCtrl(req: Request, res: Response) {
   try {

@@ -35,6 +35,11 @@ model User {
   role             Role           @default(USER)
   status           UserStatus     @default(PENDING)
   profileImageUrl  String? // URL de la imagen de perfil en Cloudinary
+  gender           String?
+  birthDate        DateTime?
+  height           Float?         // en cm
+  currentWeight    Float?         // en kg
+  medicalNotes     String?        // para enfermedades, etc.
   createdAt        DateTime       @default(now())
   updatedAt        DateTime       @updatedAt
   centerId         String? // Centro actual
@@ -47,7 +52,8 @@ model User {
   workouts         Workout[] @relation("UserWorkouts") // Entrenamientos del usuario
   diets            Diet[] @relation("UserDiets") // Dietas del usuario
   chatSessions     AiChatSession[]
-
+  measurements     UserMeasurement[]
+  exerciseLogs     ExerciseLog[]
 }
 
 // ... (modelos Center, GymClass, Machine iguales)
@@ -199,6 +205,7 @@ model Exercise {
   createdAt     DateTime          @default(now())
   updatedAt     DateTime          @updatedAt
   workoutExercises WorkoutExercise[] // Ejercicios usados en entrenamientos
+  exerciseLogs     ExerciseLog[]     // Historial de progreso en el ejercicio
 
   @@index([machineTypeId])
 }
@@ -329,5 +336,37 @@ model AiChatMessage {
 
   @@index([sessionId])
   @@index([createdAt])
+}
+
+model UserMeasurement {
+  id               String   @id @default(cuid())
+  userId           String
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  date             DateTime @default(now())
+  weight           Float?
+  bodyFat          Float?
+  bmi              Float?
+  createdAt        DateTime @default(now())
+
+  @@index([userId])
+  @@index([date])
+}
+
+model ExerciseLog {
+  id               String   @id @default(cuid())
+  userId           String
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  exerciseId       String
+  exercise         Exercise @relation(fields: [exerciseId], references: [id], onDelete: Cascade)
+  date             DateTime @default(now())
+  sets             Int?
+  reps             Int?
+  weight           Float?   // peso levantado
+  notes            String?
+  createdAt        DateTime @default(now())
+
+  @@index([userId])
+  @@index([exerciseId])
+  @@index([date])
 }
 

@@ -27,6 +27,11 @@ export const updateUserSchema = {
 export const updateProfileSchema = z.object({
   name: z.string().min(2, 'El nombre debe tener al menos 2 caracteres').optional(),
   email: z.string().email('Email inválido').optional(),
+  gender: z.string().optional().nullable(),
+  birthDate: z.string().optional().nullable(),
+  height: z.number().optional().nullable(),
+  currentWeight: z.number().optional().nullable(),
+  medicalNotes: z.string().optional().nullable(),
 });
 export const changePasswordSchema = z.object({
   currentPassword: z.string().min(1, 'La contraseña actual es requerida'),

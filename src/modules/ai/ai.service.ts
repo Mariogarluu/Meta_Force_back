@@ -95,18 +95,46 @@ export async function chatWithAi(userId: string, userMessage: string, sessionId?
         }
     });
 
-    // 3. Preparar contexto y prompt
-    // Construimos el historial para enviarlo (o un resumen)
-    // Gemini soporta chat history nativo, pero aquí haremos "stateless" por simplicidad enviando contexto concatenado
-    // o usando el chatSession de Gemini si preferimos.
-    // Para simplificar y asegurar control, usaremos "system instruction" + "last messages".
+    // 3. Obtener perfil físico del usuario para contexto
+    // 3. Obtener perfil físico y progreso del usuario para contexto
+    const user = await (prisma.user as any).findUnique({
+        where: { id: userId },
+        select: { 
+            name: true, gender: true, birthDate: true, height: true, currentWeight: true, medicalNotes: true 
+        }
+    });
+
+    // Obtener los últimos 10 logs de ejercicios para que la IA vea el rendimiento real
+    const recentLogs = await (prisma as any).exerciseLog.findMany({
+        where: { userId },
+        orderBy: { date: 'desc' },
+        take: 10,
+        include: { exercise: true }
+    });
+
+    let profileContext = '';
+    if (user) {
+        profileContext = `DATOS DEL USUARIO:
+        - Nombre: ${user.name}
+        - Género: ${user.gender || 'No especificado'}
+        - Altura: ${user.height ? user.height + 'cm' : 'No especificada'}
+        - Peso actual: ${user.currentWeight ? user.currentWeight + 'kg' : 'No especificado'}
+        - Notas médicas/Otros: ${user.medicalNotes || 'Ninguna'}
+        
+        ÚLTIMO RENDIMIENTO (HISTORIAL):
+        ${recentLogs.map((l: any) => `- ${l.exercise.name}: ${l.weight}kg x ${l.reps} reps (${l.sets} series) el ${l.date.toLocaleDateString()}`).join('\n') || 'Sin historial reciente.'}
+
+        Usa estos datos para personalizar tus recomendaciones. Si el peso ha subido o bajado, o si tiene notas médicas, adapta la intensidad.`;
+    }
 
     const systemPrompt = `
         Eres "MetaForce Coach", un asistente experto EXCLUSIVAMENTE en gimnasio, fitness, nutrición y salud deportiva.
         Tu tono es motivador, profesional y directo.
         
+        ${profileContext}
+        
         REGLAS CRÍTICAS:
-        1. Si el usuario pregunta sobre CUALQUIER tema que no sea deporte, dieta o salud (ej: política, cine, matemáticas), DEBES rechazar responder educadamente. Ejemplo: "Soy un entrenador, solo puedo ayudarte con tus metas físicas."
+        1. Si el usuario pregunta sobre CUALQUIER tema que no sea deporte, dieta o salud (ej: política, cine, matemáticas), DEBES rechazar responder educadamente.
         2. Puedes generar rutinas de ejercicios. Si el usuario pide una rutina, devuelve un JSON ESTRUCTURADO dentro de un bloque de código \`\`\`json ... \`\`\`.
         
         Estructura JSON:
@@ -117,13 +145,13 @@ export async function chatWithAi(userId: string, userMessage: string, sessionId?
                 "description": "Breve descripción",
                 "days": [
                     {
-                        "dayOfWeek": 1,
-                        "items": [ // CRITICAL: MANTIENE ESTA CLAVE COMO "items". NUNCA uses "exercises" ni "meals".
+                        "dayOfWeek": 1, // 1 para Lunes, 2 Martes... 7 Domingo. El sistema restará 1 automáticamente.
+                        "items": [ 
                             {
                                 "name": "Nombre Ejercicio o Comida",
-                                "sets": 4, // Solo si es WORKOUT
-                                "reps": 10, // Solo si es WORKOUT
-                                "quantity": "1 porción", // Solo si es DIET
+                                "sets": 4, 
+                                "reps": 10, 
+                                "quantity": "1 porción", 
                                 "notes": "Notas adicionales" 
                             }
                         ]
@@ -152,7 +180,6 @@ export async function chatWithAi(userId: string, userMessage: string, sessionId?
             if (parsed.plan) {
                 generatedPlan = parsed.plan;
                 // Limpiamos el JSON del texto visible para que no se vea "feo" en el chat
-                // Opcional: dejarlo o quitarlo. Lo quitaremos y enviaremos el objeto estructurado.
                 finalMessage = aiRawResponse.replace(/```json[\s\S]*?```/, '(Ver rutina generada abajo)').trim();
             }
         } catch (e) {
@@ -193,7 +220,7 @@ export async function getUserSessions(userId: string) {
         take: 10,
         include: {
             messages: {
-                orderBy: { createdAt: 'desc' },
+                orderBy: { createdAt: 'asc' }, // Corregido: asc para que el chat se vea bien
             }
         }
     });
@@ -216,8 +243,6 @@ export async function deleteSession(userId: string, sessionId: string) {
         throw new Error('No tienes permiso para eliminar esta sesión');
     }
 
-    // 2. Eliminar la sesión (los mensajes se eliminarán en cascada gracias a onDelete: Cascade en Prisma, 
-    // o podemos borrarlos explícitamente si no está configurado). Prisma maneja Cascade si está en schema.
     await (prisma as any).aiChatSession.delete({
         where: { id: sessionId }
     });
@@ -230,7 +255,7 @@ export async function deleteSession(userId: string, sessionId: string) {
  */
 export async function saveAiPlan(userId: string, plan: AiGeneratedPlan) {
     if (plan.type === "WORKOUT") {
-        // 1. Resolver ejercicios fuera de la transacción para evitar envenenarla con P2002
+        // 1. Resolver ejercicios fuera de la transacción
         let dbExercises: Record<string, string> = {};
         const safeDays = Array.isArray(plan.days) ? plan.days : [];
         for (const day of safeDays) {
@@ -275,6 +300,11 @@ export async function saveAiPlan(userId: string, plan: AiGeneratedPlan) {
                 const items = day.items || day.exercises || day.meals || [];
                 if (!Array.isArray(items)) continue;
 
+                // Día de la semana (AI 1-7 -> App 0-6)
+                const dayOfWeekValue = typeof day?.dayOfWeek === 'number' ? (day.dayOfWeek - 1) : d;
+                // Asegurar rango 0-6
+                const finalDayOfWeek = Math.max(0, Math.min(6, dayOfWeekValue));
+
                 for (let i = 0; i < items.length; i++) {
                     const item = items[i];
                     if (!item || !item.name) continue;
@@ -286,7 +316,7 @@ export async function saveAiPlan(userId: string, plan: AiGeneratedPlan) {
                         data: {
                             workoutId: workout.id,
                             exerciseId: exerciseId,
-                            dayOfWeek: typeof day?.dayOfWeek === 'number' ? day.dayOfWeek : (d + 1),
+                            dayOfWeek: finalDayOfWeek,
                             order: i,
                             sets: Number(item.sets) || 3,
                             reps: Number(item.reps) || 10,
@@ -343,6 +373,9 @@ export async function saveAiPlan(userId: string, plan: AiGeneratedPlan) {
                 const items = day.items || day.exercises || day.meals || [];
                 if (!Array.isArray(items)) continue;
 
+                const dayOfWeekValue = typeof day?.dayOfWeek === 'number' ? (day.dayOfWeek - 1) : (d);
+                const finalDayOfWeek = Math.max(0, Math.min(6, dayOfWeekValue));
+
                 for (let i = 0; i < items.length; i++) {
                     const item = items[i];
                     if (!item || !item.name) continue;
@@ -360,7 +393,7 @@ export async function saveAiPlan(userId: string, plan: AiGeneratedPlan) {
                         data: {
                             dietId: diet.id,
                             mealId: mealId,
-                            dayOfWeek: typeof day?.dayOfWeek === 'number' ? day.dayOfWeek : (d + 1),
+                            dayOfWeek: finalDayOfWeek,
                             mealType: mealType,
                             order: i,
                             notes: item.quantity ? `${item.quantity}. ${item.notes || ''}` : (item.notes || null),

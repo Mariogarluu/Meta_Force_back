@@ -41,7 +41,8 @@ export async function findUserById(id: string) {
     where: { id },
     select: { 
       id: true, email: true, name: true, role: true, status: true, centerId: true, favoriteCenterId: true, profileImageUrl: true, createdAt: true,
-      gender: true, birthDate: true, height: true, currentWeight: true, medicalNotes: true
+      gender: true, birthDate: true, height: true, currentWeight: true, medicalNotes: true,
+      activityLevel: true, goal: true
     }
   });
 }
@@ -118,7 +119,8 @@ export async function updateUser(id: string, data: { name?: string; email?: stri
     },
     select: { 
       id: true, email: true, name: true, role: true, status: true, centerId: true, favoriteCenterId: true, profileImageUrl: true, createdAt: true,
-      gender: true, birthDate: true, height: true, currentWeight: true, medicalNotes: true
+      gender: true, birthDate: true, height: true, currentWeight: true, medicalNotes: true,
+      activityLevel: true, goal: true
     }
   });
 
@@ -150,7 +152,7 @@ export async function deleteUser(id: string) {
 /**
  * Updates a user's basic profile information.
  */
-export async function updateProfile(userId: string, data: { name?: string; email?: string; profileImageUrl?: string | null; gender?: string; birthDate?: string | Date; height?: number; currentWeight?: number; medicalNotes?: string }) {
+export async function updateProfile(userId: string, data: { name?: string; email?: string; profileImageUrl?: string | null; gender?: string; birthDate?: string | Date; height?: number; currentWeight?: number; medicalNotes?: string; activityLevel?: string; goal?: string }) {
   const updateData = { ...data };
   if (updateData.birthDate && typeof updateData.birthDate === 'string') {
     updateData.birthDate = new Date(updateData.birthDate);
@@ -161,7 +163,8 @@ export async function updateProfile(userId: string, data: { name?: string; email
     data: updateData as any,
     select: { 
       id: true, email: true, name: true, role: true, status: true, profileImageUrl: true, createdAt: true,
-      gender: true, birthDate: true, height: true, currentWeight: true, medicalNotes: true
+      gender: true, birthDate: true, height: true, currentWeight: true, medicalNotes: true,
+      activityLevel: true, goal: true
     }
   });
 }
@@ -215,6 +218,7 @@ export async function getMeWithCenter(id: string) {
     select: {
       id: true, email: true, name: true, role: true, status: true, profileImageUrl: true, createdAt: true, centerId: true, favoriteCenterId: true,
       gender: true, birthDate: true, height: true, currentWeight: true, medicalNotes: true,
+      activityLevel: true, goal: true,
       center: { select: { id: true, name: true } },
       favoriteCenter: { select: { id: true, name: true } },
     },

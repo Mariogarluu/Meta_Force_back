@@ -40,7 +40,8 @@ export async function findUserById(id: string) {
   return prisma.user.findUnique({
     where: { id },
     select: { 
-      id: true, email: true, name: true, role: true, status: true, centerId: true, favoriteCenterId: true, profileImageUrl: true, createdAt: true 
+      id: true, email: true, name: true, role: true, status: true, centerId: true, favoriteCenterId: true, profileImageUrl: true, createdAt: true,
+      gender: true, birthDate: true, height: true, currentWeight: true, medicalNotes: true
     }
   });
 }
@@ -116,7 +117,8 @@ export async function updateUser(id: string, data: { name?: string; email?: stri
       role: updateData.role as string | undefined
     },
     select: { 
-      id: true, email: true, name: true, role: true, status: true, centerId: true, favoriteCenterId: true, profileImageUrl: true, createdAt: true 
+      id: true, email: true, name: true, role: true, status: true, centerId: true, favoriteCenterId: true, profileImageUrl: true, createdAt: true,
+      gender: true, birthDate: true, height: true, currentWeight: true, medicalNotes: true
     }
   });
 
@@ -148,11 +150,19 @@ export async function deleteUser(id: string) {
 /**
  * Updates a user's basic profile information.
  */
-export async function updateProfile(userId: string, data: { name?: string; email?: string; profileImageUrl?: string | null }) {
+export async function updateProfile(userId: string, data: { name?: string; email?: string; profileImageUrl?: string | null; gender?: string; birthDate?: string | Date; height?: number; currentWeight?: number; medicalNotes?: string }) {
+  const updateData = { ...data };
+  if (updateData.birthDate && typeof updateData.birthDate === 'string') {
+    updateData.birthDate = new Date(updateData.birthDate);
+  }
+
   return prisma.user.update({
     where: { id: userId },
-    data,
-    select: { id: true, email: true, name: true, role: true, status: true, profileImageUrl: true, createdAt: true }
+    data: updateData as any,
+    select: { 
+      id: true, email: true, name: true, role: true, status: true, profileImageUrl: true, createdAt: true,
+      gender: true, birthDate: true, height: true, currentWeight: true, medicalNotes: true
+    }
   });
 }
 
@@ -165,7 +175,10 @@ export async function updateProfileImage(userId: string, imageUrl: string) {
   return prisma.user.update({
     where: { id: userId },
     data: { profileImageUrl: imageUrl },
-    select: { id: true, email: true, name: true, role: true, status: true, profileImageUrl: true, createdAt: true }
+    select: { 
+      id: true, email: true, name: true, role: true, status: true, profileImageUrl: true, createdAt: true,
+      gender: true, birthDate: true, height: true, currentWeight: true, medicalNotes: true
+    }
   });
 }
 
@@ -201,6 +214,7 @@ export async function getMeWithCenter(id: string) {
     where: { id },
     select: {
       id: true, email: true, name: true, role: true, status: true, profileImageUrl: true, createdAt: true, centerId: true, favoriteCenterId: true,
+      gender: true, birthDate: true, height: true, currentWeight: true, medicalNotes: true,
       center: { select: { id: true, name: true } },
       favoriteCenter: { select: { id: true, name: true } },
     },

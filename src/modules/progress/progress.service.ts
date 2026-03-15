@@ -7,9 +7,9 @@ export async function logMeasurement(userId: string, data: { weight?: number, bo
   return prisma.userMeasurement.create({
     data: {
       userId,
-      weight: data.weight,
-      bodyFat: data.bodyFat,
-      bmi: data.bmi
+      weight: data.weight ?? null,
+      bodyFat: data.bodyFat ?? null,
+      bmi: data.bmi ?? null
     }
   });
 }
@@ -33,10 +33,10 @@ export async function logExercisePerformance(userId: string, data: { exerciseId:
     data: {
       userId,
       exerciseId: data.exerciseId,
-      weight: data.weight,
-      reps: data.reps,
-      sets: data.sets,
-      notes: data.notes
+      weight: data.weight ?? null,
+      reps: data.reps ?? null,
+      sets: data.sets ?? null,
+      notes: data.notes ?? null
     }
   });
 }

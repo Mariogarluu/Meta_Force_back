@@ -20,6 +20,8 @@ model User {
   height           Float?         // en cm
   currentWeight    Float?         // en kg
   medicalNotes     String?        // para enfermedades, etc.
+  activityLevel    String?
+  goal             String?
   createdAt        DateTime       @default(now())
   updatedAt        DateTime       @updatedAt
   centerId         String? // Centro actual

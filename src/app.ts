@@ -27,6 +27,7 @@ import dietRoutes from './modules/diets/diets.routes.js';
 import membershipRoutes from './modules/memberships/memberships.routes.js';
 import healthRoutes from './modules/health/health.routes.js';
 import aiRoutes from './modules/ai/ai.routes.js';
+import performanceRoutes from './modules/performance/performance.routes.js';
 
 const app: Application = express();
 const isDev = process.env['NODE_ENV'] === 'development';
@@ -192,6 +193,7 @@ app.use('/api/meals', mealRoutes);
 app.use('/api/diets', dietRoutes);
 app.use('/api/memberships', membershipRoutes);
 app.use('/api/ai', aiRoutes);
+app.use('/api/performance', performanceRoutes);
 
 // 8. MANEJO DE 404
 app.use((_req: Request, _res: Response, next: NextFunction) => {

@@ -28,7 +28,7 @@
   "dependencies": {
     "@angular/cdk": "^21.0.5",
     "@google/generative-ai": "^0.24.1",
-    "@prisma/client": "^6.18.0",
+    "@prisma/client": "6.19.0",
     "@types/bcrypt": "^6.0.0",
     "@types/cookie-parser": "^1.4.10",
     "@types/cors": "^2.8.19",
@@ -65,7 +65,7 @@
     "dotenv-cli": "^11.0.0",
     "jest": "^30.2.0",
     "nodemon": "^3.1.10",
-    "prisma": "^6.18.0",
+    "prisma": "6.19.0",
     "supertest": "^7.1.4",
     "ts-jest": "^29.4.5",
     "ts-node": "^10.9.2",

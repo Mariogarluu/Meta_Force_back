@@ -28,26 +28,27 @@ enum UserStatus {
 }
 
 model User {
-  id               String         @id @default(cuid())
-  email            String         @unique
+  id               String             @id @default(cuid())
+  email            String             @unique
   name             String
   passwordHash     String
-  role             Role           @default(USER)
-  status           UserStatus     @default(PENDING)
+  role             Role               @default(USER)
+  status           UserStatus         @default(PENDING)
   profileImageUrl  String? // URL de la imagen de perfil en Cloudinary
-  createdAt        DateTime       @default(now())
-  updatedAt        DateTime       @updatedAt
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
   centerId         String? // Centro actual
-  center           Center?        @relation("CurrentCenter", fields: [centerId], references: [id], onDelete: SetNull)
+  center           Center?            @relation("CurrentCenter", fields: [centerId], references: [id], onDelete: SetNull)
   favoriteCenterId String? // Centro favorito
-  favoriteCenter   Center?        @relation("FavoriteCenter", fields: [favoriteCenterId], references: [id], onDelete: SetNull)
+  favoriteCenter   Center?            @relation("FavoriteCenter", fields: [favoriteCenterId], references: [id], onDelete: SetNull)
   classes          GymClass[] // Clases a las que asiste como usuario
-  trainedClasses   ClassTrainer[] @relation("ClassTrainer") // Clases que enseña como entrenador
+  trainedClasses   ClassTrainer[]     @relation("ClassTrainer") // Clases que enseña como entrenador
   notifications    Notification[]
-  workouts         Workout[] @relation("UserWorkouts") // Entrenamientos del usuario
-  diets            Diet[] @relation("UserDiets") // Dietas del usuario
+  workouts         Workout[]          @relation("UserWorkouts") // Entrenamientos del usuario
+  diets            Diet[]             @relation("UserDiets") // Dietas del usuario
   chatSessions     AiChatSession[]
-
+  bodyWeights      BodyWeightRecord[] @relation("UserBodyWeights")
+  exerciseRecords  ExerciseRecord[]   @relation("UserExerciseRecords")
 }
 
 // ... (modelos Center, GymClass, Machine iguales)
@@ -188,17 +189,18 @@ model Ticket {
 
 // Banco de ejercicios disponibles
 model Exercise {
-  id            String            @id @default(cuid())
-  name          String
-  description   String?
-  instructions  String? // Instrucciones de cómo realizar el ejercicio
-  imageUrl      String? // URL de imagen del ejercicio
-  videoUrl      String? // URL de video del ejercicio
-  machineTypeId String? // Ejercicio relacionado con un tipo de máquina (opcional)
-  machineType   MachineType?      @relation("MachineTypeExercises", fields: [machineTypeId], references: [id], onDelete: SetNull)
-  createdAt     DateTime          @default(now())
-  updatedAt     DateTime          @updatedAt
+  id               String            @id @default(cuid())
+  name             String
+  description      String?
+  instructions     String? // Instrucciones de cómo realizar el ejercicio
+  imageUrl         String? // URL de imagen del ejercicio
+  videoUrl         String? // URL de video del ejercicio
+  machineTypeId    String? // Ejercicio relacionado con un tipo de máquina (opcional)
+  machineType      MachineType?      @relation("MachineTypeExercises", fields: [machineTypeId], references: [id], onDelete: SetNull)
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
   workoutExercises WorkoutExercise[] // Ejercicios usados en entrenamientos
+  exerciseRecords  ExerciseRecord[]  @relation("ExerciseRecords")
 
   @@index([machineTypeId])
 }
@@ -224,14 +226,14 @@ model WorkoutExercise {
   workout     Workout  @relation(fields: [workoutId], references: [id], onDelete: Cascade)
   exerciseId  String
   exercise    Exercise @relation(fields: [exerciseId], references: [id], onDelete: Cascade)
-  dayOfWeek   Int      // 0 = Domingo, 1 = Lunes, ..., 6 = Sábado
-  order       Int      // Orden del ejercicio en el día (para arrastrar y soltar)
-  sets        Int?     // Número de series
-  reps        Int?     // Número de repeticiones
-  weight      Float?   // Peso en kg
-  duration    Int?     // Duración en segundos (para ejercicios de tiempo)
-  restSeconds Int?     // Descanso entre series en segundos
-  notes       String?  // Notas adicionales
+  dayOfWeek   Int // 0 = Domingo, 1 = Lunes, ..., 6 = Sábado
+  order       Int // Orden del ejercicio en el día (para arrastrar y soltar)
+  sets        Int? // Número de series
+  reps        Int? // Número de repeticiones
+  weight      Float? // Peso en kg
+  duration    Int? // Duración en segundos (para ejercicios de tiempo)
+  restSeconds Int? // Descanso entre series en segundos
+  notes       String? // Notas adicionales
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
@@ -242,19 +244,19 @@ model WorkoutExercise {
 
 // Banco de comidas/recetas disponibles
 model Meal {
-  id          String     @id @default(cuid())
-  name        String     @unique
-  description String?
+  id           String     @id @default(cuid())
+  name         String     @unique
+  description  String?
   instructions String? // Instrucciones de preparación
-  imageUrl    String? // URL de imagen de la comida
-  calories    Float? // Calorías por porción
-  protein     Float? // Proteínas en gramos
-  carbs       Float? // Carbohidratos en gramos
-  fats        Float? // Grasas en gramos
-  fiber       Float? // Fibra en gramos
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
-  dietMeals   DietMeal[] // Comidas usadas en dietas
+  imageUrl     String? // URL de imagen de la comida
+  calories     Float? // Calorías por porción
+  protein      Float? // Proteínas en gramos
+  carbs        Float? // Carbohidratos en gramos
+  fats         Float? // Grasas en gramos
+  fiber        Float? // Fibra en gramos
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  dietMeals    DietMeal[] // Comidas usadas en dietas
 }
 
 // Dieta de un usuario
@@ -273,18 +275,18 @@ model Diet {
 
 // Comidas en una dieta con datos específicos
 model DietMeal {
-  id          String   @id @default(cuid())
-  dietId      String
-  diet        Diet     @relation(fields: [dietId], references: [id], onDelete: Cascade)
-  mealId      String
-  meal        Meal     @relation(fields: [mealId], references: [id], onDelete: Cascade)
-  dayOfWeek   Int      // 0 = Domingo, 1 = Lunes, ..., 6 = Sábado
-  mealType    String   // "desayuno", "almuerzo", "comida", "merienda", "cena"
-  order       Int      // Orden de la comida en el día (para arrastrar y soltar)
-  quantity    Float?   // Cantidad de porciones
-  notes       String?  // Notas adicionales
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id        String   @id @default(cuid())
+  dietId    String
+  diet      Diet     @relation(fields: [dietId], references: [id], onDelete: Cascade)
+  mealId    String
+  meal      Meal     @relation(fields: [mealId], references: [id], onDelete: Cascade)
+  dayOfWeek Int // 0 = Domingo, 1 = Lunes, ..., 6 = Sábado
+  mealType  String // "desayuno", "almuerzo", "comida", "merienda", "cena"
+  order     Int // Orden de la comida en el día (para arrastrar y soltar)
+  quantity  Float? // Cantidad de porciones
+  notes     String? // Notas adicionales
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([dietId])
   @@index([mealId])
@@ -295,8 +297,8 @@ model MembershipPlan {
   id          String   @id @default(cuid())
   name        String
   description String?
-  price       Float    // Precio mensual
-  duration    Int      // Duración en meses (1 = mensual, 3 = trimestral, etc.)
+  price       Float // Precio mensual
+  duration    Int // Duración en meses (1 = mensual, 3 = trimestral, etc.)
   features    String[] // Array de características/beneficios
   isActive    Boolean  @default(true)
   createdAt   DateTime @default(now())
@@ -310,7 +312,7 @@ model AiChatSession {
   id        String          @id @default(cuid())
   userId    String
   user      User            @relation(fields: [userId], references: [id], onDelete: Cascade)
-  title     String?         // Título autogenerado o "Nuevo chat"
+  title     String? // Título autogenerado o "Nuevo chat"
   createdAt DateTime        @default(now())
   updatedAt DateTime        @updatedAt
   messages  AiChatMessage[]
@@ -323,11 +325,40 @@ model AiChatMessage {
   id        String        @id @default(cuid())
   sessionId String
   session   AiChatSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
-  role      String        // 'user' | 'model'
-  content   String        // Contenido del mensaje
+  role      String // 'user' | 'model'
+  content   String // Contenido del mensaje
   createdAt DateTime      @default(now())
 
   @@index([sessionId])
   @@index([createdAt])
 }
 
+// Registro de peso corporal del usuario
+model BodyWeightRecord {
+  id     String   @id @default(cuid())
+  userId String
+  user   User     @relation("UserBodyWeights", fields: [userId], references: [id], onDelete: Cascade)
+  weight Float // Peso en kg
+  date   DateTime @default(now())
+  notes  String? // Notas adicionales
+
+  @@index([userId])
+  @@index([date])
+}
+
+// Registro de rendimiento/PR en un ejercicio específico
+model ExerciseRecord {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation("UserExerciseRecords", fields: [userId], references: [id], onDelete: Cascade)
+  exerciseId String
+  exercise   Exercise @relation("ExerciseRecords", fields: [exerciseId], references: [id], onDelete: Cascade)
+  weight     Float // Peso movido en kg
+  reps       Int // Repeticiones logradas
+  date       DateTime @default(now())
+  notes      String? // Notas adicionales
+
+  @@index([userId])
+  @@index([exerciseId])
+  @@index([date])
+}

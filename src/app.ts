@@ -28,6 +28,7 @@ import membershipRoutes from './modules/memberships/memberships.routes.js';
 import healthRoutes from './modules/health/health.routes.js';
 import aiRoutes from './modules/ai/ai.routes.js';
 import progressRoutes from './modules/progress/progress.routes.js';
+import performanceRoutes from './modules/performance/performance.routes.js';
 
 /**
  * Main application entry point for the Meta-Force Backend.
@@ -199,6 +200,7 @@ app.use('/api/diets', dietRoutes);
 app.use('/api/memberships', membershipRoutes);
 app.use('/api/progress', progressRoutes);
 app.use('/api/ai', aiRoutes);
+app.use('/api/performance', performanceRoutes);
 
 // 8. MANEJO DE 404
 app.use((_req: Request, _res: Response, next: NextFunction) => {

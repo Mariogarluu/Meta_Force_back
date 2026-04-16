@@ -9,9 +9,24 @@ import {
 } from './performance.service.js';
 import { logger } from '../../utils/logger.js';
 
+/**
+ * =============================================================================
+ * CONTROLADORES DE RENDIMIENTO (PERFORMANCE CONTROLLERS)
+ * =============================================================================
+ * Se encargan de la orquestación de las peticiones HTTP relacionadas con
+ * las métricas del usuario. Validan la identidad del usuario y manejan errores.
+ */
+
+/**
+ * Controlador para listar el historial de peso del usuario autenticado.
+ * @param req - Request con req.user inyectado por el middleware auth
+ * @param res - Response para enviar el listado JSON
+ */
 export const listBodyWeightsCtrl = async (req: Request, res: Response): Promise<void> => {
   try {
     const user = req.user;
+    // El middleware de Auth ya debería garantizar que user existe, 
+    // pero realizamos una validación extra de seguridad para el ID.
     if (!user?.id) {
       logger.error('Performance Controller: userId no encontrado en la petición');
       res.status(401).json({ error: 'Usuario no autenticado correctamente' });

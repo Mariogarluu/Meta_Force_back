@@ -11,6 +11,9 @@
 - env.production.example con variables para producción
 - Health checks en Docker Compose
 - Restart policy para contenedores
+- **Arquitectura**: Creación de `ARCHITECTURE.md` con diagramas Mermaid (ERD y Capas).
+- **Documentación Técnica**: JSDoc exhaustivo en servicios de Auth, Users y Performance.
+- **Actividad del Repositorio**: Implementación de `DOCS_STRATEGY.md` para el escalado de documentación.
 
 ### Documentación Swagger
 - Especificación OpenAPI 3.0.0
@@ -47,6 +50,9 @@
 ### Archivos modificados
 - `src/app.ts` - Integración Swagger UI
 - `package.json` - Nuevas dependencias
+- `src/modules/users/users.service.ts` - Fix de importación de logger (Vercel Build Fix)
+- `src/modules/auth/auth.service.ts` - Estandarización de logs
+- `docs/ARCHITECTURE.md` - Esquema técnico del sistema
 
 ### Dependencias nuevas
 - `swagger-ui-express` - UI para documentación

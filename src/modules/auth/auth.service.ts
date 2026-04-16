@@ -6,13 +6,28 @@ import { Role } from '../../types/role.js';
 import { notifySuperAdmins } from '../notifications/notifications.service.js';
 
 /**
- * Registers a new user in the system.
- * Hashes the password, creates the user record, and generates a JWT.
- * @param email - User's email address
- * @param name - User's full name
- * @param password - Plain text password (will be hashed)
- * @param role - Optional initial role
- * @returns Object containing user profile and JWT
+ * =============================================================================
+ * SERVICIO DE AUTENTICACIÓN (AUTH SERVICE)
+ * =============================================================================
+ * Gestiona el ciclo de vida de la sesión del usuario, incluyendo el alta
+ * de nuevas cuentas, validación de credenciales y emisión de tokens JWT.
+ */
+
+/**
+ * Registra un nuevo usuario en la plataforma.
+ * 
+ * FLUJO DE REGISTRO:
+ * 1. Verifica si el email ya existe para evitar duplicados.
+ * 2. Hashea la contraseña con Bcrypt para seguridad (reposo).
+ * 3. Crea el registro del usuario con estado PENDING por defecto.
+ * 4. Envía notificaciones a los SuperAdmins para validación manual.
+ * 5. Genera un token JWT inicial para sesión inmediata.
+ * 
+ * @param email - Correo único del usuario.
+ * @param name - Nombre completo.
+ * @param password - Contraseña en texto plano (será hasheada).
+ * @param role - Rol solicitado (opcional).
+ * @returns Perfil del usuario y token de sesión.
  */
 export async function register(email: string, name: string, password: string, role?: Role) {
   const existing = await findUserByEmail(email);
@@ -58,11 +73,18 @@ export async function register(email: string, name: string, password: string, ro
 }
 
 /**
- * Authenticates a user with email and password.
- * Verifies credentials, checks if the account is ACTIVE, and generates a JWT.
- * @param email - User's email address
- * @param password - Plain text password
- * @returns Object containing user profile and JWT
+ * Autentica a un usuario existente mediante sus credenciales.
+ * 
+ * FLUJO DE LOGIN:
+ * 1. Busca al usuario por email.
+ * 2. Verifica si la cuenta está en estado 'ACTIVE'. Si no, deniega el acceso.
+ * 3. Compara la contraseña proporcionada con el hash almacenado mediante bcrypt.compare.
+ * 4. Si la validación es exitosa, genera un JWT firmado.
+ * 
+ * @param email - Correo del usuario.
+ * @param password - Contraseña en texto plano.
+ * @returns Perfil del usuario y token JWT de acceso.
+ * @throws Error si las credenciales son inválidas o la cuenta no está activa.
  */
 export async function login(email: string, password: string) {
   const user = await findUserByEmail(email);

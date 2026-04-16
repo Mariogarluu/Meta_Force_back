@@ -7,6 +7,7 @@ declare global {
   namespace Express {
     interface Request {
       user?: { 
+        id: string;
         sub: string; 
         email: string;
         role: Role;
@@ -57,6 +58,7 @@ export function auth(req: Request, res: Response, next: NextFunction) {
       Object.values(Role).includes(payload.role as Role)
     ) {
       req.user = { 
+        id: payload.sub,
         sub: payload.sub, 
         email: payload.email,
         role: payload.role as Role,

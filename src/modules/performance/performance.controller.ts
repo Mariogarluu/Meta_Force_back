@@ -7,23 +7,38 @@ import {
   createExerciseRecord,
   deleteExerciseRecord,
 } from './performance.service.js';
+import { logger } from '../../utils/logger.js';
 
 export const listBodyWeightsCtrl = async (req: Request, res: Response): Promise<void> => {
   try {
-    const userId = (req as any).user.id;
-    const records = await getBodyWeightsByUser(userId);
+    const user = req.user;
+    if (!user?.id) {
+      logger.error('Performance Controller: userId no encontrado en la petición');
+      res.status(401).json({ error: 'Usuario no autenticado correctamente' });
+      return;
+    }
+    
+    const records = await getBodyWeightsByUser(user.id);
     res.json(records);
   } catch (error: any) {
+    logger.error(`Performance Controller (listBodyWeights): ${error.message}`, { stack: error.stack });
     res.status(500).json({ error: error.message });
   }
 };
 
 export const createBodyWeightCtrl = async (req: Request, res: Response): Promise<void> => {
   try {
-    const userId = (req as any).user.id;
-    const record = await createBodyWeight(userId, req.body);
+    const user = req.user;
+    if (!user?.id) {
+      logger.error('Performance Controller: userId no encontrado en la petición');
+      res.status(401).json({ error: 'Usuario no autenticado correctamente' });
+      return;
+    }
+    
+    const record = await createBodyWeight(user.id, req.body);
     res.status(201).json(record);
   } catch (error: any) {
+    logger.error(`Performance Controller (createBodyWeight): ${error.message}`, { stack: error.stack });
     res.status(500).json({ error: error.message });
   }
 };
@@ -41,10 +56,17 @@ export const deleteBodyWeightCtrl = async (req: Request, res: Response): Promise
 
 export const listExerciseRecordsCtrl = async (req: Request, res: Response): Promise<void> => {
   try {
-    const userId = (req as any).user.id;
-    const records = await getExerciseRecordsByUser(userId);
+    const user = req.user;
+    if (!user?.id) {
+      logger.error('Performance Controller: userId no encontrado en la petición');
+      res.status(401).json({ error: 'Usuario no autenticado correctamente' });
+      return;
+    }
+    
+    const records = await getExerciseRecordsByUser(user.id);
     res.json(records);
   } catch (error: any) {
+    logger.error(`Performance Controller (listExerciseRecords): ${error.message}`, { stack: error.stack });
     res.status(500).json({ error: error.message });
   }
 };

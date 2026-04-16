@@ -20,10 +20,15 @@ declare global {
 const COOKIE_NAME = 'auth_token';
 
 /**
- * Middleware de autenticación JWT que verifica el token desde:
- * 1. Header Authorization: Bearer <token>
- * 2. Cookie auth_token (HttpOnly, enviada con withCredentials)
- * Valida el payload y añade req.user. Retorna 401 si falta o es inválido.
+ * =============================================================================
+ * MIDDLEWARE DE AUTENTICACIÓN (JWT)
+ * =============================================================================
+ * Este middleware intercepta las peticiones entrantes y valida la presencia
+ * de un JSON Web Token (JWT) válido. Soporta extracción desde headers y cookies.
+ * 
+ * Estrategia de búsqueda del token:
+ * 1. Header 'Authorization' con esquema 'Bearer'.
+ * 2. Cookie HttpOnly denominada 'auth_token'.
  */
 export function auth(req: Request, res: Response, next: NextFunction) {
   let token: string | undefined;
@@ -35,12 +40,12 @@ export function auth(req: Request, res: Response, next: NextFunction) {
     token = req.cookies[COOKIE_NAME] as string;
   }
   
+  // Si tras buscar en header y cookies no hay token, denegamos el acceso
   if (!token) {
-    return res.status(401).json({ message: 'No autorizado' });
-  }
-  
-  if (!token) {
-    return res.status(401).json({ message: 'No autorizado' });
+    return res.status(401).json({ 
+      success: false,
+      message: 'No autorizado: Se requiere una sesión activa' 
+    });
   }
   
   try {

@@ -3,6 +3,7 @@ import bcrypt from 'bcrypt';
 import { env } from '../../config/env.js';
 import { Role } from '../../types/role.js';
 import { createNotification } from '../notifications/notifications.service.js';
+import { logger } from '../../utils/logger.js';
 
 /**
  * =============================================================================

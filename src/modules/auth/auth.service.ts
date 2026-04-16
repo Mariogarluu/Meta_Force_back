@@ -4,6 +4,7 @@ import { env } from '../../config/env.js';
 import { createUser, findUserByEmail, getMeWithCenter } from '../users/users.service.js';
 import { Role } from '../../types/role.js';
 import { notifySuperAdmins } from '../notifications/notifications.service.js';
+import { logger } from '../../utils/logger.js';
 
 /**
  * =============================================================================
@@ -47,7 +48,7 @@ export async function register(email: string, name: string, password: string, ro
       'INFO'
     );
   } catch (error) {
-    console.error('Error enviando notificación de registro:', error);
+    logger.error('Error enviando notificación de registro:', error);
   }
 
   const token = jwt.sign(
@@ -89,18 +90,18 @@ export async function register(email: string, name: string, password: string, ro
 export async function login(email: string, password: string) {
   const user = await findUserByEmail(email);
   if (!user) {
-    console.log(`Login fallido: El email ${email} no existe.`);
+    logger.warn(`Login fallido: El email ${email} no existe.`);
     throw new Error('Credenciales inválidas');
   }
 
   if (user.status !== 'ACTIVE') {
-    console.log(`Login bloqueado: El usuario ${email} tiene estado ${user.status}.`);
+    logger.warn(`Login bloqueado: El usuario ${email} tiene estado ${user.status}.`);
     throw new Error('Cuenta no validada. Contacta con un administrador para activar tu cuenta.');
   }
 
   const ok = await bcrypt.compare(password, user.passwordHash);
   if (!ok) {
-    console.log(`Login fallido: Contraseña incorrecta para ${email}.`);
+    logger.warn(`Login fallido: Contraseña incorrecta para ${email}.`);
     throw new Error('Credenciales inválidas');
   }
 

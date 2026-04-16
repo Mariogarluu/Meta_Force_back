@@ -5,16 +5,25 @@ import { Role } from '../../types/role.js';
 import { createNotification } from '../notifications/notifications.service.js';
 
 /**
- * Crea un nuevo usuario en el sistema.
+ * =============================================================================
+ * SERVICIO DE USUARIOS (USERS SERVICE)
+ * =============================================================================
+ * Este servicio encapsula toda la lógica de persistencia y reglas de negocio
+ * relacionadas con la gestión de usuarios, perfiles y permisos.
  */
+
 /**
- * Creates a new user in the database.
- * @param email - Unique email address
- * @param name - Display name
- * @param passwordHash - Bcrypt hashed password
- * @param role - System role
+ * Registra físicamente un nuevo usuario en la persistencia.
+ * Se utiliza principalmente durante el flujo de registro (Auth).
+ * 
+ * @param email - Correo electrónico único del usuario.
+ * @param name - Nombre completo o alias.
+ * @param passwordHash - Contraseña ya encriptada con Bcrypt.
+ * @param role - Rol asignado. Por defecto es 'USER'.
+ * @returns Datos del usuario creado (id, email, name, role, status, createdAt).
  */
 export async function createUser(email: string, name: string, passwordHash: string, role?: Role | string) {
+  // Realizamos la inserción mediante Prisma Client
   return prisma.user.create({
     data: { 
       email, 
@@ -22,19 +31,28 @@ export async function createUser(email: string, name: string, passwordHash: stri
       passwordHash,
       role: (role as Role) || Role.USER
     },
+    // Seleccionamos solo campos seguros para devolver al cliente
     select: { id: true, email: true, name: true, role: true, status: true, createdAt: true }
   });
 }
 
 /**
- * Finds a user by their unique email.
+ * Localiza a un usuario mediante su dirección de correo electrónico.
+ * Utilizado frecuentemente en la validación de login y duplicados.
+ * 
+ * @param email - Correo a buscar.
+ * @returns El objeto de usuario completo si existe, null en caso contrario.
  */
 export async function findUserByEmail(email: string) {
   return prisma.user.findUnique({ where: { email } });
 }
 
 /**
- * Finds a user by their unique ID.
+ * Recupera el perfil detallado de un usuario mediante su ID.
+ * Incluye datos biométricos, niveles de actividad y objetivos.
+ * 
+ * @param id - Identificador único de usuario (CUID).
+ * @returns Perfil seleccionado o null.
  */
 export async function findUserById(id: string) {
   return prisma.user.findUnique({
@@ -48,15 +66,21 @@ export async function findUserById(id: string) {
 }
 
 /**
- * Lists users, optionally filtered by center.
+ * Lista usuarios registrados, con opción de filtrado por centro.
+ * Utilizado por administradores para gestión de personal y clientes.
+ * 
+ * @param centerId - Opcional. ID del centro para filtrar resultados.
+ * @returns Array de usuarios con información básica de perfil.
  */
 export async function listUsers(centerId?: string | null) {
+  // Construcción dinámica de la cláusula WHERE
   const where = centerId ? { centerId } : {};
   return prisma.user.findMany({
     where,
     select: { 
       id: true, email: true, name: true, role: true, status: true, centerId: true, favoriteCenterId: true, profileImageUrl: true, createdAt: true 
     },
+    // Ordenamos por antigüedad de registro
     orderBy: { createdAt: 'asc' }
   });
 }
@@ -104,13 +128,20 @@ export async function listTrainers(centerId?: string | null) {
 }
 
 /**
- * Actualiza los datos de un usuario.
- * * LÓGICA DE NEGOCIO:
- * Si el estado cambia a 'ACTIVE', notifica al usuario de que su cuenta ha sido activada.
+ * Actualiza los datos de un usuario de forma administrativa.
+ * 
+ * @param id - ID del usuario a modificar.
+ * @param data - Objeto con los campos a actualizar (nombre, email, rol, estado...).
+ * @returns El objeto de usuario actualizado.
+ * 
+ * LÓGICA DE NEGOCIO ADICIONAL:
+ * - Si el estado cambia a 'ACTIVE', se dispara una notificación de éxito al usuario
+ *   indicando que ya puede acceder a todas las funciones.
  */
 export async function updateUser(id: string, data: { name?: string; email?: string; role?: Role | string; status?: string; favoriteCenterId?: string | null; profileImageUrl?: string | null }) {
   const { centerId, ...updateData } = data as any;
   
+  // Persistimos los cambios en la BD
   const updatedUser = await prisma.user.update({
     where: { id },
     data: {
@@ -124,7 +155,7 @@ export async function updateUser(id: string, data: { name?: string; email?: stri
     }
   });
 
-  // Notificar activación
+  // SISTEMA DE NOTIFICACIONES: Activación de cuenta
   if (data.status === 'ACTIVE') {
     try {
       await createNotification({
@@ -135,7 +166,7 @@ export async function updateUser(id: string, data: { name?: string; email?: stri
         link: '/dashboard'
       });
     } catch (error) {
-      console.error('Error notificando activación de usuario:', error);
+      logger.error('Error notificando activación de usuario:', error);
     }
   }
 
@@ -143,7 +174,11 @@ export async function updateUser(id: string, data: { name?: string; email?: stri
 }
 
 /**
- * Deletes a user record by ID.
+ * Elimina físicamente el registro de un usuario de la base de datos.
+ * ATENCIÓN: Esta acción es irreversible y borra datos en cascada según el schema.
+ * 
+ * @param id - ID del usuario a borrar.
+ * @returns El objeto de usuario eliminado.
  */
 export async function deleteUser(id: string) {
   return prisma.user.delete({ where: { id } });

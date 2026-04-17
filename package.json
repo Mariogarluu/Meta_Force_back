@@ -21,7 +21,9 @@
     "prisma:status": "dotenv -e .env -- npx prisma migrate status",
     "prisma:diagnose": "node scripts/diagnose-migrations.js",
     "vercel-reset": "npx prisma migrate reset --force && npm run build",
-    "seed": "node prisma/seed.js"
+    "seed": "node prisma/seed.js",
+    "verify:seed": "node verify_seed.js",
+    "test:db": "node test_db.js"
   },
   "keywords": [],
   "author": "",
@@ -30,6 +32,8 @@
     "@angular/cdk": "^21.0.5",
     "@google/generative-ai": "^0.24.1",
     "@prisma/client": "6.19.0",
+    "@supabase/ssr": "^0.10.2",
+    "@supabase/supabase-js": "^2.103.3",
     "@types/bcrypt": "^6.0.0",
     "@types/cookie-parser": "^1.4.10",
     "@types/cors": "^2.8.19",
@@ -54,6 +58,7 @@
     "jsonwebtoken": "^9.0.2",
     "morgan": "^1.10.1",
     "multer": "^2.0.2",
+    "pg": "^8.20.0",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1",
     "winston": "^3.18.3",

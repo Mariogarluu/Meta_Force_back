@@ -72,6 +72,10 @@ const envSchema = z.object({
     z.number().positive().int().safe().optional(),
   ).optional(),
   DB_DATABASE: z.string().optional(),
+
+  // 🔥 Supabase Configuration
+  SUPABASE_URL: z.string().url('SUPABASE_URL debe ser una URL válida.').nonempty(),
+  SUPABASE_ANON_KEY: z.string().nonempty('SUPABASE_ANON_KEY es requerida.'),
 });
 
 

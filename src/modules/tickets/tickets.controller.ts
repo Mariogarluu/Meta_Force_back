@@ -6,7 +6,7 @@ import {
   updateTicket,
   deleteTicket
 } from './tickets.service.js';
-import { CloudinaryService } from '../../services/cloudinary.service.js';
+import { SupabaseStorageService } from '../../services/supabase-storage.service.js';
 
 /**
  * Controlador para crear un nuevo ticket de contacto (público, sin autenticación)
@@ -25,7 +25,7 @@ export async function createTicketCtrl(req: Request, res: Response) {
       for (const file of req.files) {
         if (file.buffer) {
           try {
-            const url = await CloudinaryService.uploadTicketAttachment(
+            const url = await SupabaseStorageService.uploadTicketAttachment(
               file.buffer,
               file.originalname,
               ticket.id

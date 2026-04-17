@@ -405,15 +405,13 @@ async function main() {
 }
 
 // Execute main function if script is run directly
-if (import.meta.url === `file://${process.argv[1]}`) {
-  main()
-    .catch(e => {
-      console.error('Error during seeding:', e)
-      process.exit(1)
-    })
-    .finally(async () => {
-      await prisma.$disconnect()
-    })
-}
+main()
+  .catch(e => {
+    console.error('Error during seeding:', e)
+    process.exit(1)
+  })
+  .finally(async () => {
+    await prisma.$disconnect()
+  })
 
 export default main

@@ -13,7 +13,7 @@ import {
 } from './users.service.js';
 import { Role } from '../../types/role.js';
 import { prisma } from '../../config/db.js';
-import { CloudinaryService } from '../../services/cloudinary.service.js';
+import { SupabaseStorageService } from '../../services/supabase-storage.service.js';
 
 /**
  * Controlador para listar usuarios del sistema.
@@ -346,11 +346,11 @@ export async function uploadProfileImageCtrl(req: Request, res: Response) {
 
     // Eliminar imagen anterior si existe y no es fauno.png
     if (user.profileImageUrl && !user.profileImageUrl.includes('fauno.png')) {
-      await CloudinaryService.deleteImage(user.profileImageUrl);
+      await SupabaseStorageService.deleteFile(user.profileImageUrl, 'profiles');
     }
 
     // Subir nueva imagen
-    const imageUrl = await CloudinaryService.uploadProfileImage(req.file.buffer, userId);
+    const imageUrl = await SupabaseStorageService.uploadProfileImage(req.file.buffer, userId);
     
     // Actualizar en base de datos
     const updatedUser = await updateProfileImage(userId, imageUrl);
@@ -388,7 +388,7 @@ export async function deleteProfileImageCtrl(req: Request, res: Response) {
 
     // Eliminar imagen de Cloudinary si existe y no es fauno.png
     if (user.profileImageUrl && !user.profileImageUrl.includes('fauno.png')) {
-      await CloudinaryService.deleteImage(user.profileImageUrl);
+      await SupabaseStorageService.deleteFile(user.profileImageUrl, 'profiles');
     }
 
     // Actualizar en base de datos

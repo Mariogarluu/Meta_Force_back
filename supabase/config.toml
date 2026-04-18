@@ -1,5 +1,4 @@
-# Sustituye project_id por el ref del proyecto (Settings → General en Supabase).
-project_id = "YOUR_SUPABASE_PROJECT_REF"
+project_id = "qybgnrlszozjhimewkel"
 
 [api]
 enabled = true
@@ -34,3 +33,6 @@ verify_jwt = true
 
 [functions.bulk-import]
 verify_jwt = true
+
+[functions.migrate-legacy-users]
+verify_jwt = false

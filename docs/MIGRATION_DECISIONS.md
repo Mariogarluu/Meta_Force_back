@@ -14,9 +14,8 @@
 
 ## Orden de aplicación de SQL
 
-1. Migraciones del directorio raíz `supabase/migrations/` en la raíz del monorepo (perfiles, RLS, storage).
-2. Migraciones adicionales en `back/supabase/migrations/` (fases del plan y parches).
+Todo el historial SQL vive en **`supabase/migrations/`** de este repo (antes parte estaba en la raíz del monorepo; se unificó aquí). Aplicar con `npx supabase db push` desde la raíz del repo `back/`.
 
 ## API HTTP legacy
 
-- Tras el sunset, las rutas `/api/*` en Vercel pueden responder **410** (ver `back/src/app-sunset.ts`).
+- Express/Vercel retirados; snapshot en tag git **`pre-supabase`**. El cliente usa solo Supabase (Auth, PostgREST, Edge Functions).

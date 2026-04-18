@@ -1,0 +1,36 @@
+# Sustituye project_id por el ref del proyecto (Settings → General en Supabase).
+project_id = "YOUR_SUPABASE_PROJECT_REF"
+
+[api]
+enabled = true
+
+# IA: JWT validado por Supabase Gateway (sesión del usuario).
+[functions.ai-chat]
+verify_jwt = true
+
+[functions.ai-sessions]
+verify_jwt = true
+
+[functions.ai-save-plan]
+verify_jwt = true
+
+[functions.create-ticket]
+verify_jwt = false
+
+[functions.health]
+verify_jwt = false
+
+[functions.auth-register]
+verify_jwt = false
+
+[functions.auth-change-password]
+verify_jwt = true
+
+[functions.access-scan]
+verify_jwt = true
+
+[functions.machines-create]
+verify_jwt = true
+
+[functions.bulk-import]
+verify_jwt = true

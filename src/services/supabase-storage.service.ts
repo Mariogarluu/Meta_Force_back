@@ -3,7 +3,7 @@ import { logger } from '../utils/logger.js';
 
 /**
  * Servicio para gestionar operaciones con Supabase Storage.
- * Reemplaza a CloudinaryService para el almacenamiento de archivos.
+ * Almacenamiento de archivos en Supabase Storage (perfiles y tickets).
  */
 export class SupabaseStorageService {
   /**
@@ -34,22 +34,38 @@ export class SupabaseStorageService {
   }
 
   /**
-   * Elimina una imagen de un bucket.
-   * @param imageUrl - URL completa del archivo
+   * Ruta del objeto dentro del bucket a partir de una URL pública de Supabase Storage.
+   * Ej.: .../object/public/tickets/<ticketId>/<archivo> → "<ticketId>/<archivo>"
+   */
+  static objectPathFromPublicUrl(imageUrl: string, bucket: string): string | null {
+    const marker = `/object/public/${bucket}/`;
+    const i = imageUrl.indexOf(marker);
+    if (i !== -1) {
+      const raw = imageUrl.slice(i + marker.length).split('?')[0] ?? '';
+      const path = decodeURIComponent(raw).replace(/^\/+/, '');
+      return path || null;
+    }
+    const parts = imageUrl.split('/');
+    const last = parts[parts.length - 1] ?? '';
+    return last ? decodeURIComponent(last) : null;
+  }
+
+  /**
+   * Elimina un objeto en Storage (perfil plano o adjunto con subcarpetas).
+   * @param imageUrl - URL pública completa del archivo
    * @param bucket - Nombre del bucket
    */
   static async deleteFile(imageUrl: string, bucket: string): Promise<boolean> {
     try {
-      // Extraer el nombre del archivo de la URL
-      const parts = imageUrl.split('/');
-      const fileName = parts[parts.length - 1];
+      const objectPath = SupabaseStorageService.objectPathFromPublicUrl(imageUrl, bucket);
+      if (!objectPath) return false;
 
       const { error } = await supabase.storage
         .from(bucket)
-        .remove([fileName]);
+        .remove([objectPath]);
 
       if (error) {
-        logger.error(`Error eliminando archivo ${fileName} de ${bucket}:`, error);
+        logger.error(`Error eliminando archivo ${objectPath} de ${bucket}:`, error);
         return false;
       }
       return true;

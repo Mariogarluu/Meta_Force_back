@@ -99,6 +99,10 @@ export async function login(email: string, password: string) {
     throw new Error('Cuenta no validada. Contacta con un administrador para activar tu cuenta.');
   }
 
+  if (user.passwordHash == null || user.passwordHash === '') {
+    throw new Error('Esta cuenta usa inicio de sesión con Supabase. Usa el login de la app (Supabase Auth).');
+  }
+
   const ok = await bcrypt.compare(password, user.passwordHash);
   if (!ok) {
     logger.warn(`Login fallido: Contraseña incorrecta para ${email}.`);

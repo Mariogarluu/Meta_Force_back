@@ -316,9 +316,8 @@ export async function changePasswordCtrl(req: Request, res: Response) {
 }
 
 /**
- * Controlador para subir una imagen de perfil.
- * Sube la imagen a Cloudinary y actualiza la URL en la base de datos.
- * Si el usuario ya tiene una imagen (y no es fauno.png), la elimina de Cloudinary antes de subir la nueva.
+ * Controlador para subir una imagen de perfil (Supabase Storage, bucket `profiles`).
+ * Si el usuario ya tiene una imagen (y no es fauno.png), la elimina del bucket antes de subir la nueva.
  */
 export async function uploadProfileImageCtrl(req: Request, res: Response) {
   try {
@@ -363,8 +362,7 @@ export async function uploadProfileImageCtrl(req: Request, res: Response) {
 }
 
 /**
- * Controlador para eliminar la imagen de perfil del usuario autenticado.
- * Elimina la imagen de Cloudinary y establece profileImageUrl a null en la base de datos.
+ * Controlador para eliminar la imagen de perfil del usuario autenticado (Storage + BD).
  */
 export async function deleteProfileImageCtrl(req: Request, res: Response) {
   try {
@@ -386,7 +384,7 @@ export async function deleteProfileImageCtrl(req: Request, res: Response) {
       return res.status(404).json({ message: 'Usuario no encontrado' });
     }
 
-    // Eliminar imagen de Cloudinary si existe y no es fauno.png
+    // Eliminar imagen en Storage si existe y no es fauno.png
     if (user.profileImageUrl && !user.profileImageUrl.includes('fauno.png')) {
       await SupabaseStorageService.deleteFile(user.profileImageUrl, 'profiles');
     }

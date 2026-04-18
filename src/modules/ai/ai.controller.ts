@@ -2,6 +2,12 @@ import type { Request, Response } from 'express';
 import { logger } from '../../utils/logger.js';
 import { chatWithAi, getUserSessions } from './ai.service.js';
 import { z } from 'zod';
+import {
+  forwardAiChat,
+  forwardAiSavePlan,
+  forwardAiSessionsDelete,
+  forwardAiSessionsGet,
+} from './edge-proxy.js';
 
 const chatSchema = z.object({
     message: z.string().min(1),
@@ -10,8 +16,12 @@ const chatSchema = z.object({
 
 export async function chatCtrl(req: Request, res: Response) {
     try {
+        const parsed = chatSchema.parse(req.body);
+        const forwarded = await forwardAiChat(req, res, parsed);
+        if (forwarded) return;
+
         const userId = (req as any).user.sub;
-        const { message, sessionId } = chatSchema.parse(req.body);
+        const { message, sessionId } = parsed;
 
         const result = await chatWithAi(userId, message, sessionId);
 
@@ -24,6 +34,9 @@ export async function chatCtrl(req: Request, res: Response) {
 
 export async function getSessionsCtrl(req: Request, res: Response) {
     try {
+        const forwarded = await forwardAiSessionsGet(req, res);
+        if (forwarded) return;
+
         const userId = (req as any).user.sub;
         const sessions = await getUserSessions(userId);
         return res.status(200).json(sessions);
@@ -34,13 +47,16 @@ export async function getSessionsCtrl(req: Request, res: Response) {
 
 export async function savePlanCtrl(req: Request, res: Response) {
     try {
-        const userId = (req as any).user.sub;
         const { plan } = req.body;
 
         if (!plan || !plan.type || !plan.name || !plan.days) {
             return res.status(400).json({ message: 'Estructura de plan inválida' });
         }
 
+        const forwarded = await forwardAiSavePlan(req, res, { plan });
+        if (forwarded) return;
+
+        const userId = (req as any).user.sub;
         const savedResult = await import('./ai.service.js').then(m => m.saveAiPlan(userId, plan));
         return res.status(201).json(savedResult);
     } catch (error: any) {
@@ -51,13 +67,16 @@ export async function savePlanCtrl(req: Request, res: Response) {
 
 export async function deleteSessionCtrl(req: Request, res: Response) {
     try {
-        const userId = (req as any).user.sub;
         const { sessionId } = req.params;
 
         if (!sessionId) {
             return res.status(400).json({ message: 'Se requiere el ID de la sesión' });
         }
 
+        const forwarded = await forwardAiSessionsDelete(req, res, sessionId);
+        if (forwarded) return;
+
+        const userId = (req as any).user.sub;
         const result = await import('./ai.service.js').then(m => m.deleteSession(userId, sessionId));
         return res.status(200).json(result);
     } catch (error: any) {

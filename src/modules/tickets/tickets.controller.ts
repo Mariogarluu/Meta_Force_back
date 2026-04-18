@@ -9,7 +9,8 @@ import {
 import { SupabaseStorageService } from '../../services/supabase-storage.service.js';
 
 /**
- * Controlador para crear un nuevo ticket de contacto (público, sin autenticación)
+ * Controlador para crear un nuevo ticket de contacto (público, sin autenticación).
+ * Alternativa serverless: Edge `create-ticket` (JSON; adjuntos en base64) en `supabase/functions`.
  */
 export async function createTicketCtrl(req: Request, res: Response) {
   try {

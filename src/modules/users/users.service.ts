@@ -23,13 +23,18 @@ import { logger } from '../../utils/logger.js';
  * @param role - Rol asignado. Por defecto es 'USER'.
  * @returns Datos del usuario creado (id, email, name, role, status, createdAt).
  */
-export async function createUser(email: string, name: string, passwordHash: string, role?: Role | string) {
+export async function createUser(
+  email: string,
+  name: string,
+  passwordHash?: string | null,
+  role?: Role | string,
+) {
   // Realizamos la inserción mediante Prisma Client
   return prisma.user.create({
     data: { 
       email, 
       name, 
-      passwordHash,
+      passwordHash: passwordHash ?? null,
       role: (role as Role) || Role.USER
     },
     // Seleccionamos solo campos seguros para devolver al cliente
@@ -208,7 +213,7 @@ export async function updateProfile(userId: string, data: { name?: string; email
 /**
  * Actualiza la URL de la imagen de perfil del usuario.
  * @param userId - ID del usuario
- * @param imageUrl - URL de la imagen en Cloudinary
+ * @param imageUrl - URL pública de la imagen (Supabase Storage)
  */
 export async function updateProfileImage(userId: string, imageUrl: string) {
   return prisma.user.update({
@@ -237,6 +242,9 @@ export async function changePassword(userId: string, currentPassword: string, ne
   const user = await prisma.user.findUnique({ where: { id: userId } });
   if (!user) throw new Error('Usuario no encontrado');
 
+  if (user.passwordHash == null || user.passwordHash === '') {
+    throw new Error('Cambia la contraseña desde la app (Supabase) o usa la función auth-change-password.');
+  }
   const isValid = await bcrypt.compare(currentPassword, user.passwordHash);
   if (!isValid) throw new Error('Contraseña actual incorrecta');
 

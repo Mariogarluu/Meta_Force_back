@@ -53,11 +53,10 @@ Si prefieres usar variables separadas:
 
 - **BCRYPT_SALT_ROUNDS**: (Opcional) Número de rondas para hashing, default: `10`
 
-### Variables de Cloudinary (si usas imágenes de perfil)
+### Supabase (Storage)
 
-- **CLOUDINARY_CLOUD_NAME**: Tu cloud name de Cloudinary
-- **CLOUDINARY_API_KEY**: Tu API key de Cloudinary
-- **CLOUDINARY_API_SECRET**: Tu API secret de Cloudinary
+- **SUPABASE_URL**: URL del proyecto
+- **SUPABASE_ANON_KEY**: Clave anon (necesaria para subir/borrar en buckets configurados)
 
 ---
 
@@ -233,7 +232,7 @@ DATABASE_URL="postgresql://user:password@hostname-externo:5432/database?sslmode=
 - [ ] Internal Database URL configurada en `DATABASE_URL`
 - [ ] `JWT_SECRET` configurado (mínimo 32 caracteres)
 - [ ] `NODE_ENV` configurado como `production`
-- [ ] Variables de Cloudinary configuradas (si aplica)
+- [ ] `SUPABASE_URL` y `SUPABASE_ANON_KEY` configurados (Storage)
 - [ ] Servicio web desplegado y funcionando
 - [ ] Logs verificados sin errores de conexión
 - [ ] Prisma Studio configurado para acceso local (si necesario)

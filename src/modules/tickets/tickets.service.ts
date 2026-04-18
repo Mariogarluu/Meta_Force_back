@@ -1,4 +1,5 @@
 import { prisma } from '../../config/db.js';
+import { SupabaseStorageService } from '../../services/supabase-storage.service.js';
 import { notifyCenterAdmins } from '../notifications/notifications.service.js';
 import type { NotificationType } from '../notifications/notifications.service.js';
 
@@ -176,8 +177,11 @@ export async function deleteTicket(id: string, userRole: string, userCenterId?: 
     throw new Error('No tienes permiso para eliminar este ticket');
   }
 
-  // Eliminar archivos adjuntos de Cloudinary si existen
-  // TODO: Implementar eliminación de archivos si es necesario
+  const attachments = Array.isArray(ticket.attachments) ? ticket.attachments : [];
+  for (const url of attachments) {
+    if (typeof url !== 'string' || !url.includes('/object/public/tickets/')) continue;
+    await SupabaseStorageService.deleteFile(url, 'tickets');
+  }
 
   await prisma.ticket.delete({
     where: { id }

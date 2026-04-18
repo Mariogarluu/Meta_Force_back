@@ -8,7 +8,7 @@ API REST desarrollada con Node.js, Express, TypeScript y PostgreSQL para Meta Fo
 - npm (viene incluido con Node.js)
 - PostgreSQL (versión 14 o superior)
 - Git
-- Cuenta de Cloudinary (para gestión de imágenes de perfil)
+- Proyecto Supabase (Storage para avatares y adjuntos de tickets)
 
 ## 🚀 Instalación
 
@@ -29,7 +29,8 @@ cp .env.example .env
 # Edita .env con tus configuraciones:
 # - DATABASE_URL: URL de conexión a PostgreSQL
 # - JWT_SECRET: Clave secreta para JWT (mínimo 32 caracteres)
-# - CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET
+# - SUPABASE_URL, SUPABASE_ANON_KEY (Storage y cliente)
+# - Opcional: SUPABASE_EDGE_FUNCTIONS_URL + misma ANON para proxy IA → Edge
 ```
 
 4. Configura la base de datos:
@@ -65,7 +66,7 @@ La API estará disponible en `http://localhost:3000/`
 - **Zod** - Validación de esquemas
 
 ### Cloud Services
-- **Cloudinary** - Gestión y almacenamiento de imágenes
+- **Supabase** - Storage (perfiles, tickets) y Edge Functions (`ai-chat`, `ai-sessions`, `ai-save-plan`, `create-ticket`, `health`). Despliegue: `npm run functions:deploy` (requiere [Supabase CLI](https://supabase.com/docs/guides/cli) y `supabase link`).
 - **Render** - Hosting de aplicaciones y bases de datos
 - **Vercel** - Despliegue serverless
 
@@ -179,17 +180,14 @@ Authorization: Bearer <tu-token-jwt>
 5. Se genera un JWT válido por 7 días
 6. Usuario puede hacer login (`POST /api/auth/login`) para obtener un nuevo token
 
-## 📸 Gestión de Imágenes de Perfil
+## 📸 Imágenes de perfil y adjuntos
 
-El sistema integra Cloudinary para gestión de imágenes:
+Almacenamiento en **Supabase Storage** (buckets `profiles` y `tickets`):
 
 ### Características
-- **Subida automática a Cloudinary** con transformaciones optimizadas
-- **Redimensionamiento inteligente** (400x400px, crop centrado en cara)
-- **Calidad automática** y formato óptimo (WebP cuando sea posible)
-- **Eliminación automática** de imagen anterior al subir una nueva
-- **Validación de archivos** (solo imágenes, tamaño máximo)
-- **URLs seguras** (HTTPS) y optimizadas para CDN
+- Subida con `upsert` en perfil y rutas por ticket para adjuntos
+- Eliminación de la imagen anterior al subir otra (excepto `fauno.png`)
+- Validación de archivos en las rutas de upload (multer / límites)
 
 ### Uso
 ```bash
@@ -230,7 +228,7 @@ Meta_Force_back/
 ├── src/
 │   ├── app.ts              # Configuración principal de Express
 │   ├── index.ts            # Punto de entrada
-│   ├── config/             # Configuraciones (DB, Swagger, env, Cloudinary)
+│   ├── config/             # Configuraciones (DB, Swagger, env, Supabase)
 │   ├── middleware/         # Middlewares (auth, validación, errores, upload)
 │   ├── modules/            # Módulos de la aplicación
 │   │   ├── auth/           # Autenticación
@@ -241,7 +239,7 @@ Meta_Force_back/
 │   │   ├── notifications/  # Sistema de notificaciones
 │   │   ├── access/         # Control de acceso (QR)
 │   │   └── health/         # Health checks
-│   ├── services/           # Servicios externos (Cloudinary)
+│   ├── services/           # Servicios (p. ej. Supabase Storage)
 │   ├── types/              # Tipos TypeScript
 │   ├── utils/              # Utilidades (logger, validación)
 │   └── tests/              # Pruebas unitarias
@@ -254,6 +252,7 @@ Meta_Force_back/
 ├── Dockerfile              # Imagen Docker multi-stage
 ├── docker-compose.yml      # Orquestación Docker
 ├── vercel.json             # Configuración Vercel
+├── supabase/               # Edge Functions (IA) y config CLI
 ├── package.json            # Dependencias del proyecto
 └── tsconfig.json           # Configuración de TypeScript
 ```
@@ -329,9 +328,9 @@ El proyecto está configurado para despliegue serverless en Vercel:
    ```
    DATABASE_URL=postgresql://user:password@host:5432/database
    JWT_SECRET=tu-secret-super-seguro-de-al-menos-32-caracteres
-   CLOUDINARY_CLOUD_NAME=tu-cloud-name
-   CLOUDINARY_API_KEY=tu-api-key
-   CLOUDINARY_API_SECRET=tu-api-secret
+   SUPABASE_URL=https://xxxx.supabase.co
+   SUPABASE_ANON_KEY=tu_anon_key
+   GEMINI_API_KEY=... (o solo en secretos Edge si usas SUPABASE_EDGE_FUNCTIONS_URL)
    NODE_ENV=production
    ```
 
@@ -385,7 +384,7 @@ Consulta `PRISMA_STUDIO_PRODUCTION.md` para instrucciones sobre:
 ## ✨ Características Destacadas
 
 - 🔐 **Autenticación JWT completa** con registro, login y renovación de tokens
-- 👤 **Gestión de perfiles** con imágenes de perfil en Cloudinary
+- 👤 **Gestión de perfiles** con imágenes en Supabase Storage
 - 🏢 **Multi-centro** con selección de centro favorito
 - 📅 **Sistema de clases** con múltiples entrenadores y horarios personalizados
 - 🔔 **Notificaciones en tiempo real** para usuarios

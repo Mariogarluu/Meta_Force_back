@@ -11,10 +11,13 @@ model User {
   id               String            @id @default(cuid())
   email            String            @unique
   name             String
-  passwordHash     String
+  /// Enlace a Supabase Auth (uuid). Nulos en usuarios solo legacy Express.
+  authUserId       String?           @unique @map("auth_user_id") @db.Uuid
+  /// Opcional tras migración a Supabase Auth (filas creadas solo desde trigger).
+  passwordHash     String?
   role             Role              @default(USER)
   status           UserStatus        @default(PENDING)
-  profileImageUrl  String? // URL de la imagen de perfil en Cloudinary
+  profileImageUrl  String? // URL pública de imagen de perfil (Supabase Storage u otro CDN)
   gender           String?
   birthDate        DateTime?
   height           Float?         // en cm

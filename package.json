@@ -23,7 +23,9 @@
     "vercel-reset": "npx prisma migrate reset --force && npm run build",
     "seed": "node prisma/seed.js",
     "verify:seed": "node verify_seed.js",
-    "test:db": "node test_db.js"
+    "test:db": "node test_db.js",
+    "functions:deploy": "supabase functions deploy ai-chat ai-sessions ai-save-plan create-ticket health auth-register auth-change-password access-scan machines-create bulk-import",
+    "functions:deploy:ai": "supabase functions deploy ai-chat ai-sessions ai-save-plan"
   },
   "keywords": [],
   "author": "",
@@ -47,7 +49,6 @@
     "@types/swagger-ui-express": "^4.1.8",
     "@vercel/node": "^3.0.0",
     "bcrypt": "^6.0.0",
-    "cloudinary": "^2.8.0",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.6",
     "dotenv": "^17.2.3",

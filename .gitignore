@@ -20,3 +20,7 @@ logs/
 /src/generated/prisma
 
 backend-context.txt
+
+# Supabase CLI
+supabase/.temp/
+supabase/.branches/

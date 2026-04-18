@@ -25,7 +25,7 @@ Ver [SECRETS.md](SECRETS.md) para variables de Edge Functions y rotación de cla
 
 ## Verificación (local)
 
-Tras rellenar `.env` con `DATABASE_URL` válida (o ejecutar `npx supabase link --project-ref qybgnrlszozjhimewkel -p <db_password>`):
+Tras rellenar `.env` con `DATABASE_URL` válida (o ejecutar `npx supabase link --project-ref <TU_PROJECT_REF> -p <db_password>`):
 
 ```bash
 npx supabase migration list --linked

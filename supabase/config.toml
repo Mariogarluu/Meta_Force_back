@@ -1,4 +1,5 @@
-project_id = "qybgnrlszozjhimewkel"
+# Sustituye por el ref real del proyecto (Settings → General) o usa `supabase link`.
+project_id = "YOUR_SUPABASE_PROJECT_REF"
 
 [api]
 enabled = true

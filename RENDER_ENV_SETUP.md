@@ -78,10 +78,11 @@ Además de la base de datos, necesitas configurar:
 - **PORT**: Puerto del servidor (Render lo establece automáticamente, pero puedes dejarlo)
   - Valor: Dejar que Render lo maneje automáticamente
 
-### Supabase (Storage de perfiles y adjuntos de tickets)
+### Variables de Cloudinary (si usas imágenes de perfil):
 
-- **SUPABASE_URL**: URL del proyecto (`https://xxxx.supabase.co`)
-- **SUPABASE_ANON_KEY**: Clave anon (Settings → API)
+- **CLOUDINARY_CLOUD_NAME**: Tu cloud name de Cloudinary
+- **CLOUDINARY_API_KEY**: Tu API key de Cloudinary
+- **CLOUDINARY_API_SECRET**: Tu API secret de Cloudinary
 
 ---
 

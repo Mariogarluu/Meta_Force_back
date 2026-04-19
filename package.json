@@ -6,7 +6,9 @@
   "description": "Migraciones SQL y Edge Functions (Supabase). API Express/Prisma: git tag pre-supabase.",
   "scripts": {
     "functions:deploy": "npx supabase functions deploy ai-chat ai-sessions ai-save-plan create-ticket health auth-register auth-change-password access-scan machines-create bulk-import migrate-legacy-users",
-    "functions:deploy:ai": "npx supabase functions deploy ai-chat ai-sessions ai-save-plan"
+    "functions:deploy:ai": "npx supabase functions deploy ai-chat ai-sessions ai-save-plan",
+    "build": "echo 'Arquitectura Supabase Native - Build no requerido en Vercel'",
+    "start:prod": "echo 'Arquitectura Supabase Native - Despliegue gestionado mediante Supabase CLI'"
   },
   "keywords": ["supabase", "edge-functions"],
   "license": "ISC",

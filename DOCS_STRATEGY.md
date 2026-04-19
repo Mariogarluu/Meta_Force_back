@@ -51,6 +51,15 @@ Cada función debe seguir este formato para garantizar la máxima calidad:
 
 ---
 
+## ✅ Registro de Progreso
+
+| Fecha | Repositorio | Carpeta / Archivos | Estado |
+| :--- | :--- | :--- | :---: |
+| 19/04/2026 | **Frontend** | `src/app/core/services/` (Auth, Supabase, Notification, Theme, Users) | 🟢 5/18 |
+| | | | |
+
+---
+
 ## 📝 Notas de Git
 - **Commit Size**: 5-8 archivos modificados por commit para maximizar la visibilidad en el historial.
 - **Mensajes**: Siempre en español con prefijos claros (`docs:`, `style:`, `refactor:`).

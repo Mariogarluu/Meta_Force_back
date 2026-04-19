@@ -56,7 +56,7 @@ Cada función debe seguir este formato para garantizar la máxima calidad:
 | Fecha | Repositorio | Carpeta / Archivos | Estado |
 | :--- | :--- | :--- | :---: |
 | 19/04/2026 | **Frontend** | `src/app/core/services/` (Auth, Supabase, Notification, Theme, Users) | 🟢 5/18 |
-| | | | |
+| 19/04/2026 | **Backend** | `supabase/functions/` (Core Utils, Health, Register) | 🟢 5/20 |
 
 ---
 

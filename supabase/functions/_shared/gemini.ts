@@ -1,5 +1,21 @@
+/**
+ * =============================================================================
+ * UTILIDADES DE INTELIGENCIA ARTIFICIAL (GEMINI UTILS)
+ * =============================================================================
+ * Este módulo gestiona la comunicación directa con la API de Google Gemini.
+ * Se utiliza para la generación de contenido dinámico, planes de entrenamiento
+ * y chat interactivo utilizando modelos generativos.
+ */
 const DEFAULT_MODEL = "gemini-2.5-flash";
 
+/**
+ * Realiza una llamada a la API de Gemini para generar contenido.
+ * 
+ * @param systemInstruction - Instrucciones de contexto y rol para la IA.
+ * @param prompt - El mensaje o pregunta específica del usuario.
+ * @returns La respuesta textual generada por el modelo.
+ * @throws Error si la API Key no está configurada o si hay fallos de red.
+ */
 export async function callGemini(
   systemInstruction: string,
   prompt: string,

@@ -1,3 +1,13 @@
+/**
+ * =============================================================================
+ * REGISTRO DE USUARIOS (AUTH REGISTER)
+ * =============================================================================
+ * Esta Edge Function gestiona el proceso de alta de nuevos usuarios.
+ * Realiza las siguientes tareas:
+ * 1. Valida los datos de entrada (email, password, nombre).
+ * 2. Crea el usuario en Supabase Auth con privilegios administrativos.
+ * 3. Establece metadatos de rol (USER) y estado (PENDING) iniciales.
+ */
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { corsHeaders, jsonResponse, preflight } from "../_shared/cors.ts";
 

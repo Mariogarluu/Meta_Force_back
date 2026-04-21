@@ -57,6 +57,7 @@ Cada función debe seguir este formato para garantizar la máxima calidad:
 | :--- | :--- | :--- | :---: |
 | 19/04/2026 | **Frontend** | `src/app/core/services/` (Auth, Supabase, Notification, Theme, Users) | 🟢 5/18 |
 | 19/04/2026 | **Backend** | `supabase/functions/` (Core Utils, Health, Register) | 🟢 5/20 |
+| 21/04/2026 | **Backend** | `supabase/functions/` (access-scan, ai-chat, ai-save-plan, ai-sessions, machines-create) | 🟢 10/20 |
 
 ---
 

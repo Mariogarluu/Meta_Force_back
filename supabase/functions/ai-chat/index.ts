@@ -5,6 +5,12 @@ import { getSupabaseAdmin } from "../_shared/supabase-admin.ts";
 import { getSupabaseAuthUser } from "../_shared/supabase-auth.ts";
 import { resolveAppUserId } from "../_shared/resolve-app-user-id.ts";
 
+/**
+ * Controlador Edge Function para el chat asistido por IA (MetaForce Coach).
+ * Valida la identidad del usuario, carga su contexto físico (medidas, historial de entrenamiento)
+ * y genera una respuesta inteligente utilizando Gemini. Además, detecta y parsea
+ * cualquier rutina de entrenamiento generada para entregarla estructurada al cliente.
+ */
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return preflight();
 

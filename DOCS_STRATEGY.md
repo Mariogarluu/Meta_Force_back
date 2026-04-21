@@ -35,19 +35,31 @@ Podemos ejecutar esto en "sesiones de documentación" agrupadas por módulos:
 
 ## ✍️ Estándares de Documentación (JSDoc Premium)
 
-Cada función debe seguir este formato para garantizar la máxima calidad:
+El usuario ha especificado estrictamente el siguiente formato para *todos* los archivos:
 
-```typescript
-/**
- * [Descripción breve de la acción en español]
- * 
- * [Explicación detallada de la lógica interna o efectos secundarios]
- * 
- * @param [nombre] - [Propósito del parámetro]
- * @returns [Descripción de lo que devuelve la promesa/función]
- * @throws [Errores esperados/excepciones]
- */
-```
+1. **Cabecera obligatoria al principio del archivo**, antes de la clase o servicio principal, definiendo la finalidad global:
+   ```typescript
+   /**
+    * =============================================================================
+    * TÍTULO DEL ARCHIVO/MÓDULO
+    * =============================================================================
+    * Descripción general y propósito en el ecosistema.
+    * 
+    * Responsabilidades:
+    * 1. 
+    * 2.
+    * ...
+    */
+   ```
+2. **JSDoc antes de cada apertura de llave `{}`** (justo encima de la firma de cada función, método o getters). 
+   ```typescript
+   /**
+    * [Explicación de qué hace esta función y su flujo]
+    * @param [nombre] - [Propósito]
+    * @returns [Lo que devuelve]
+    */
+   ```
+3. **Ningún comentario en línea (`//`) dentro de la lógica del propio bloque `{}`.** Salvo en excepciones matemáticas estrictas, el "qué y cómo" se expresa en la firma exterior.
 
 ---
 

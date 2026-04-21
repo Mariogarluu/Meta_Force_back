@@ -8,9 +8,24 @@ import {
 } from "../_shared/save-ai-plan.ts";
 
 /**
- * Controlador Edge Function para el guardado de planes generados por IA.
- * Recibe un plan estructurado generado previamente y lo inserta en la base de datos
- * asociándolo al perfil de usuario actual usando funciones auxiliares.
+ * =============================================================================
+ * GUARDADO DE PLANES GENERADOS POR IA (AI SAVE PLAN)
+ * =============================================================================
+ * Controlador Edge Function para el parseo y almacenamiento de rutinas inferidas.
+ * 
+ * Responsabilidades:
+ * 1. Recibir un plan de entrenamiento estructurado en formato JSON.
+ * 2. Autenticar la identidad origen de la petición.
+ * 3. Ejecutar sub-procedimientos de transacción anidados para estructurar y persistir 
+ *    todo el árbol relacional completo en Prisma (workouts/exercises).
+ */
+
+/**
+ * Endpoint de red POST diseñado para atrapar el request.
+ * Convierte un esquema JSON al árbol relacional DB mediante subconsultas asociadas.
+ *
+ * @param req - Objeto de solicitud HTTP Request.
+ * @returns Confirmación o rechazo con código HTTP acorde al éxito de inserción.
  */
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return preflight();

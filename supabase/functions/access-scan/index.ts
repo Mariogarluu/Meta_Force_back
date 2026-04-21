@@ -6,6 +6,18 @@ import {
 } from "../_shared/supabase-auth.ts";
 
 /**
+ * =============================================================================
+ * CONTROLADOR DE ESCANEO DE ACCESOS (ACCESS SCAN)
+ * =============================================================================
+ * Controlador Edge Function de Deno para registrar entradas y salidas de usuarios.
+ * 
+ * Responsabilidades:
+ * 1. Validar tokens de acceso administrativo de centro o Superadmin.
+ * 2. Verificar la integridad y validez temporal del payload del QR.
+ * 3. Ejecutar transacciones proxy atómicas en la BD para mover al usuario de un centro a otro.
+ */
+
+/**
  * Valida si un código QR está dentro del tiempo de expiración permitido.
  * @param timestamp - Marca de tiempo original de creación del código QR
  * @returns {boolean} `true` si el código fue generado hace menos de 20 minutos, `false` en caso contrario
@@ -16,8 +28,11 @@ function validateQRTimestamp(timestamp: string): boolean {
 }
 
 /**
- * Controlador Edge Function para escaneo de accesos (entrada/salida) en centros.
- * Verifica permisos de administrador, validad el QR y registra el movimiento.
+ * Controlador asíncrono para peticiones HTTP entrantes del cliente o terminal móvil.
+ * Extrae autorización, evalúa firmas de QR y realiza las mutaciones correspondientes en el registro.
+ *
+ * @param req - La solicitud HTTP Deno native Request.
+ * @returns Response object modelado en formato JSON estructurado.
  */
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return preflight();

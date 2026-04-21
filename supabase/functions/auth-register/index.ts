@@ -11,6 +11,13 @@
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { corsHeaders, jsonResponse, preflight } from "../_shared/cors.ts";
 
+/**
+ * Orquesta dinámicamente la transacción de registro en Supabase Auth y anexa
+ * metadatos fundacionales necesarios para la lógica de dominio.
+ * 
+ * @param req - La solicitud HTTP Deno native Request.
+ * @returns Response object modelado en formato JSON indicando la estructura del user id o el error asociado.
+ */
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return preflight();
   if (req.method !== "POST") return jsonResponse({ message: "Method not allowed" }, 405);

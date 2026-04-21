@@ -3,6 +3,11 @@ import { createId } from "npm:@paralleldrive/cuid2@2.2.2";
 import { corsHeaders, jsonResponse, preflight } from "../_shared/cors.ts";
 import { getProfileRole, getSupabaseAuthUser } from "../_shared/supabase-auth.ts";
 
+/**
+ * Controlador Edge Function para el alta masiva de máquinas por centro.
+ * Gestiona la inserción automática generando números de instancia consecutivos
+ * basándose en la cantidad de máquinas existentes del mismo tipo en el gimnasio especificado.
+ */
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return preflight();
   if (req.method !== "POST") return jsonResponse({ message: "Method not allowed" }, 405);

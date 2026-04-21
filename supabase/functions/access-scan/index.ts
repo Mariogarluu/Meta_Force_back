@@ -5,11 +5,20 @@ import {
   getSupabaseAuthUser,
 } from "../_shared/supabase-auth.ts";
 
+/**
+ * Valida si un código QR está dentro del tiempo de expiración permitido.
+ * @param timestamp - Marca de tiempo original de creación del código QR
+ * @returns {boolean} `true` si el código fue generado hace menos de 20 minutos, `false` en caso contrario
+ */
 function validateQRTimestamp(timestamp: string): boolean {
   const qrTime = new Date(timestamp).getTime();
   return (Date.now() - qrTime) < 20 * 60 * 1000;
 }
 
+/**
+ * Controlador Edge Function para escaneo de accesos (entrada/salida) en centros.
+ * Verifica permisos de administrador, validad el QR y registra el movimiento.
+ */
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return preflight();
   if (req.method !== "POST") return jsonResponse({ message: "Method not allowed" }, 405);

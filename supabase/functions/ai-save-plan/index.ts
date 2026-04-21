@@ -7,6 +7,11 @@ import {
   saveAiPlan,
 } from "../_shared/save-ai-plan.ts";
 
+/**
+ * Controlador Edge Function para el guardado de planes generados por IA.
+ * Recibe un plan estructurado generado previamente y lo inserta en la base de datos
+ * asociándolo al perfil de usuario actual usando funciones auxiliares.
+ */
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return preflight();
 

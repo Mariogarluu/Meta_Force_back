@@ -3,6 +3,11 @@ import { getSupabaseAdmin } from "../_shared/supabase-admin.ts";
 import { getSupabaseAuthUser } from "../_shared/supabase-auth.ts";
 import { resolveAppUserId } from "../_shared/resolve-app-user-id.ts";
 
+/**
+ * Controlador Edge Function para gestionar el historial de sesiones del chat de IA.
+ * Proporciona métodos para obtener el historial completo (GET) de conversaciones del
+ * usuario identificado o eliminar una sesión en particular (DELETE).
+ */
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return preflight();
 

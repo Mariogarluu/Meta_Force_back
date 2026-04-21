@@ -4,9 +4,23 @@ import { getSupabaseAuthUser } from "../_shared/supabase-auth.ts";
 import { resolveAppUserId } from "../_shared/resolve-app-user-id.ts";
 
 /**
+ * =============================================================================
+ * GESTOR DE SESIONES DE IA (AI SESSIONS)
+ * =============================================================================
  * Controlador Edge Function para gestionar el historial de sesiones del chat de IA.
- * Proporciona métodos para obtener el historial completo (GET) de conversaciones del
- * usuario identificado o eliminar una sesión en particular (DELETE).
+ * 
+ * Responsabilidades:
+ * 1. Proporcionar un endpoint de sólo-lectura para recuperar el log de conversaciones (GET).
+ * 2. Permitir el borrado en cascada/individual de una conversación específica (DELETE).
+ * 3. Filtrar de forma autorizada y segura los registros pertenecientes al actor solicitante.
+ */
+
+/**
+ * Recibe, tramita y expone en formato JSON los metadatos y extractos transaccionales 
+ * de la base de conocimiento IA de la sesión del usuario.
+ *
+ * @param req - Objeto de solicitud HTTP Request invocada (GET/DELETE).
+ * @returns Objeto Response con una matriz en JSON de la historia u estado vacío.
  */
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return preflight();

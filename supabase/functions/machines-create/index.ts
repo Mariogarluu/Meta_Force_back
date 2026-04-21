@@ -4,9 +4,23 @@ import { corsHeaders, jsonResponse, preflight } from "../_shared/cors.ts";
 import { getProfileRole, getSupabaseAuthUser } from "../_shared/supabase-auth.ts";
 
 /**
- * Controlador Edge Function para el alta masiva de máquinas por centro.
- * Gestiona la inserción automática generando números de instancia consecutivos
- * basándose en la cantidad de máquinas existentes del mismo tipo en el gimnasio especificado.
+ * =============================================================================
+ * CREACIÓN DE MÁQUINAS (MACHINES CREATE)
+ * =============================================================================
+ * Controlador Edge Function para el alta masiva o individual de hardware deportivo en centros.
+ * 
+ * Responsabilidades:
+ * 1. Gestión de la inserción desbancando a los IDs secuenciales estándar.
+ * 2. Calcular los números de instancia consecutivos localizados bajo un mismo parentesco Gym-Model.
+ * 3. Proteger la operativa exponiéndola exclusivamente al Rol Administrative/System.
+ */
+
+/**
+ * Escucha la red por peticiones POST autorizadas.
+ * Extrae carga JSON con el id del centro y el listado de máquinas a crear, indexándolas mediante count a la DB.
+ *
+ * @param req - Objeto de solicitud HTTP Request con lista de hardware a dar de alta.
+ * @returns Response object modelado en formato JSON estructurado indicando el éxito y el diff volcado.
  */
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return preflight();

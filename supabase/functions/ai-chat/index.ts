@@ -6,10 +6,24 @@ import { getSupabaseAuthUser } from "../_shared/supabase-auth.ts";
 import { resolveAppUserId } from "../_shared/resolve-app-user-id.ts";
 
 /**
+ * =============================================================================
+ * ASISTENTE IA COACH (AI CHAT)
+ * =============================================================================
  * Controlador Edge Function para el chat asistido por IA (MetaForce Coach).
- * Valida la identidad del usuario, carga su contexto físico (medidas, historial de entrenamiento)
- * y genera una respuesta inteligente utilizando Gemini. Además, detecta y parsea
- * cualquier rutina de entrenamiento generada para entregarla estructurada al cliente.
+ * 
+ * Responsabilidades:
+ * 1. Validar identidad e interactuar con el modelo LLM Gemini.
+ * 2. Cargar perfil, medidas e historial de entrenamiento como contexto del prompt.
+ * 3. Producir e inyectar respuestas formatadas, extrayendo estructuras de rutinas.
+ * 4. Persistir la transcripción de la conversación (Prompt/Response) vinculada al usuario.
+ */
+
+/**
+ * Controlador asíncrono para ingesta de consultas hacia el entrenador de IA.
+ * Inicializa variables contextuales de usuario, delega el cálculo al LLM y parsea el resultado.
+ *
+ * @param req - Objeto de solicitud HTTP Request con payload JSON.
+ * @returns Objeto Response con el texto de la IA y el JSON de plan generado si procede.
  */
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return preflight();

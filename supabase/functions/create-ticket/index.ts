@@ -1,3 +1,17 @@
+/**
+ * =============================================================================
+ * CREACIÓN DE TICKETS DE SOPORTE (CREATE TICKET)
+ * =============================================================================
+ * Esta Edge Function permite a los usuarios (autenticados o no) crear tickets
+ * de soporte o contacto. Gestiona tanto los datos del ticket como la subida
+ * de archivos adjuntos al almacenamiento de Supabase.
+ * 
+ * Responsabilidades:
+ * 1. Validar los campos obligatorios del ticket (nombre, email, asunto, etc.).
+ * 2. Verificar la existencia del centro asociado.
+ * 3. Procesar y subir hasta 5 archivos adjuntos en formato Base64.
+ * 4. Persistir el ticket en la base de datos con las URLs de los adjuntos.
+ */
 import { createId } from "npm:@paralleldrive/cuid2@2.2.2";
 import { corsHeaders, jsonResponse, preflight } from "../_shared/cors.ts";
 import { getSupabaseAdmin } from "../_shared/supabase-admin.ts";
@@ -9,8 +23,10 @@ type AttachmentInput = {
 };
 
 /**
- * POST público: crea un ticket de contacto (misma semántica que POST /api/tickets con JSON).
- * Adjuntos: base64 (máx. 5). Rutas en Storage: `<ticketId>/<timestamp>_<nombre>`.
+ * Manejador principal para la creación de tickets de contacto.
+ * 
+ * @param req - Solicitud HTTP POST con los datos del ticket y adjuntos.
+ * @returns Respuesta con el objeto del ticket creado, incluyendo datos del centro.
  */
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return preflight();

@@ -1,6 +1,24 @@
+/**
+ * =============================================================================
+ * CAMBIO DE CONTRASEÑA (AUTH CHANGE PASSWORD)
+ * =============================================================================
+ * Esta Edge Function gestiona el proceso de cambio de contraseña para usuarios
+ * autenticados. Valida la contraseña actual antes de permitir la actualización.
+ * 
+ * Responsabilidades:
+ * 1. Validar la sesión activa del usuario.
+ * 2. Verificar la contraseña actual mediante un re-login atómico.
+ * 3. Actualizar la contraseña en Supabase Auth mediante privilegios de admin.
+ */
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { corsHeaders, jsonResponse, preflight } from "../_shared/cors.ts";
 
+/**
+ * Manejador principal para la solicitud de cambio de contraseña.
+ * 
+ * @param req - Solicitud HTTP entrante.
+ * @returns Respuesta JSON indicando éxito o error.
+ */
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return preflight();
   if (req.method !== "POST") return jsonResponse({ message: "Method not allowed" }, 405);

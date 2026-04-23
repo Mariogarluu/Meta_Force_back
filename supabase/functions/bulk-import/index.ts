@@ -1,8 +1,27 @@
+/**
+ * =============================================================================
+ * IMPORTACIÓN MASIVA (BULK IMPORT)
+ * =============================================================================
+ * Esta Edge Function permite la creación masiva de registros de ejercicios o
+ * comidas en la base de datos. Está restringida a usuarios con roles administrativos.
+ * 
+ * Responsabilidades:
+ * 1. Verificar los permisos administrativos del usuario (SUPERADMIN/ADMIN_CENTER).
+ * 2. Validar el tipo de importación (ejercicios o comidas).
+ * 3. Procesar iterativamente los elementos, evitando duplicados por nombre.
+ * 4. Reportar resultados detallados (creados, omitidos y errores).
+ */
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { createId } from "npm:@paralleldrive/cuid2@2.2.2";
 import { corsHeaders, jsonResponse, preflight } from "../_shared/cors.ts";
 import { getProfileRole, getSupabaseAuthUser } from "../_shared/supabase-auth.ts";
 
+/**
+ * Manejador principal para la importación masiva de datos.
+ * 
+ * @param req - Solicitud HTTP con el cuerpo JSON conteniendo 'kind' e 'items'.
+ * @returns Respuesta JSON con el resumen de la operación.
+ */
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return preflight();
   if (req.method !== "POST") return jsonResponse({ message: "Method not allowed" }, 405);

@@ -1,3 +1,17 @@
+/**
+ * =============================================================================
+ * MIGRACIÓN DE USUARIOS LEGACY (MIGRATE LEGACY USERS)
+ * =============================================================================
+ * Esta Edge Function automatiza la migración de usuarios desde el sistema legacy
+ * hacia Supabase Auth. Gestiona la creación de identidades, vinculación de
+ * perfiles y migración opcional de datos históricos.
+ * 
+ * Responsabilidades:
+ * 1. Validar el secreto de migración para asegurar la petición.
+ * 2. Crear usuarios en Supabase Auth con contraseñas temporales.
+ * 3. Vincular registros de la tabla 'User' con los nuevos UUIDs de Auth.
+ * 4. Migrar datos relacionados (Notificaciones, Entrenamientos, Dietas, etc.).
+ */
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0"
 
@@ -15,6 +29,12 @@ type LegacyUserRow = {
   status: string
 }
 
+/**
+ * Manejador principal para el proceso de migración masiva.
+ * 
+ * @param req - Solicitud HTTP con parámetros de límite, dryRun y migrateData.
+ * @returns Respuesta con los resultados detallados de cada usuario procesado.
+ */
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders })
@@ -70,8 +90,6 @@ serve(async (req) => {
     for (const u of (legacyUsers ?? []) as LegacyUserRow[]) {
       const legacyUserId = u.id
       const email = u.email
-
-      // Create auth user with temporary random password
       const tempPassword = crypto.randomUUID() + "Aa1!"
 
       if (dryRun) {
@@ -99,7 +117,6 @@ serve(async (req) => {
 
       const authUserId = created.user.id
 
-      // Link legacy user row
       const { error: linkErr } = await admin
         .from("User")
         .update({ auth_user_id: authUserId })
@@ -116,7 +133,6 @@ serve(async (req) => {
         continue
       }
 
-      // Create canonical profile row
       const { error: profileErr } = await admin
         .from("profiles")
         .upsert({
@@ -154,7 +170,6 @@ serve(async (req) => {
         continue
       }
 
-      // Optional: migrate user-owned data from legacy id -> auth uuid text
       if (migrateData) {
         const authUserIdText = authUserId
 

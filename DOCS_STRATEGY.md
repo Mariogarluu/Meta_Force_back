@@ -71,8 +71,8 @@ El usuario ha especificado estrictamente el siguiente formato para *todos* los a
 | 19/04/2026 | **Backend** | `supabase/functions/` (Core Utils, Health, Register) | 🟢 5/20 |
 | 21/04/2026 | **Backend** | `supabase/functions/` (access-scan, ai-chat, ai-save-plan, ai-sessions, machines-create) | 🟢 10/20 |
 | 21/04/2026 | **Frontend** | `src/app/pages/login`, `dashboard`, `diets.service.ts` (Comentarios internos explicativos y traducción a español) | 🟢 8/18 |
-| 23/04/2026 | **Backend** | `supabase/functions/` (auth-change-password, bulk-import, create-ticket) | 🟢 13/20 |
-| 23/04/2026 | **Frontend** | `src/app/core/services/` (centers, classes, machines) | 🟢 11/18 |
+| 23/04/2026 | **Backend** | `supabase/functions/` (migrate-legacy-users, _shared/supabase-auth) | 🟢 15/20 |
+| 23/04/2026 | **Frontend** | `src/app/core/services/` (error, exercises, workouts, meals) | 🟢 15/18 |
 
 ---
 

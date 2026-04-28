@@ -6,7 +6,7 @@
  * Se utiliza para la generación de contenido dinámico, planes de entrenamiento
  * y chat interactivo utilizando modelos generativos.
  */
-const DEFAULT_MODEL = "gemini-2.5-flash";
+const DEFAULT_MODEL = "gemini-1.5-flash";
 
 /**
  * Realiza una llamada a la API de Gemini para generar contenido.
@@ -51,7 +51,7 @@ export async function callGemini(
   if (!res.ok) {
     const errText = await res.text();
     console.error("Gemini API error:", res.status, errText);
-    throw new Error("Error de comunicación con la IA.");
+    throw new Error(`Error de comunicación con la IA. Details: ${res.status} - ${errText}`);
   }
 
   const data = (await res.json()) as {

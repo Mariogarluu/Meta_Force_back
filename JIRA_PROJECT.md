@@ -10,6 +10,7 @@ Este archivo centraliza el estado actual de todas las tareas definidas en el bac
 - [x] Implementar la interfaz de usuario de Rendimiento (Gráficas y formularios).
 - [x] Corregir conexión Frontend-Backend local y error 500 (userId).
 - [x] Internacionalización del módulo (ES, EN, FR) - **COMPLETO**.
+- [x] Sistema de recordatorios motivacionales In-App por inactividad (Fase 1).
 
 ---
 
@@ -28,8 +29,8 @@ Este archivo centraliza el estado actual de todas las tareas definidas en el bac
 - [x] Cacheado de respuestas de red en la DB para acceso offline.
 
 ### SCRUM-138 Infraestructura y Despliegue [20 pts]
-- [ ] Migración de la base de datos a Supabase.
-- [ ] Optimización de despliegue en Vercel/Render.
+- [x] Migración de la base de datos a Supabase (Backend/Frontend conectados).
+- [ ] Optimización de despliegue en Vercel/Render (Pendiente configurar Vercel con las nuevas ENVs).
 
 ---
 

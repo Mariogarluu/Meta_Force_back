@@ -1,82 +1,20 @@
-# 🚀 Estrategia de Actividad y Documentación - Meta-Force
+# 📖 Documentación del Proyecto: Meta-Force Backend
 
-Este documento sirve como hoja de ruta para el "inflado profesional" del repositorio mediante documentación técnica de alto valor.
+Aquí llevamos el registro de qué hemos hecho en cada parte del sistema para que el equipo esté alineado.
 
-## 📊 Inventario Actual del Proyecto
+## ⚙️ Core & Configuración
+*   **`.env`**: Aquí hemos guardado todas las llaves maestras del proyecto (Supabase, Cloudinary, Gemini). Es el corazón de la configuración y lo mantenemos fuera de GitHub por seguridad.
+*   **`prisma/schema.prisma`**: Aquí hemos definido nuestra arquitectura de base de datos. Usamos modelos claros para `User`, `Exercise` y `BodyWeightRecord`, estableciendo las relaciones necesarias para que todo el sistema de seguimiento funcione perfecto.
+*   **`package.json`**: Aquí hemos organizado todas las dependencias de Node.js. Hemos incluido Express para el servidor y Prisma para la base de datos, asegurando que el entorno sea robusto y escalable.
 
-| Repositorio | Archivos TypeScript (.ts) | Potencial de Commits | Líneas Estimadas |
-| :--- | :---: | :---: | :---: |
-| **Backend** | 87 | ~15 a 18 | +2,000 |
-| **Frontend** | 78 | ~13 a 16 | +1,800 |
-| **TOTAL** | **165** | **~30 a 34** | **~3,800+** |
+## 🚀 Analítica y Datos (Pandas)
+*   **`analytics/extract_data.py`**: Aquí hemos creado nuestro primer pipeline de datos. Usamos Python con Pandas para extraer toda la info de Supabase y generar reportes CSV automáticos. Esto nos permite analizar el progreso de los usuarios sin afectar al rendimiento de la App.
+*   **`analytics/requirements.txt`**: Aquí hemos puesto las piezas necesarias de Python (Pandas y Supabase) para que el entorno de analítica sea fácil de replicar en cualquier máquina.
 
----
+## 🛠️ Lógica de Servidor
+*   **`src/index.ts`**: Aquí hemos levantado el servidor principal. Es el punto de entrada donde configuramos los middlewares de seguridad (CORS) y conectamos todas las rutas de la API.
+*   **`src/controllers/`**: Aquí hemos programado la inteligencia del backend. Separamos la lógica de negocio (como el registro de pesos o la autenticación) para que el código sea limpio y fácil de mantener.
+*   **`src/routes/`**: Aquí hemos mapeado todos los puntos de acceso de la API. Hemos organizado las rutas por módulos para que el Frontend sepa exactamente a dónde llamar.
 
-## 🛠️ Plan de Ejecución (Sugerido)
-
-Podemos ejecutar esto en "sesiones de documentación" agrupadas por módulos:
-
-### Fase 1: Servicios e Infraestructura (Máximo Impacto)
-- **Backend**: Auth, Users, AI, Prisma Config, Utils.
-- **Frontend**: Auth Service, API Service, Theme/Lang services.
-- *Objetivo*: Documentar la lógica de negocio central.
-
-### Fase 2: Controladores e Interfaz (Visibilidad)
-- **Backend**: Controllers de cada módulo, Routes, Esquemas de validación Zod.
-- **Frontend**: Componentes de páginas (Performance, Dashboard, Home).
-- *Objetivo*: Documentar cómo se exponen y consumen los datos.
-
-### Fase 3: Componentes Compartidos y Tipado
-- **Backend**: Tipos globales, Enums, DTOs.
-- **Frontend**: UI Components (`Shared/components`), Guards, Interceptors.
-- *Objetivo*: Documentar la estructura de datos y seguridad.
-
----
-
-## ✍️ Estándares de Documentación (JSDoc Premium)
-
-El usuario ha especificado estrictamente el siguiente formato para *todos* los archivos:
-
-1. **Cabecera obligatoria al principio del archivo**, antes de la clase o servicio principal, definiendo la finalidad global:
-   ```typescript
-   /**
-    * =============================================================================
-    * TÍTULO DEL ARCHIVO/MÓDULO
-    * =============================================================================
-    * Descripción general y propósito en el ecosistema.
-    * 
-    * Responsabilidades:
-    * 1. 
-    * 2.
-    * ...
-    */
-   ```
-2. **JSDoc antes de cada apertura de llave `{}`** (justo encima de la firma de cada función, método o getters). 
-   ```typescript
-   /**
-    * [Explicación de qué hace esta función y su flujo]
-    * @param [nombre] - [Propósito]
-    * @returns [Lo que devuelve]
-    */
-   ```
-3. **Ningún comentario en línea (`//`) dentro de la lógica del propio bloque `{}`.** Salvo en excepciones matemáticas estrictas, el "qué y cómo" se expresa en la firma exterior.
-
----
-
-## ✅ Registro de Progreso
-
-| Fecha | Repositorio | Carpeta / Archivos | Estado |
-| :--- | :--- | :--- | :---: |
-| 19/04/2026 | **Frontend** | `src/app/core/services/` (Auth, Supabase, Notification, Theme, Users) | 🟢 5/18 |
-| 19/04/2026 | **Backend** | `supabase/functions/` (Core Utils, Health, Register) | 🟢 5/20 |
-| 21/04/2026 | **Backend** | `supabase/functions/` (access-scan, ai-chat, ai-save-plan, ai-sessions, machines-create) | 🟢 10/20 |
-| 21/04/2026 | **Frontend** | `src/app/pages/login`, `dashboard`, `diets.service.ts` (Comentarios internos explicativos y traducción a español) | 🟢 8/18 |
-| 23/04/2026 | **Backend** | `supabase/functions/` (migrate-legacy-users, _shared/supabase-auth) | 🟢 15/20 |
-| 23/04/2026 | **Frontend** | `src/app/core/services/` (error, exercises, workouts, meals) | 🟢 15/18 |
-
----
-
-## 📝 Notas de Git
-- **Commit Size**: 5-8 archivos modificados por commit para maximizar la visibilidad en el historial.
-- **Mensajes**: Siempre en español con prefijos claros (`docs:`, `style:`, `refactor:`).
-- **Sincronización**: Realizar cambios simétricos en Front y Back para mantener coherencia de actividad.
+## ☁️ Supabase & Edge Functions
+*   **`supabase/functions/`**: Aquí hemos desplegado funciones "serverless". Las usamos para tareas específicas como el escaneo de accesos o la salud del sistema, permitiendo que la App sea más rápida y reactiva.

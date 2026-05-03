@@ -37,8 +37,8 @@ Este archivo centraliza el estado actual de todas las tareas definidas en el bac
 ### SCRUM-121 Gestionar bien Datos del usuario [18 pts]
 - [x] Progreso del usuario (Campos `activityLevel` y `goal` añadidos en BD).
 - [x] Panel visual de evolución física en el frontend.
-- [ ] Tablas con Power BI.
-- [ ] Extracción de datos con Pandas.
+- [x] Tablas con Power BI.
+- [x] Extracción de datos con Pandas.
 
 ### SCRUM-18 Sistema de Facturación [11 pts]
 - [ ] Implementar la interfaz de usuario para la facturación.
@@ -59,8 +59,8 @@ Este archivo centraliza el estado actual de todas las tareas definidas en el bac
 - [x] Manejo de Permisos en Runtime.
 
 ### SCRUM-111 Tareas en Segundo Plano y Alertas [10 pts]
-- [/] Configuración de WorkManager.
-- [ ] Implementación de Notificaciones push/locales.
+- [x] Configuración de WorkManager.
+- [x] Implementación de Notificaciones push/locales.
 
 ---
-**Última actualización**: 16 de abril de 2026.
+**Última actualización**: 3 de mayo de 2026.

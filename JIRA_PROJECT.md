@@ -38,8 +38,8 @@ Este archivo centraliza el estado actual de todas las tareas definidas en el bac
 ### SCRUM-121 Gestionar bien Datos del usuario [18 pts]
 - [x] Progreso del usuario (Campos `activityLevel` y `goal` añadidos en BD).
 - [x] Panel visual de evolución física en el frontend.
-- [x] Tablas con Power BI.
-- [x] Extracción de datos con Pandas.
+- [ ] Tablas con Power BI.
+- [ ] Extracción de datos con Pandas.
 
 ### SCRUM-18 Sistema de Facturación [11 pts]
 - [ ] Implementar la interfaz de usuario para la facturación.

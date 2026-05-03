@@ -1,8 +1,17 @@
+
 {
   "mcpServers": {
     "jira": {
       "command": "npx",
-      "args": ["-y", "mcp-remote@latest", "https://mcp.atlassian.com/v1/mcp"]
+      "args": [
+        "-y",
+        "mcp-remote@latest",
+        "https://mcp.atlassian.com/v1/mcp"
+      ],
+      "env": {
+        "JIRA_USER_EMAIL": "[EMAIL_ADDRESS]",
+        "JIRA_API_TOKEN": "ATATT3xFfGF0pX_2iE4j-H0k0pP6p-J6p-A6p-A6p-A"
+      }
     }
   }
 }

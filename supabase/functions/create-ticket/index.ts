@@ -15,6 +15,7 @@
 import { createId } from "npm:@paralleldrive/cuid2@2.2.2";
 import { corsHeaders, jsonResponse, preflight } from "../_shared/cors.ts";
 import { getSupabaseAdmin } from "../_shared/supabase-admin.ts";
+import { checkRateLimit, getClientIdentifier } from "../_shared/rate-limit.ts";
 
 type AttachmentInput = {
   filename: string;
@@ -55,6 +56,20 @@ Deno.serve(async (req) => {
   }
 
   const sb = getSupabaseAdmin();
+
+  // Rate limiting por email/IP para prevenir spam de tickets anónimos.
+  const ip = getClientIdentifier(req, "unknown-ip");
+  const rl = checkRateLimit({
+    key: `create-ticket:${email || ip}`,
+    limit: 10,            // máx. 10 tickets por hora
+    windowMs: 60 * 60_000, // 1 hora
+  });
+  if (!rl.allowed) {
+    return jsonResponse(
+      { message: "Has creado demasiados tickets en poco tiempo. Inténtalo más tarde." },
+      429,
+    );
+  }
 
   const { data: center, error: cErr } = await sb.from("Center").select("id").eq("id", centerId)
     .maybeSingle();

@@ -10,6 +10,7 @@
  */
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { corsHeaders, jsonResponse, preflight } from "../_shared/cors.ts";
+import { checkRateLimit, getClientIdentifier } from "../_shared/rate-limit.ts";
 
 /**
  * Orquesta dinámicamente la transacción de registro en Supabase Auth y anexa
@@ -26,6 +27,20 @@ Deno.serve(async (req) => {
   const url = Deno.env.get("SUPABASE_URL");
   if (!serviceKey || !url) {
     return jsonResponse({ message: "Servidor mal configurado" }, 500);
+  }
+
+  // Rate limiting básico por IP para endpoint de registro.
+  const ip = getClientIdentifier(req, "unknown-ip");
+  const rl = checkRateLimit({
+    key: `auth-register:${ip}`,
+    limit: 5,          // máx. 5 registros por ventana
+    windowMs: 60_000,  // ventana de 1 minuto
+  });
+  if (!rl.allowed) {
+    return jsonResponse(
+      { message: "Demasiadas peticiones de registro, inténtalo de nuevo en unos minutos." },
+      429,
+    );
   }
 
   let body: { email?: string; password?: string; name?: string };

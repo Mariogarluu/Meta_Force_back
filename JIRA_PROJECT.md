@@ -16,11 +16,11 @@ Este archivo centraliza el estado actual de todas las tareas definidas en el bac
 
 ## 🏗️ Sprint 7 (En Curso)
 ### SCRUM-126 Documentación y Ciberseguridad (parte 2) [10 pts]
-- [ ] Auditar de nuevo la aplicación con Zap.
-- [ ] Mejorar la app con los resultados de la auditoría.
-- [ ] Auditar el módulo de Kotlin.
+- [x] Auditar de nuevo la aplicación con Zap.
+- [x] Mejorar la app con los resultados de la auditoría.
+- [x] Auditar el módulo de Kotlin.
 - [x] Documentar con Compodoc (Objetivo 100%).
-- [/] Auditoría y corrección de traducciones global.
+- [x] Auditoría y corrección de traducciones global.
 
 ### SCRUM-106 Modo Offline y Persistencia (Room) [14 pts]
 - [x] Configuración de la base de datos Room.
@@ -30,7 +30,7 @@ Este archivo centraliza el estado actual de todas las tareas definidas en el bac
 
 ### SCRUM-138 Infraestructura y Despliegue [20 pts]
 - [x] Migración de la base de datos a Supabase (Backend/Frontend conectados).
-- [ ] Optimización de despliegue en Vercel/Render (Pendiente configurar Vercel con las nuevas ENVs).
+- [x] Optimización de despliegue en Vercel/Render.
 
 ---
 
@@ -64,4 +64,4 @@ Este archivo centraliza el estado actual de todas las tareas definidas en el bac
 - [x] Implementación de Notificaciones push/locales.
 
 ---
-**Última actualización**: 3 de mayo de 2026.
+**Última actualización**: 5 de mayo de 2026.

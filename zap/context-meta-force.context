@@ -1,0 +1,45 @@
+#
+# OWASP ZAP context for Meta-Force
+# --------------------------------
+# Este fichero define los targets principales a auditar y algunos valores
+# de referencia para configurar el contexto manualmente en la UI de ZAP.
+#
+# NOTA: El contexto real de ZAP se suele guardar en formato XML/binario
+# desde la propia herramienta. Este archivo sirve como fuente de verdad
+# versionada dentro del repo para reproducir la configuración.
+#
+
+name=meta-force
+
+# 1) Targets de alto nivel
+target.frontend=https://meta-force.vercel.app
+target.supabase.functions=https://<YOUR_PROJECT_REF>.supabase.co/functions/v1
+target.supabase.rest=https://<YOUR_PROJECT_REF>.supabase.co/rest/v1
+
+# 2) Rutas interesantes a priorizar en el spider / active scan
+include.url.1=https://meta-force.vercel.app/**
+include.url.2=https://<YOUR_PROJECT_REF>.supabase.co/functions/v1/*
+include.url.3=https://<YOUR_PROJECT_REF>.supabase.co/rest/v1/*
+
+# 3) Autenticación
+#
+# Usa autenticación basada en token Bearer para un usuario de prueba
+# normal (USER) y otro con rol administrativo (ADMIN). En ZAP:
+#   - Authentication -> HTTP Authentication
+#   - Header: Authorization: Bearer <TOKEN>
+#
+# Rellena estos campos sustituyendo los placeholders cuando configures
+# el contexto en ZAP.
+
+auth.user.jwt=<USER_JWT_ACCESS_TOKEN>
+auth.admin.jwt=<ADMIN_JWT_ACCESS_TOKEN>
+
+# 4) Reglas OWASP específicas que queremos revisar con más cuidado
+#
+# - Bypass de RLS: intentar acceder a registros de otros usuarios
+#   cambiando IDs en los parámetros de las peticiones.
+# - Exposición de claves: comprobar que nunca aparece `service_role`
+#   ni secretos sensibles en respuestas o cabeceras.
+# - Seguridad de cookies: verificar atributos Secure, HttpOnly y SameSite.
+# - CORS: revisar origenes permitidos en endpoints de Edge Functions.
+

@@ -39,10 +39,13 @@ async function getOrCreateExerciseId(
   let id = await findExerciseIdCi(sb, itemName);
   if (id) return id;
   const newId = createId();
+  const nowIso = new Date().toISOString();
   const { error } = await sb.from("Exercise").insert({
     id: newId,
     name: itemName,
     description: "Generado por AI",
+    createdAt: nowIso,
+    updatedAt: nowIso,
   });
   if (error) {
     id = await findExerciseIdCi(sb, itemName);
@@ -71,10 +74,13 @@ async function getOrCreateMealId(
   let id = await findMealIdCi(sb, itemName);
   if (id) return id;
   const newId = createId();
+  const nowIso = new Date().toISOString();
   const { error } = await sb.from("Meal").insert({
     id: newId,
     name: itemName,
     description: "Generada por AI",
+    createdAt: nowIso,
+    updatedAt: nowIso,
   });
   if (error) {
     if (String(error.message || "").includes("duplicate") || error.code === "23505") {
@@ -119,11 +125,14 @@ export async function saveAiPlan(
     }
 
     const workoutId = createId();
+    const workoutNowIso = new Date().toISOString();
     const { error: wErr } = await sb.from("Workout").insert({
       id: workoutId,
       userId,
       name: plan.name || "Rutina de Entrenamiento",
       description: plan.description || "Generado por IA",
+      createdAt: workoutNowIso,
+      updatedAt: workoutNowIso,
     });
     if (wErr) throw new Error(wErr.message);
 
@@ -159,6 +168,7 @@ export async function saveAiPlan(
             sets: Number(item.sets) || 3,
             reps: Number(item.reps) || 10,
             notes: item.notes ?? null,
+            updatedAt: new Date().toISOString(),
           });
           if (weErr) throw new Error(weErr.message);
         }
@@ -193,11 +203,14 @@ export async function saveAiPlan(
     }
 
     const dietId = createId();
+    const dietNowIso = new Date().toISOString();
     const { error: dErr } = await sb.from("Diet").insert({
       id: dietId,
       userId,
       name: plan.name || "Plan de Nutrición",
       description: plan.description || "Generado por IA",
+      createdAt: dietNowIso,
+      updatedAt: dietNowIso,
     });
     if (dErr) throw new Error(dErr.message);
 
@@ -245,6 +258,7 @@ export async function saveAiPlan(
             mealType,
             order: i,
             notes: notesVal,
+            updatedAt: new Date().toISOString(),
           });
           if (dmErr) throw new Error(dmErr.message);
         }

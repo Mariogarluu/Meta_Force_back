@@ -48,3 +48,10 @@ verify_jwt = true
 [functions.qr-sign]
 verify_jwt = true
 
+[functions.admin-signout]
+verify_jwt = true
+
+[auth]
+# 10 min. Recomendado cuando se usan claims para autorización.
+jwt_expiry = 600
+

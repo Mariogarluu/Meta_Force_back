@@ -42,6 +42,29 @@ En Supabase Dashboard, configura estos secretos desde:
 
 Y en local, copia `back/.env.example` a `back/.env` y rellena los valores reales antes de ejecutar `supabase start` / `supabase db push`.
 
+### Modelo de roles (defensa en profundidad)
+
+El proyecto usa **roles de aplicación** (por ejemplo `SUPERADMIN`, `ADMIN_CENTER`, `TRAINER`, `USER`) y **NO confía en `user_metadata`** para autorización.
+
+- **Fuente de verdad**: `public.user_roles`
+- **JWT**: el rol se inyecta como claim `app_role` mediante el **Custom Access Token Hook** de Supabase Auth.
+- **RLS**: helpers como `app.is_staff()` / `app.is_superadmin()` leen el rol desde `auth.jwt()->>'app_role'` (no desde `public.profiles`).
+
+#### Activar el Custom Access Token Hook
+
+En Supabase Dashboard:
+
+- **Authentication → Hooks → Custom access token**: selecciona la función Postgres `public.custom_access_token_hook`.
+
+> Importante: los cambios de rol **no se reflejan en el JWT hasta que el usuario refresca sesión**. Por eso también se recomienda un `jwt_expiry` corto.
+
+#### JWT expiry recomendado
+
+Para reducir la ventana de tokens antiguos, configura un expiry corto (p. ej. **10 minutos**):
+
+- En local: `back/supabase/config.toml` contiene `[auth] jwt_expiry = 600`.
+- En producción: configúralo en **Authentication → Sessions** (según versión del Dashboard).
+
 ## 🚀 Instalación
 
 1. Clona el repositorio:

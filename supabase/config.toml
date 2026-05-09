@@ -37,3 +37,14 @@ verify_jwt = true
 
 [functions.migrate-legacy-users]
 verify_jwt = false
+
+# Facturación: generación de PDF y envío de email de suscripción.
+[functions.invoice-pdf]
+verify_jwt = true
+
+[functions.subscription-email]
+verify_jwt = true
+
+[functions.qr-sign]
+verify_jwt = true
+

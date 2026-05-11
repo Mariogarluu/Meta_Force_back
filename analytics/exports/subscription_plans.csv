@@ -1,0 +1,4 @@
+id,code,name,description,position,active,created_at,updated_at
+8975637e-8c53-469e-86fa-78f4d5043e10,basic,Basic,Acceso a centros Meta Force,1,True,2026-05-09T15:01:26.232132+00:00,2026-05-09T15:01:26.232132+00:00
+590066bc-293b-4158-88e9-9bd0aa39efe4,standard,Standard,Basic + clases grupales + dietas,2,True,2026-05-09T15:01:26.232132+00:00,2026-05-09T15:01:26.232132+00:00
+6f78d579-3083-4e16-bd36-eb2e049d4875,premium,Premium,Standard + IA Coach + analítica avanzada,3,True,2026-05-09T15:01:26.232132+00:00,2026-05-09T15:01:26.232132+00:00

@@ -31,10 +31,19 @@ def main():
     print("--- INICIANDO EXTRACCIÓN ---")
     
     try:
+        # Tablas Core
         df_users = fetch_table_data("User")
         df_bodyweight = fetch_table_data("BodyWeightRecord")
         df_exercise = fetch_table_data("Exercise")
         df_records = fetch_table_data("ExerciseRecord")
+        
+        # Nuevas Tablas de Negocio
+        df_roles = fetch_table_data("user_roles")
+        df_plans = fetch_table_data("subscription_plans")
+        df_durations = fetch_table_data("plan_durations")
+        df_subscriptions = fetch_table_data("subscriptions")
+        df_invoices = fetch_table_data("invoices")
+        
     except Exception as e:
         print(f"Error al extraer datos (posible fallo de RLS o nombre de tabla): {e}")
         return
@@ -42,30 +51,37 @@ def main():
     # 2. Transformación (Transform)
     print("--- INICIANDO TRANSFORMACIÓN (Pandas) ---")
     
-    # Asegurarnos de que las fechas sean objetos datetime de Pandas
-    if not df_bodyweight.empty:
-        df_bodyweight['date'] = pd.to_datetime(df_bodyweight['date'])
-        # Ordenar por fecha
-        df_bodyweight = df_bodyweight.sort_values(by='date')
+    # Procesar fechas
+    for df in [df_bodyweight, df_records, df_subscriptions, df_invoices]:
+        if not df.empty:
+            # Detectar columna de fecha (date o created_at)
+            date_col = 'date' if 'date' in df.columns else 'created_at'
+            if date_col in df.columns:
+                df[date_col] = pd.to_datetime(df[date_col])
+                df = df.sort_values(by=date_col)
         
-    if not df_records.empty:
-        df_records['date'] = pd.to_datetime(df_records['date'])
-        
-        # Cruce (JOIN) entre ExerciseRecord y Exercise para tener los nombres de los ejercicios
-        if not df_exercise.empty:
-            df_records = pd.merge(
-                df_records, 
-                df_exercise[['id', 'name']], 
-                left_on='exerciseId', 
-                right_on='id', 
-                how='left',
-                suffixes=('', '_exercise')
-            )
-            # Renombrar columnas para mayor claridad
-            df_records.rename(columns={'name': 'exercise_name'}, inplace=True)
-            # Eliminar la columna id duplicada
-            if 'id_exercise' in df_records.columns:
-                df_records.drop(columns=['id_exercise'], inplace=True)
+    # Cruce (JOIN) entre ExerciseRecord y Exercise
+    if not df_records.empty and not df_exercise.empty:
+        df_records = pd.merge(
+            df_records, 
+            df_exercise[['id', 'name']], 
+            left_on='exerciseId', 
+            right_on='id', 
+            how='left',
+            suffixes=('', '_exercise')
+        )
+        df_records.rename(columns={'name': 'exercise_name'}, inplace=True)
+        if 'id_exercise' in df_records.columns:
+            df_records.drop(columns=['id_exercise'], inplace=True)
+
+    # Cruce de Suscripciones con Planes y Duraciones
+    if not df_subscriptions.empty:
+        if not df_plans.empty:
+            df_subscriptions = pd.merge(df_subscriptions, df_plans[['id', 'name']], left_on='plan_id', right_on='id', how='left', suffixes=('', '_plan'))
+            df_subscriptions.rename(columns={'name': 'plan_name'}, inplace=True)
+        if not df_durations.empty:
+            df_subscriptions = pd.merge(df_subscriptions, df_durations[['id', 'label']], left_on='duration_id', right_on='id', how='left')
+            df_subscriptions.rename(columns={'label': 'duration_label'}, inplace=True)
 
     # 3. Carga (Load) - Exportar a CSV
     print("--- EXPORTANDO DATOS ---")
@@ -73,24 +89,26 @@ def main():
     exports_dir = os.path.join(os.path.dirname(__file__), 'exports')
     os.makedirs(exports_dir, exist_ok=True)
     
-    # Exportar los DataFrames a CSV
-    if not df_users.empty:
-        df_users.to_csv(os.path.join(exports_dir, 'users.csv'), index=False)
-        print("users.csv generado.")
-        
-    if not df_bodyweight.empty:
-        df_bodyweight.to_csv(os.path.join(exports_dir, 'bodyweight_records.csv'), index=False)
-        print("bodyweight_records.csv generado.")
-        
-    if not df_records.empty:
-        df_records.to_csv(os.path.join(exports_dir, 'exercise_records.csv'), index=False)
-        print("exercise_records.csv generado.")
-        
-    if not df_exercise.empty:
-        df_exercise.to_csv(os.path.join(exports_dir, 'exercises_catalog.csv'), index=False)
-        print("exercises_catalog.csv generado.")
+    # Mapeo de DataFrames a nombres de archivo
+    dfs_to_export = {
+        'users.csv': df_users,
+        'bodyweight_records.csv': df_bodyweight,
+        'exercise_records.csv': df_records,
+        'exercises_catalog.csv': df_exercise,
+        'user_roles.csv': df_roles,
+        'subscription_plans.csv': df_plans,
+        'plan_durations.csv': df_durations,
+        'subscriptions.csv': df_subscriptions,
+        'invoices.csv': df_invoices
+    }
+    
+    for filename, df in dfs_to_export.items():
+        if not df.empty:
+            df.to_csv(os.path.join(exports_dir, filename), index=False)
+            print(f"{filename} generado.")
 
     print("\nProceso ETL completado con exito! Tienes los archivos listos para Power BI en la carpeta 'analytics/exports/'")
+
 
 if __name__ == "__main__":
     main()

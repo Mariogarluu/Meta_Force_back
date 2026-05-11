@@ -62,6 +62,6 @@ export async function getProfileRole(
   admin: ReturnType<typeof createClient>,
   userId: string,
 ): Promise<string | null> {
-  const { data } = await admin.from("profiles").select("role").eq("id", userId).maybeSingle();
+  const { data } = await admin.from("user_roles").select("role").eq("user_id", userId).maybeSingle();
   return (data as { role?: string } | null)?.role ?? null;
 }

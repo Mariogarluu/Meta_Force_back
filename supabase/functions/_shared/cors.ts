@@ -10,6 +10,12 @@ export const corsHeaders: Record<string, string> = {
   "Access-Control-Allow-Headers":
     "authorization, x-client-info, apikey, content-type",
   "Access-Control-Allow-Methods": "GET, POST, DELETE, OPTIONS",
+  // Cabeceras de seguridad básicas
+  "X-Content-Type-Options": "nosniff",
+  "Referrer-Policy": "strict-origin-when-cross-origin",
+  // Política conservadora por defecto; ajustar según necesidades futuras.
+  "Permissions-Policy":
+    "geolocation=(), camera=(), microphone=(), interest-cohort=()",
 };
 
 /**

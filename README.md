@@ -1,4 +1,6 @@
-# Meta Force Frontend 🏋️
+# Meta Force Platform 🏋️
+
+Este directorio contiene la configuración de backend (Supabase) y, en esta rama, también la documentación principal del frontend Angular.
 
 Aplicación frontend desarrollada con Angular 19 para la gestión integral de centros deportivos Meta Force. Sistema completo de gestión de usuarios, centros, máquinas, clases y entrenadores con soporte multiidioma y temas personalizables.
 
@@ -24,6 +26,44 @@ Aplicación frontend desarrollada con Angular 19 para la gestión integral de ce
 - **npm** (viene incluido con Node.js)
 - **Git** - [Descargar](https://git-scm.com/)
 - **Angular CLI** (opcional, recomendado): `npm install -g @angular/cli`
+
+### Backend Supabase (SCRUM-18)
+
+Para las funciones de suscripciones, facturación y QR (SCRUM-18) es necesario configurar algunas variables de entorno adicionales en `back/.env` (ver plantilla en `back/.env.example`) y subirlas a Supabase:
+
+- `SUPABASE_SERVICE_ROLE_KEY`: clave `service_role` del proyecto (solo en backend y Edge Functions).
+- `RESEND_API_KEY`: API key de Resend para el envío de emails de confirmación de suscripción.
+- `RESEND_FROM`: remitente de los emails de facturación (por ejemplo, `"Meta Force <facturacion@tudominio.com>"`).
+- `JWT_QR_SECRET`: secreto usado para firmar los JWT cortos del QR de acceso (Edge Function `qr-sign`).
+
+En Supabase Dashboard, configura estos secretos desde:
+
+- **Project Settings → Environment Variables → Database / Edge Functions**.
+
+Y en local, copia `back/.env.example` a `back/.env` y rellena los valores reales antes de ejecutar `supabase start` / `supabase db push`.
+
+### Modelo de roles (defensa en profundidad)
+
+El proyecto usa **roles de aplicación** (por ejemplo `SUPERADMIN`, `ADMIN_CENTER`, `TRAINER`, `USER`) y **NO confía en `user_metadata`** para autorización.
+
+- **Fuente de verdad**: `public.user_roles`
+- **JWT**: el rol se inyecta como claim `app_role` mediante el **Custom Access Token Hook** de Supabase Auth.
+- **RLS**: helpers como `app.is_staff()` / `app.is_superadmin()` leen el rol desde `auth.jwt()->>'app_role'` (no desde `public.profiles`).
+
+#### Activar el Custom Access Token Hook
+
+En Supabase Dashboard:
+
+- **Authentication → Hooks → Custom access token**: selecciona la función Postgres `public.custom_access_token_hook`.
+
+> Importante: los cambios de rol **no se reflejan en el JWT hasta que el usuario refresca sesión**. Por eso también se recomienda un `jwt_expiry` corto.
+
+#### JWT expiry recomendado
+
+Para reducir la ventana de tokens antiguos, configura un expiry corto (p. ej. **10 minutos**):
+
+- En local: `back/supabase/config.toml` contiene `[auth] jwt_expiry = 600`.
+- En producción: configúralo en **Authentication → Sessions** (según versión del Dashboard).
 
 ## 🚀 Instalación
 

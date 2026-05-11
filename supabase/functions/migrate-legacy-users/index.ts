@@ -90,7 +90,6 @@ serve(async (req) => {
     for (const u of (legacyUsers ?? []) as LegacyUserRow[]) {
       const legacyUserId = u.id
       const email = u.email
-      const tempPassword = crypto.randomUUID() + "Aa1!"
 
       if (dryRun) {
         results.push({ legacyUserId, email, action: "dryRun" })
@@ -100,7 +99,6 @@ serve(async (req) => {
       const { data: created, error: createErr } = await admin.auth.admin
         .createUser({
           email,
-          password: tempPassword,
           email_confirm: true,
           user_metadata: { name: u.name, legacy_user_id: legacyUserId },
         })
@@ -202,11 +200,27 @@ serve(async (req) => {
         }
       }
 
+      // Generate password recovery link instead of returning a raw password
+      const { data: linkData, error: linkErr } = await admin.auth.admin.generateLink({
+        type: "recovery",
+        email,
+      })
+
+      if (linkErr || !linkData) {
+        results.push({
+          legacyUserId,
+          email,
+          authUserId,
+          action: "recovery_link_failed",
+          error: linkErr?.message ?? "Failed to generate recovery link",
+        })
+        continue
+      }
+
       results.push({
         legacyUserId,
         email,
         authUserId,
-        tempPassword,
         action: migrateData ? "migrated_with_data" : "migrated_identity_only",
       })
     }

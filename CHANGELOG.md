@@ -1,5 +1,20 @@
 # Changelog
 
+## v1.1.0 - Auditoría seguridad & docs 100%
+
+### Añadido
+- Runbook de OWASP ZAP (`back/docs/ZAP_RUNBOOK_2026-05.md`) y plantilla de informe (`back/docs/security-audit-2026-05.md`) para la nueva arquitectura Supabase.
+- Rate limiting básico en Edge Functions sensibles (`auth-register`, `ai-chat`, `create-ticket`) mediante helper compartido `back/supabase/functions/_shared/rate-limit.ts`.
+- Cabeceras de seguridad en respuestas de Edge (`X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy`) desde `back/supabase/functions/_shared/cors.ts`.
+- Integración de detekt en la app Kotlin (`kotlin/app`) con configuración de seguridad inicial y primer informe generado.
+- Endurecimiento del build de release Android: R8/ProGuard activado con reglas mínimas para Compose, Hilt y Supabase, y generación de APK de release validada.
+- Script de auditoría i18n (`front/scripts/i18n-audit.mjs`) para verificar claves y placeholders consistentes entre `es/en/fr`.
+
+### Cambiado
+- `back/JIRA_PROJECT.md`: marcado SCRUM-126 y SCRUM-138 como completados y fecha de última actualización actualizada.
+
+---
+
 ## v1.0.0 - Producción y documentación
 
 ### Añadido

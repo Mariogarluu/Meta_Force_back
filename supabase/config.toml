@@ -1,5 +1,5 @@
 # Sustituye por el ref real del proyecto (Settings → General) o usa `supabase link`.
-project_id = "YOUR_SUPABASE_PROJECT_REF"
+project_id = "qybgnrlszozjhimewkel"
 
 [api]
 enabled = true
@@ -37,3 +37,21 @@ verify_jwt = true
 
 [functions.migrate-legacy-users]
 verify_jwt = false
+
+# Facturación: generación de PDF y envío de email de suscripción.
+[functions.invoice-pdf]
+verify_jwt = true
+
+[functions.subscription-email]
+verify_jwt = true
+
+[functions.qr-sign]
+verify_jwt = true
+
+[functions.admin-signout]
+verify_jwt = true
+
+[auth]
+# 10 min. Recomendado cuando se usan claims para autorización.
+jwt_expiry = 600
+

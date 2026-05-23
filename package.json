@@ -11,9 +11,12 @@
     "start:prod": "echo 'Arquitectura Supabase Native - Despliegue gestionado mediante Supabase CLI'",
     "seed:supabase": "node scripts/seed-from-json.mjs"
   },
-  "keywords": ["supabase", "edge-functions"],
+  "keywords": [
+    "supabase",
+    "edge-functions"
+  ],
   "license": "ISC",
   "devDependencies": {
-    "supabase": "2.90.0"
+    "supabase": "^2.90.0"
   }
 }

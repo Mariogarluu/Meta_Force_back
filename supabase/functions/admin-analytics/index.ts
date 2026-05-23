@@ -20,7 +20,7 @@ const ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY")!;
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return preflight();
-  if (req.method !== "GET") {
+  if (req.method !== "GET" && req.method !== "POST") {
     return jsonResponse({ error: "Method not allowed" }, 405);
   }
 

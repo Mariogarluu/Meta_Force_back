@@ -32,8 +32,6 @@ CREATE OR REPLACE FUNCTION public.register_subscription(
 )
 RETURNS TABLE(subscription_id uuid, invoice_id uuid)
 LANGUAGE plpgsql
-SECURITY DEFINER
-SET search_path = public, auth, app, pg_temp
 AS $$
 DECLARE
   v_price numeric(10,2);
@@ -100,12 +98,11 @@ BEGIN
            'id', u.id,
            'email', u.email,
            'name', COALESCE(p.name, u.email),
-           'role', COALESCE(ur.role, 'USER'::public."Role")
+           'role', p.role
          )
   INTO v_customer_snapshot
   FROM auth.users u
   LEFT JOIN public.profiles p ON p.id = u.id
-  LEFT JOIN public.user_roles ur ON ur.user_id = u.id
   WHERE u.id = p_user_id;
 
   IF v_customer_snapshot IS NULL THEN

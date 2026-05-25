@@ -111,6 +111,50 @@ Deno.serve(async (req) => {
   // 2) Recuperar rol del perfil
   const role = (await getProfileRole(admin as any, ctx.id)) ?? "CLIENT";
 
+  // Bypassear la suscripción para el personal administrativo y entrenadores (staff)
+  if (role === "SUPERADMIN" || role === "ADMIN_CENTER" || role === "TRAINER") {
+    const payload = {
+      user_id: ctx.id,
+      plan_code: "staff",
+      end_date: "9999-12-31", // Fecha de fin virtual
+      role,
+    };
+
+    const now = Math.floor(Date.now() / 1000);
+    const ttlSeconds = 15 * 60; // 15 minutos
+    const exp = now + ttlSeconds;
+
+    const secret = getEnvOrThrow("JWT_QR_SECRET");
+
+    const fullPayload = {
+      ...payload,
+      exp,
+    };
+
+    let token: string;
+    try {
+      token = await signJwtHS256(fullPayload, secret);
+    } catch (err) {
+      console.error(err);
+      return jsonResponse(
+        { message: (err as Error).message ?? "No se pudo firmar el JWT" },
+        500,
+      );
+    }
+
+    return jsonResponse(
+      {
+        token,
+        ...payload,
+        exp,
+        plan_name: "Acceso Personal (Staff)",
+        duration_label: "Ilimitado",
+        duration_months: 999,
+      },
+      200,
+    );
+  }
+
   // 3) Recuperar última suscripción activa (por fecha de fin más lejana)
   const { data: subscription, error: subErr } = await admin
     .from("subscriptions")

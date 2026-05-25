@@ -38,28 +38,13 @@ $$;
 GRANT EXECUTE ON FUNCTION public.custom_access_token_hook(jsonb) TO supabase_auth_admin;
 REVOKE EXECUTE ON FUNCTION public.custom_access_token_hook(jsonb) FROM authenticated, anon, public;
 
--- 2) Helpers: rol actual desde JWT (claim app_role) o fallback a base de datos
+-- 2) Helpers: rol actual desde JWT (claim app_role)
 CREATE OR REPLACE FUNCTION app.current_role()
 RETURNS public."Role"
-LANGUAGE plpgsql
+LANGUAGE sql
 STABLE
-SECURITY DEFINER
-SET search_path = public, auth, pg_temp
 AS $$
-DECLARE
-  v_role public."Role";
-BEGIN
-  -- 1) Intentar obtener del JWT claim
-  v_role := NULLIF(auth.jwt()->>'app_role', '')::public."Role";
-  
-  -- 2) Si es nulo, buscar directamente en la tabla user_roles
-  IF v_role IS NULL AND auth.uid() IS NOT NULL THEN
-    SELECT role INTO v_role FROM public.user_roles WHERE user_id = auth.uid();
-  END IF;
-  
-  -- 3) Retornar rol o USER por defecto
-  RETURN COALESCE(v_role, 'USER'::public."Role");
-END;
+  SELECT COALESCE(NULLIF(auth.jwt()->>'app_role', ''), 'USER')::public."Role";
 $$;
 
 CREATE OR REPLACE FUNCTION public.has_role(required_role public."Role")
@@ -69,8 +54,4 @@ STABLE
 AS $$
   SELECT app.current_role() = required_role;
 $$;
-
--- Grant usage on schema app and execute on functions in schema app to authenticated and anon
-GRANT USAGE ON SCHEMA app TO authenticated, anon;
-GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA app TO authenticated, anon;
 

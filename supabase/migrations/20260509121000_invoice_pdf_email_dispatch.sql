@@ -22,10 +22,10 @@ ON CONFLICT (id) DO NOTHING;
 
 -- ============================================================================
 -- RPC: register_subscription — add pg_net dispatch
--- ============================================================================
+-- ============================================================================DROP FUNCTION IF EXISTS public.register_subscription(uuid, uuid, uuid, uuid);
 
 CREATE OR REPLACE FUNCTION public.register_subscription(
-  p_user_id uuid,
+  p_user_id text,
   p_plan_id uuid,
   p_duration_id uuid,
   p_offer_id uuid DEFAULT NULL
@@ -36,6 +36,11 @@ SECURITY DEFINER
 SET search_path = public, auth, app, pg_temp
 AS $$
 DECLARE
+  v_user_uuid uuid;
+  v_email text;
+  v_name text;
+  v_role public."Role";
+  v_status public."UserStatus";
   v_price numeric(10,2);
   v_tax_rate numeric(5,2);
   v_discount_type public.discount_type;
@@ -55,6 +60,120 @@ BEGIN
   IF NOT app.is_staff() THEN
     RAISE EXCEPTION 'Only staff can register subscriptions'
       USING ERRCODE = '42501';
+  END IF;
+
+  -- Intentar resolver el UUID del usuario
+  IF p_user_id ~ '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$' THEN
+    -- Si ya es un UUID, lo usamos directamente
+    v_user_uuid := p_user_id::uuid;
+  ELSE
+    -- Si es un CUID antiguo, buscamos en public."User"
+    SELECT u.auth_user_id, u.email, u.name, u.role, u.status
+    INTO v_user_uuid, v_email, v_name, v_role, v_status
+    FROM public."User" u
+    WHERE u.id = p_user_id;
+
+    IF v_email IS NULL THEN
+      RAISE EXCEPTION 'Legacy user % not found in public.User', p_user_id;
+    END IF;
+
+    -- Si no estaba migrado, lo migramos al vuelo (creamos la cuenta en auth.users)
+    IF v_user_uuid IS NULL THEN
+      -- Comprobar si ya existe una cuenta en auth.users con ese email
+      SELECT id INTO v_user_uuid FROM auth.users WHERE email = v_email;
+      
+      IF v_user_uuid IS NULL THEN
+        v_user_uuid := gen_random_uuid();
+        
+        -- Evitar la violación de restricción única en el disparador on_auth_user_created:
+        -- Renombramos temporalmente el email en el registro legacy.
+        UPDATE public."User" SET email = email || '.legacy' WHERE id = p_user_id;
+        
+        -- Insertar en auth.users (esto disparará public.handle_new_user(),
+        -- el cual insertará una nueva fila en public.User con id = v_user_uuid::text y el email original).
+        INSERT INTO auth.users (
+          id,
+          instance_id,
+          email,
+          encrypted_password,
+          email_confirmed_at,
+          raw_app_meta_data,
+          raw_user_meta_data,
+          is_super_admin,
+          role,
+          aud
+        )
+        VALUES (
+          v_user_uuid,
+          '00000000-0000-0000-0000-000000000000',
+          v_email,
+          '$2y$10$abcdefghijklmnopqrstuvwxyz01234567890123456789',
+          now(),
+          jsonb_build_object('role', v_role::text, 'status', v_status::text),
+          jsonb_build_object('name', v_name),
+          false,
+          'authenticated',
+          'authenticated'
+        );
+
+        -- Copiar los detalles adicionales del usuario legacy al nuevo registro UUID
+        UPDATE public."User" new_u
+        SET "passwordHash" = old_u."passwordHash",
+            height = old_u.height,
+            "currentWeight" = old_u."currentWeight",
+            "birthDate" = old_u."birthDate",
+            gender = old_u.gender,
+            "medicalNotes" = old_u."medicalNotes",
+            "activityLevel" = old_u."activityLevel",
+            goal = old_u.goal
+        FROM public."User" old_u
+        WHERE old_u.id = p_user_id
+          AND new_u.id = v_user_uuid::text;
+
+        -- Actualizar referencias en otras tablas relacionales
+        IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'Notification') THEN
+          UPDATE public."Notification" SET "userId" = v_user_uuid::text WHERE "userId" = p_user_id;
+        END IF;
+        IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'Workout') THEN
+          UPDATE public."Workout" SET "userId" = v_user_uuid::text WHERE "userId" = p_user_id;
+        END IF;
+        IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'Diet') THEN
+          UPDATE public."Diet" SET "userId" = v_user_uuid::text WHERE "userId" = p_user_id;
+        END IF;
+        IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'ExerciseLog') THEN
+          UPDATE public."ExerciseLog" SET "userId" = v_user_uuid::text WHERE "userId" = p_user_id;
+        END IF;
+        IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'UserMeasurement') THEN
+          UPDATE public."UserMeasurement" SET "userId" = v_user_uuid::text WHERE "userId" = p_user_id;
+        END IF;
+        IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'BodyWeightRecord') THEN
+          UPDATE public."BodyWeightRecord" SET "userId" = v_user_uuid::text WHERE "userId" = p_user_id;
+        END IF;
+        IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'ExerciseRecord') THEN
+          UPDATE public."ExerciseRecord" SET "userId" = v_user_uuid::text WHERE "userId" = p_user_id;
+        END IF;
+        IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'AiChatSession') THEN
+          UPDATE public."AiChatSession" SET "userId" = v_user_uuid::text WHERE "userId" = p_user_id;
+        END IF;
+        IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = '_GymClassToUser') THEN
+          UPDATE public."_GymClassToUser" SET "B" = v_user_uuid::text WHERE "B" = p_user_id;
+        END IF;
+        IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'ClassTrainer') THEN
+          UPDATE public."ClassTrainer" SET "trainerId" = v_user_uuid::text WHERE "trainerId" = p_user_id;
+        END IF;
+
+        -- Eliminar el registro legacy temporal
+        DELETE FROM public."User" WHERE id = p_user_id;
+      ELSE
+        -- Si ya existía el usuario en auth.users pero no estaba enlazado en User
+        UPDATE public."User" SET auth_user_id = v_user_uuid WHERE id = p_user_id;
+      END IF;
+
+      -- Vincular en legacy_user_map
+      INSERT INTO public.legacy_user_map (legacy_user_id, auth_user_id)
+      VALUES (p_user_id, v_user_uuid)
+      ON CONFLICT (legacy_user_id) DO NOTHING;
+    END IF;
   END IF;
 
   -- Precio base
@@ -106,10 +225,10 @@ BEGIN
   FROM auth.users u
   LEFT JOIN public.profiles p ON p.id = u.id
   LEFT JOIN public.user_roles ur ON ur.user_id = u.id
-  WHERE u.id = p_user_id;
+  WHERE u.id = v_user_uuid;
 
   IF v_customer_snapshot IS NULL THEN
-    RAISE EXCEPTION 'User % not found for subscription', p_user_id;
+    RAISE EXCEPTION 'User % not found for subscription', v_user_uuid;
   END IF;
 
   -- Snapshot del emisor (issuer_settings singleton)
@@ -135,7 +254,7 @@ BEGIN
     status, created_by, subtotal, tax_total, total
   )
   VALUES (
-    p_user_id, p_plan_id, p_duration_id, p_offer_id,
+    v_user_uuid, p_plan_id, p_duration_id, p_offer_id,
     'active', auth.uid(), v_subtotal, v_tax_total, v_total
   )
   RETURNING id INTO v_subscription_id;
@@ -200,4 +319,3 @@ BEGIN
   RETURN NEXT;
 END;
 $$;
-

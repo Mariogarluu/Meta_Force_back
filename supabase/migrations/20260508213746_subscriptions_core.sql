@@ -103,6 +103,7 @@ CREATE TABLE IF NOT EXISTS public.issuer_settings (
   address text NOT NULL,
   email text,
   phone text,
+  iban text,
   logo_url text,
   created_at timestamptz NOT NULL DEFAULT now(),
   updated_at timestamptz NOT NULL DEFAULT now()
@@ -684,6 +685,31 @@ BEGIN
     (v_premium_id, v_m6_id, 300, 21),
     (v_premium_id, v_m12_id, 540, 21)
   ON CONFLICT (plan_id, duration_id) DO NOTHING;
+
+  -- Asegurar que la columna iban existe (por si la tabla ya existía antes de agregarla)
+  IF NOT EXISTS (
+    SELECT 1
+    FROM information_schema.columns
+    WHERE table_schema = 'public'
+      AND table_name = 'issuer_settings'
+      AND column_name = 'iban'
+  ) THEN
+    ALTER TABLE public.issuer_settings ADD COLUMN iban text;
+  END IF;
+
+  -- Seed de issuer_settings (singleton)
+  INSERT INTO public.issuer_settings (id, legal_name, tax_id, address, email, phone, iban, logo_url)
+  VALUES (
+    true,
+    'Meta Force Fitness S.L.',
+    'B12345678',
+    'Calle de la Fuerza 42, 28001 Madrid, España',
+    'contacto@metaforce.com',
+    '+34 910 000 000',
+    'ES1234567890123456789012',
+    'https://meta-force-psi.vercel.app/assets/logo.png'
+  )
+  ON CONFLICT (id) DO NOTHING;
 END $$;
 
 

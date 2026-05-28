@@ -87,6 +87,7 @@ Deno.serve(async (req) => {
       centerId,
       instanceNumber,
       status,
+      updatedAt: new Date().toISOString(),
     }).select("*").single();
     if (error) return jsonResponse({ message: error.message }, 500);
     machines.push(row);

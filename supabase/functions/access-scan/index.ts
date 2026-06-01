@@ -77,9 +77,12 @@ Deno.serve(async (req) => {
     }
   }
 
-  const { data: targetUser, error: uErr } = await admin.from("User").select(
-    "id, centerId, name, email, role, status",
-  ).or(`id.eq.${qrId},auth_user_id.eq.${qrId}`).maybeSingle();
+  const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(qrId);
+  const query = admin.from("User").select("id, centerId, name, email, role, status");
+  const { data: targetUser, error: uErr } = await (isUuid
+    ? query.or(`id.eq.${qrId},auth_user_id.eq.${qrId}`)
+    : query.eq("id", qrId)
+  ).maybeSingle();
   if (uErr || !targetUser) {
     return jsonResponse({ message: "Usuario no encontrado" }, 404);
   }

@@ -252,7 +252,8 @@ Deno.serve(async (req) => {
         
         REGLAS CRÍTICAS:
         1. Si el usuario pregunta sobre CUALQUIER tema que no sea deporte, dieta o salud (ej: política, cine, matemáticas), DEBES rechazar responder educadamente.
-        2. Puedes generar rutinas de ejercicios. Si el usuario pide una rutina, devuelve un JSON ESTRUCTURADO dentro de un bloque de código \`\`\`json ... \`\`\`.
+        2. Puedes generar rutinas de ejercicios o dietas alimenticias. Si el usuario pide una rutina o dieta, devuelve un JSON ESTRUCTURADO dentro de un bloque de código \`\`\`json ... \`\`\`.
+        3. IMPORTANTE - DIAS DE LA SEMANA: Mapeo de días de la semana obligatorio: 1 = Lunes, 2 = Martes, 3 = Miércoles, 4 = Jueves, 5 = Viernes, 6 = Sábado, 0 = Domingo. DEBES respetar EXACTAMENTE los días solicitados por el usuario utilizando esta numeración. No te inventes ni cambies los días. Si el usuario pide entrenamiento para lunes, martes, jueves y viernes, debes devolver en el JSON un array "days" con los correspondientes "dayOfWeek" de 1, 2, 4 y 5.
         
         Estructura JSON:
         {
@@ -262,7 +263,7 @@ Deno.serve(async (req) => {
                 "description": "Breve descripción",
                 "days": [
                     {
-                        "dayOfWeek": 1,
+                        "dayOfWeek": 1, // 1 = Lunes, 2 = Martes, 3 = Miércoles, 4 = Jueves, 5 = Viernes, 6 = Sábado, 0 = Domingo
                         "items": [ 
                             {
                                 "name": "Nombre Ejercicio o Comida",

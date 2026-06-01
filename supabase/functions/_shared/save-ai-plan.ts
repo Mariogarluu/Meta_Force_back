@@ -107,7 +107,27 @@ export async function saveAiPlan(
   userId: string,
   plan: AiGeneratedPlan,
 ): Promise<unknown> {
-  if (plan.type === "WORKOUT") {
+  const rawType = String(plan.type || "").toUpperCase().trim();
+  let resolvedType: "WORKOUT" | "DIET" | null = null;
+  if (
+    rawType.includes("WORK") ||
+    rawType.includes("TRAIN") ||
+    rawType.includes("ENTREN") ||
+    rawType.includes("RUTIN") ||
+    rawType.includes("EJERCIC")
+  ) {
+    resolvedType = "WORKOUT";
+  } else if (
+    rawType.includes("DIET") ||
+    rawType.includes("ALIMENT") ||
+    rawType.includes("NUTRI") ||
+    rawType.includes("COMID") ||
+    rawType.includes("DIETA")
+  ) {
+    resolvedType = "DIET";
+  }
+
+  if (resolvedType === "WORKOUT") {
     const dbExercises: Record<string, string> = {};
     const safeDays = Array.isArray(plan.days) ? plan.days : [];
     for (const day of safeDays) {
@@ -185,7 +205,7 @@ export async function saveAiPlan(
     return workout;
   }
 
-  if (plan.type === "DIET") {
+  if (resolvedType === "DIET") {
     const dbMeals: Record<string, string> = {};
     const safeDays = Array.isArray(plan.days) ? plan.days : [];
     for (const day of safeDays) {

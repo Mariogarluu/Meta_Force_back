@@ -102,6 +102,24 @@ async function deleteDietCascade(sb: SupabaseClient, dietId: string) {
   await sb.from("Diet").delete().eq("id", dietId);
 }
 
+function parseDayOfWeek(val: unknown): number | null {
+  if (val === null || val === undefined) return null;
+  if (typeof val === "number") return val;
+  if (typeof val === "string") {
+    const cleaned = val.trim().toLowerCase();
+    const num = parseInt(cleaned, 10);
+    if (!isNaN(num)) return num;
+    if (cleaned.includes("dom") || cleaned.includes("sun")) return 0;
+    if (cleaned.includes("lun") || cleaned.includes("mon")) return 1;
+    if (cleaned.includes("mar") || cleaned.includes("tue")) return 2;
+    if (cleaned.includes("mie") || cleaned.includes("mié") || cleaned.includes("wed")) return 3;
+    if (cleaned.includes("jue") || cleaned.includes("thu")) return 4;
+    if (cleaned.includes("vie") || cleaned.includes("fri")) return 5;
+    if (cleaned.includes("sab") || cleaned.includes("sáb") || cleaned.includes("sat")) return 6;
+  }
+  return null;
+}
+
 export async function saveAiPlan(
   sb: SupabaseClient,
   userId: string,
@@ -147,9 +165,8 @@ export async function saveAiPlan(
           notes?: string;
         }>;
         if (!Array.isArray(items)) continue;
-        const dayOfWeekValue = typeof day.dayOfWeek === "number"
-          ? (day.dayOfWeek - 1)
-          : d;
+        const parsedDay = parseDayOfWeek(day.dayOfWeek);
+        const dayOfWeekValue = parsedDay !== null ? parsedDay : d;
         const finalDayOfWeek = Math.max(0, Math.min(6, dayOfWeekValue));
 
         for (let i = 0; i < items.length; i++) {
@@ -224,9 +241,8 @@ export async function saveAiPlan(
           notes?: string;
         }>;
         if (!Array.isArray(items)) continue;
-        const dayOfWeekValue = typeof day.dayOfWeek === "number"
-          ? (day.dayOfWeek - 1)
-          : d;
+        const parsedDay = parseDayOfWeek(day.dayOfWeek);
+        const dayOfWeekValue = parsedDay !== null ? parsedDay : d;
         const finalDayOfWeek = Math.max(0, Math.min(6, dayOfWeekValue));
 
         for (let i = 0; i < items.length; i++) {

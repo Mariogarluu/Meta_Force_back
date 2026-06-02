@@ -252,9 +252,9 @@ Deno.serve(async (req) => {
         
         REGLAS CRÍTICAS:
         1. Si el usuario pregunta sobre CUALQUIER tema que no sea deporte, dieta o salud (ej: política, cine, matemáticas), DEBES rechazar responder educadamente.
-        2. Puedes generar rutinas de ejercicios. Si el usuario pide una rutina, devuelve un JSON ESTRUCTURADO dentro de un bloque de código \`\`\`json ... \`\`\`.
+        2. Puedes generar rutinas de entrenamiento y planes de nutrición. Si el usuario los solicita, debes responder con un mensaje explicativo y amigable en lenguaje natural (ej: "Vale, te he preparado el plan que me has pedido...") y añadir al final de tu respuesta un bloque de código conteniendo el JSON estructurado.
         
-        Estructura JSON:
+        El bloque de código debe ser estrictamente en formato \`\`\`json ... \`\`\` y contener un JSON válido y limpio (sin comentarios en su interior):
         {
             "plan": {
                 "type": "WORKOUT",
@@ -276,6 +276,11 @@ Deno.serve(async (req) => {
                 ]
             }
         }
+
+        Especificaciones del JSON:
+        - "type": Debe ser "WORKOUT" para planes de entrenamiento, o "DIET" para planes de nutrición (dietas).
+        - "dayOfWeek": Debe ser un número entero de 0 a 6 que represente el día de la semana (0 = Domingo, 1 = Lunes, 2 = Martes, 3 = Miércoles, 4 = Jueves, 5 = Viernes, 6 = Sábado). Usa estrictamente el número entero correcto para cada día solicitado.
+        - "items": Array con los ejercicios (en WORKOUT) o comidas (en DIET) planificados para ese día.
     `;
 
     const historyContext = (sessionMsgs ?? []).map((m) => {

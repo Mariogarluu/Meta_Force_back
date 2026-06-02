@@ -23,14 +23,14 @@ Deno.serve(async (req) => {
     return jsonResponse({ message: "Method not allowed" }, 405);
   }
 
-  let body: InvoicePayload;
+  let body: any;
   try {
     body = await req.json();
   } catch {
     return jsonResponse({ message: "JSON inválido" }, 400);
   }
 
-  const invoiceId = body.invoice_id;
+  const invoiceId = body.invoice_id || body.p_invoice_id;
   if (!invoiceId) {
     return jsonResponse({ message: "invoice_id requerido" }, 400);
   }

@@ -2,6 +2,16 @@
 
 Este directorio contiene la arquitectura y el código de la infraestructura de backend de **Meta Force**, migrada de forma completa desde el histórico Express/Prisma hacia un entorno serverless moderno en **Supabase Cloud**. También aloja el pipeline ETL y el dashboard analítico de BI.
 
+<div align="center">
+
+[![Supabase](https://img.shields.io/badge/Backend-Supabase-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white)](https://supabase.com)
+[![PostgreSQL](https://img.shields.io/badge/Database-PostgreSQL-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)](https://www.postgresql.org)
+[![TypeScript/Deno](https://img.shields.io/badge/Edge%20Functions-Deno%20%2F%20TypeScript-blue?style=for-the-badge&logo=deno&logoColor=white)](https://deno.com)
+[![Python](https://img.shields.io/badge/Analytics-Python%20%2F%20Pandas-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org)
+[![Power BI](https://img.shields.io/badge/BI-Power%20BI-F2C811?style=for-the-badge&logo=powerbi&logoColor=black)](https://powerbi.microsoft.com)
+
+</div>
+
 ---
 
 ## 🌟 Arquitectura Serverless (Supabase)
@@ -90,6 +100,28 @@ La base de datos ya no confía en la columna `role` editable en `public.profiles
 2. Al generar un JWT, Supabase invoca la función Postgres `public.custom_access_token_hook(event jsonb)` la cual añade el rol verificado como la claim `app_role` firmada.
 3. Las políticas RLS evalúan los permisos llamando a `auth.jwt()->>'app_role'`. Si un usuario intenta modificar su rol en local, el token será inválido o rechazado, neutralizando cualquier auto-escalado de privilegios.
 
+```mermaid
+sequenceDiagram
+    autonumber
+    actor Cliente as Cliente (Web/Móvil)
+    participant Auth as Supabase Auth
+    participant Hook as Custom Access Token Hook
+    participant DB as Tabla user_roles
+    
+    Cliente->>Auth: Login (Credenciales)
+    activate Auth
+    Auth->>Hook: Dispara Trigger de Generación de Token
+    activate Hook
+    Hook->>DB: Consulta rol asignado (user_id)
+    DB-->>Hook: Devuelve rol (ej. SUPERADMIN)
+    Hook-->>Auth: Inyecta claims { "app_role": "SUPERADMIN" }
+    deactivate Hook
+    Auth-->>Cliente: Devuelve JWT firmado con app_role
+    deactivate Auth
+    Cliente->>DB: Petición con JWT (Lectura/Escritura)
+    Note over DB: Postgres evalúa RLS:<br/>auth.jwt()->>'app_role' == 'SUPERADMIN'
+```
+
 ---
 
 ## 📊 Analytics & Business Intelligence (BI)
@@ -106,6 +138,25 @@ El panel ejecutivo Superadmin se alimenta mediante un flujo de extracción estru
    python extract_data.py
    ```
    *Salida*: Ficheros CSV formateados en `back/analytics/exports/`.
+
+```mermaid
+flowchart LR
+    subgraph Supabase Cloud
+        DB[(PostgreSQL)]
+    end
+    subgraph Pipeline ETL (Python)
+        ETL[extract_data.py]
+        Pandas[Procesamiento Pandas]
+        CSVs[(Ficheros CSV)]
+    end
+    subgraph Capa BI
+        PBI[Power BI Premium Dashboard]
+    end
+    DB -->|Consulta API| ETL
+    ETL --> Pandas
+    Pandas -->|Vuelca datos| CSVs
+    CSVs -->|Origen de Datos| PBI
+```
 
 2. **Visualización en Power BI**:
    El archivo `MetaForce_Superadmin_Dashboard.pbix` lee los CSV generados por el ETL para renderizar las métricas financieras (MRR, facturación total), ratios de retención, ocupación por centro y distribución de planes contratados.
